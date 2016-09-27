@@ -1,8 +1,18 @@
 <resources>
     <string name="app_name">Bus Tracking System</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="clear_map">Clear</string>
+    <string name="reset_map">Reset</string>
+    <string name="default_info_window">Default info window</string>
+    <string name="compass">Compass</string>
+    <string name="custom_info_contents">Custom info contents</string>
+    <string name="custom_info_window">Custom info window</string>
+    <string name="map_not_ready">Map is not ready yet</string>
+    <string name="drag_melbourne">Drag Melbourne</string>
+    <string name="flat">Flat</string>
+    <string name="rotation">Rotation</string>
 </resources>

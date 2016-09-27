@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "696054571719",
+    "firebase_url": "https://untbustracking-acb72.firebaseio.com",
+    "project_id": "untbustracking-acb72",
+    "storage_bucket": "untbustracking-acb72.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696054571719:android:68f555aa8c5ec476",
+        "android_client_info": {
+          "package_name": "edu.unt.transportation.bustrackingsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "696054571719-odf87mmmos1pdc2tnab9mb72tffqgorj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwamOUrPa1908hvuRdRzvdPJTAlLiZwKY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
