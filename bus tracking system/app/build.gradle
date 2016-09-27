@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "edu.unt.transportation.bustrackingsystem"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {
@@ -24,4 +28,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
+    compile 'com.google.android.gms:play-services:9.4.0'
+    compile 'com.google.firebase:firebase-core:9.4.0'
+    compile 'com.firebase:firebase-client-android:2.5.2+'
 }
+
+apply plugin: 'com.google.gms.google-services'
