@@ -8,49 +8,49 @@ import java.util.List;
 
 public class BusRoute
 {
-    int id;
-    String name;
-    List<BusStop> busStops;
+    private int mID;
+    private String mName;
+    private List<Vehicle> vehicleList;
+    private List<BusStop> busStops;
+    private String lastUpdated;
 
-    public List<Bus> getAssignedBuses()
-    {
-        return assignedBuses;
+    public int getmID() {
+        return mID;
     }
 
-    public void setAssignedBuses(List<Bus> assignedBuses)
-    {
-        this.assignedBuses = assignedBuses;
+    public void setmID(int mID) {
+        this.mID = mID;
     }
 
-    public List<BusStop> getBusStops()
-    {
+    public String getmName() {
+        return mName;
+    }
+
+    public void setmName(String mName) {
+        this.mName = mName;
+    }
+
+    public List<Vehicle> getVehicleList() {
+        return vehicleList;
+    }
+
+    public void setVehicleList(List<Vehicle> vehicleList) {
+        this.vehicleList = vehicleList;
+    }
+
+    public List<BusStop> getBusStops() {
         return busStops;
     }
 
-    public void setBusStops(List<BusStop> busStops)
-    {
+    public void setBusStops(List<BusStop> busStops) {
         this.busStops = busStops;
     }
 
-    public int getId()
-    {
-        return id;
+    public String getLastUpdated() {
+        return lastUpdated;
     }
 
-    public void setId(int id)
-    {
-        this.id = id;
+    public void setLastUpdated(String lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    List<Bus> assignedBuses;
 }
