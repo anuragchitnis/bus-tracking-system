@@ -34,7 +34,6 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.ServerValue;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -115,7 +114,6 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
                 Place place = PlacePicker.getPlace(data, this);
 
                 Map<String, Object> checkoutData = new HashMap<>();
-                checkoutData.put("time", ServerValue.TIMESTAMP);
                 checkoutData.put("latitude", place.getLatLng().latitude);
                 checkoutData.put("longitude", place.getLatLng().longitude);
 
