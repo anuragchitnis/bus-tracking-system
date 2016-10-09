@@ -1,7 +1,5 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.Date;
 import java.util.List;
 
@@ -10,59 +8,56 @@ import java.util.List;
  */
 public class BusStop
 {
-    int id;
-    double latitude;
-    double longitude;
-    List<Date> scheduledStops;
+    private int mStopID;
+    private String mStopName;
+    private double mLatitude;
+    private double mLongitude;
+    private List<Date> scheduledStops;
 
     public BusStop(int i, double latitude, double longitude)
     {
-        this.id=i;
-        this.latitude=latitude;
-        this.longitude=longitude;
+        this.mStopID=i;
+        this.mLatitude=latitude;
+        this.mLongitude=longitude;
     }
 
-    public int getId()
-    {
-        return id;
+    public int getmStopID() {
+        return mStopID;
     }
 
-    public void setId(int id)
-    {
-        this.id = id;
+    public void setmStopID(int mStopID) {
+        this.mStopID = mStopID;
     }
 
-    public double getLatitude()
-    {
-        return latitude;
+    public String getmStopName() {
+        return mStopName;
     }
 
-    public void setLatitude(double latitude)
-    {
-        this.latitude = latitude;
+    public void setmStopName(String mStopName) {
+        this.mStopName = mStopName;
     }
 
-    public double getLongitude()
-    {
-        return longitude;
+    public double getmLatitude() {
+        return mLatitude;
     }
 
-    public void setLongitude(double longitude)
-    {
-        this.longitude = longitude;
+    public void setmLatitude(double mLatitude) {
+        this.mLatitude = mLatitude;
     }
 
-    public List<Date> getScheduledStops()
-    {
+    public double getmLongitude() {
+        return mLongitude;
+    }
+
+    public void setmLongitude(double mLongitude) {
+        this.mLongitude = mLongitude;
+    }
+
+    public List<Date> getScheduledStops() {
         return scheduledStops;
     }
 
-    public void setScheduledStops(List<Date> scheduledStops)
-    {
+    public void setScheduledStops(List<Date> scheduledStops) {
         this.scheduledStops = scheduledStops;
-    }
-
-    public LatLng getLatLng(){
-        return new LatLng(getLatitude(),getLongitude());
     }
 }

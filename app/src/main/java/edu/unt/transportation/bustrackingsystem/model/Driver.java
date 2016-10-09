@@ -6,21 +6,10 @@ package edu.unt.transportation.bustrackingsystem.model;
 
 public class Driver
 {
-    int id;
-    String name;
-    String email;
-    String password;
-    int currentBusID;
-
-    public int getCurrentBusID()
-    {
-        return currentBusID;
-    }
-
-    public void setCurrentBusID(int currentBusID)
-    {
-        this.currentBusID = currentBusID;
-    }
+    private int mDriverID;
+    private String name;
+    private String email;
+    private String password;
 
     public String getEmail()
     {
@@ -32,14 +21,14 @@ public class Driver
         this.email = email;
     }
 
-    public int getId()
+    public int getmDriverID()
     {
-        return id;
+        return mDriverID;
     }
 
-    public void setId(int id)
+    public void setmDriverID(int mDriverID)
     {
-        this.id = id;
+        this.mDriverID = mDriverID;
     }
 
     public String getName()

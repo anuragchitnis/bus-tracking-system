@@ -3,8 +3,10 @@
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
+        android:name=".BusTrackingSystem"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,9 +14,9 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBjVZfWcW_4Mp68xvt3HmmxKKE_8gKgTow"/>
+            android:value="AIzaSyDwamOUrPa1908hvuRdRzvdPJTAlLiZwKY"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".CheckoutActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
