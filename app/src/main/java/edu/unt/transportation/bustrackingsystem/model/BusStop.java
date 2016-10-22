@@ -1,63 +1,66 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
-import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gdawg on 09/27/2016.
  */
 public class BusStop
 {
-    private int mStopID;
-    private String mStopName;
-    private double mLatitude;
-    private double mLongitude;
-    private List<Date> scheduledStops;
+    private String stopID;
+    private String stopName;
+    private double latitude;
+    private double longitude;
+    private Map<String, StopSchedule> routeSchedule;
 
-    public BusStop(int i, double latitude, double longitude)
-    {
-        this.mStopID=i;
-        this.mLatitude=latitude;
-        this.mLongitude=longitude;
+    public BusStop() {
+        //Default constructor to use with firebase
     }
 
-    public int getmStopID() {
-        return mStopID;
+    public BusStop(String stopID, String stopName, double latitude, double longitude) {
+        this.stopID = stopID;
+        this.stopName = stopName;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public void setmStopID(int mStopID) {
-        this.mStopID = mStopID;
+    public String getStopID() {
+        return stopID;
     }
 
-    public String getmStopName() {
-        return mStopName;
+    public void setStopID(String stopID) {
+        this.stopID = stopID;
     }
 
-    public void setmStopName(String mStopName) {
-        this.mStopName = mStopName;
+    public String getStopName() {
+        return stopName;
     }
 
-    public double getmLatitude() {
-        return mLatitude;
+    public void setStopName(String stopName) {
+        this.stopName = stopName;
     }
 
-    public void setmLatitude(double mLatitude) {
-        this.mLatitude = mLatitude;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public double getmLongitude() {
-        return mLongitude;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
-    public void setmLongitude(double mLongitude) {
-        this.mLongitude = mLongitude;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public List<Date> getScheduledStops() {
-        return scheduledStops;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
-    public void setScheduledStops(List<Date> scheduledStops) {
-        this.scheduledStops = scheduledStops;
+    public Map<String, StopSchedule> getRouteSchedule() {
+        return routeSchedule;
+    }
+
+    public void setRouteSchedule(Map<String, StopSchedule> routeSchedule) {
+        this.routeSchedule = routeSchedule;
     }
 }

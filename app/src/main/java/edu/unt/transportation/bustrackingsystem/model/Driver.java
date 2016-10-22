@@ -11,6 +11,15 @@ public class Driver
     private String email;
     private String password;
 
+    public Driver() {
+        //Default constructor to use with firebase
+    }
+
+    public Driver(int mDriverID, String name) {
+        this.mDriverID = mDriverID;
+        this.name = name;
+    }
+
     public String getEmail()
     {
         return email;

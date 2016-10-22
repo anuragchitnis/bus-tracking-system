@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity
                 int i = 1;
                 for (LatLng l : DISCOVERY_PARK_BUS_STOP_LOCATIONS)
                 {
-                    busStops.add(new BusStop(i++, l.latitude, l.longitude));
+                    //busStops.add(new BusStop(i++, l.latitude, l.longitude));
                 }
                 myFirebaseRef.child("/").setValue(busStops);
             }

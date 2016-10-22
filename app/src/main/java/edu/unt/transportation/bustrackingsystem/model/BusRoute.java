@@ -1,6 +1,6 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gdawg on 09/27/2016.
@@ -8,42 +8,55 @@ import java.util.List;
 
 public class BusRoute
 {
-    private int mID;
-    private String mName;
-    private List<Vehicle> vehicleList;
-    private List<BusStop> busStops;
+    private String routeId;
+    private String routeName;
+    private Map<String, Boolean> vehicleMap;
+    private Map<String, Boolean> busStopMap;
     private String lastUpdated;
 
-    public int getmID() {
-        return mID;
+
+    public BusRoute() {
+        //Default constructor to use with firebase
     }
 
-    public void setmID(int mID) {
-        this.mID = mID;
+    public BusRoute(String routeId, String routeName, Map<String, Boolean> vehicleMap, Map<String, Boolean> busStopMap, String lastUpdated) {
+        this.routeId = routeId;
+        this.routeName = routeName;
+        this.vehicleMap = vehicleMap;
+        this.busStopMap = busStopMap;
+        this.lastUpdated = lastUpdated;
     }
 
-    public String getmName() {
-        return mName;
+    public String getRouteId() {
+        return routeId;
     }
 
-    public void setmName(String mName) {
-        this.mName = mName;
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
-    public List<Vehicle> getVehicleList() {
-        return vehicleList;
+    public String getRouteName() {
+        return routeName;
     }
 
-    public void setVehicleList(List<Vehicle> vehicleList) {
-        this.vehicleList = vehicleList;
+    public void setRouteName(String routeName) {
+        this.routeName = routeName;
     }
 
-    public List<BusStop> getBusStops() {
-        return busStops;
+    public Map<String, Boolean> getVehicleMap() {
+        return vehicleMap;
     }
 
-    public void setBusStops(List<BusStop> busStops) {
-        this.busStops = busStops;
+    public void setVehicleMap(Map<String, Boolean> vehicleMap) {
+        this.vehicleMap = vehicleMap;
+    }
+
+    public Map<String, Boolean> getBusStopMap() {
+        return busStopMap;
+    }
+
+    public void setBusStopMap(Map<String, Boolean> busStopMap) {
+        this.busStopMap = busStopMap;
     }
 
     public String getLastUpdated() {
