@@ -16,4 +16,9 @@
     <string name="flat">Flat</string>
     <string name="rotation">Rotation</string>
     <string name="check_out">Checkout</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="action_driver_signIn">Driver Login</string>
 </resources>
