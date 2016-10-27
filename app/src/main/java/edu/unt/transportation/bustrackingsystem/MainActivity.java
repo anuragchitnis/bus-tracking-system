@@ -8,32 +8,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.ImmutableList;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
-import edu.unt.transportation.bustrackingsystem.model.BusStop;
+import static edu.unt.transportation.bustrackingsystem.GoogleMapWithMarker.ARG_PATHS;
+import static edu.unt.transportation.bustrackingsystem.GoogleMapWithMarker.ARG_LOCATIONS;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener
 {
-    public static final String ARG_ROUTE = "argRoute";
-    public static final String ARG_PATHS = "argPaths";
-    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
     private final ImmutableList<LatLng> DISCOVERY_PARK_BUS_STOP_LOCATIONS = ImmutableList.<LatLng>builder()
             .add(new LatLng(33.2539457, -97.1550846))
             .add(new LatLng(33.2401949, -97.1624592))
@@ -41,6 +32,7 @@ public class MainActivity extends AppCompatActivity
             .add(new LatLng(33.2200683, -97.1618755))
             .add(new LatLng(33.2167771, -97.1619047))
             .build();
+    public FirebaseController firebaseController = new FirebaseController();
 
     @Override
     public void onBackPressed()
@@ -67,6 +59,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        Firebase.setAndroidContext(this);
+
         if (fab != null)
         {
             fab.setOnClickListener(new View.OnClickListener()
@@ -94,42 +88,8 @@ public class MainActivity extends AppCompatActivity
         {
             navigationView.setNavigationItemSelectedListener(this);
         }
-        Firebase.setAndroidContext(this);
-        final Firebase myFirebaseRef = new Firebase(FIREBASE_URL);
-        myFirebaseRef.addAuthStateListener(new Firebase.AuthStateListener()
-        {
-            @Override
-            public void onAuthStateChanged(AuthData authData)
-            {
-                Log.wtf("Auth", "Authorization changed: ");
-                if(authData!=null)
-                {
-                    Log.wtf("Auth", "(Provider - Expires)" + authData.getProvider() + " - " + authData.getExpires());
-                }
-            }
-        });
+/*
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mAuth.signInWithCustomToken("vaaleKOSxYr6ApZTHL2OY1EFD1u44zBCGEdidQs9");
-        myFirebaseRef.authWithCustomToken("vaaleKOSxYr6ApZTHL2OY1EFD1u44zBCGEdidQs9", new Firebase.AuthResultHandler()
-        {
-            @Override
-            public void onAuthenticated(AuthData authData)
-            {
-                Log.wtf("onAuthenticated", "onAuthenticated: ");
-                if(authData!=null)
-                {
-                    Log.wtf("onAuthenticated", "(Provider - Expires)" + authData.getProvider() + " - " + authData.getExpires());
-                }
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError)
-            {
-                Log.wtf("Auth", "onAuthenticationError: " + firebaseError.getMessage() + " -- " + firebaseError.getDetails());
-
-            }
-        });
         Button firebaseTest = (Button) findViewById(R.id.firebase_test);
         firebaseTest.setOnClickListener(new View.OnClickListener()
         {
@@ -159,6 +119,9 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+        */
+        Button btnGoToRoutes = (Button) findViewById(R.id.btn_go_to_routes);
+        btnGoToRoutes.setOnClickListener(this);
 
     }
 
@@ -183,10 +146,14 @@ public class MainActivity extends AppCompatActivity
         {
             return true;
         }
+        else if (id == R.id.action_driver_login)
+        {
+            navigateToDriverLogin();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -228,10 +195,22 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void navigateToDriverLogin()
+    {
+        //TODO Navigate to driver Login
+    }
+
+    private void navigateToRouteList()
+    {
+        Bundle b = new Bundle();
+        b.putSerializable(FirebaseController.KEY_FIREBASE_CONTROLLER, firebaseController);
+        ActivityUtil.showScreen(MainActivity.this, RouteListActivity.class,b);
+    }
+
     private void showMap()
     {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_ROUTE, DISCOVERY_PARK_BUS_STOP_LOCATIONS);
+        bundle.putSerializable(ARG_LOCATIONS, DISCOVERY_PARK_BUS_STOP_LOCATIONS);
         CustomPath customPath = new CustomPath();
         customPath.setLocations(DISCOVERY_PARK_BUS_STOP_LOCATIONS);
         ArrayList<CustomPath> pathList = new ArrayList<>();
@@ -239,4 +218,15 @@ public class MainActivity extends AppCompatActivity
         bundle.putSerializable(ARG_PATHS, pathList);
         ActivityUtil.showScreen(MainActivity.this, GoogleMapWithMarker.class, bundle);
     }
+
+    @Override
+    public void onClick(View v)
+    {
+        if (v.getId() == R.id.btn_go_to_routes)
+        {
+            navigateToRouteList();
+        }
+    }
+
+
 }

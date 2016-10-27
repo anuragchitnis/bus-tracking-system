@@ -48,6 +48,9 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
         OnInfoWindowLongClickListener,
         OnInfoWindowCloseListener
 {
+    public static final String ARG_LOCATIONS = "argLocations";
+    public static final String ARG_PATHS = "argPaths";
+    public static final String ARG_VEHICLES = "argVehicles";
 
     private GoogleMap mMap;
     /**
@@ -66,9 +69,9 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         Bundle args = getIntent().getExtras();
-        currentRoute = (List<LatLng>) args.getSerializable(MainActivity.ARG_ROUTE);
+        currentRoute = (List<LatLng>) args.getSerializable(ARG_LOCATIONS);
 //        currentPath = new PolylineOptions().addAll(currentRoute).width(5).color(Color.CYAN);
-        currentPaths = (List<CustomPath>)args.getSerializable(MainActivity.ARG_PATHS);
+        currentPaths = (List<CustomPath>)args.getSerializable(ARG_PATHS);
 
 
         mOptions = (RadioGroup) findViewById(R.id.custom_info_window_options);

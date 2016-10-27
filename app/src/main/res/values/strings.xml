@@ -16,4 +16,8 @@
     <string name="flat">Flat</string>
     <string name="rotation">Rotation</string>
     <string name="check_out">Checkout</string>
+    <string name="driver_login">Driver Login</string>
+    <string name="view_routes">View Routes</string>
+    <string name="name_label">Name: </string>
+    <string name="route_instructions">Select a bus route below</string>
 </resources>
