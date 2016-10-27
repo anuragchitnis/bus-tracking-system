@@ -1,5 +1,6 @@
 package edu.unt.transportation.bustrackingsystem;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity
                 int i = 1;
                 for (LatLng l : DISCOVERY_PARK_BUS_STOP_LOCATIONS)
                 {
-                    busStops.add(new BusStop(i++, l.latitude, l.longitude));
+                    //busStops.add(new BusStop(i++, l.latitude, l.longitude));
                 }
                 myFirebaseRef.child("/").setValue(busStops);
             }
@@ -149,6 +150,11 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.action_driver_login)
         {
             navigateToDriverLogin();
+            return true;
+        }
+
+        if (id == R.id.action_signIn) {
+            startActivity(new Intent(this, SignInActivity.class));
             return true;
         }
 

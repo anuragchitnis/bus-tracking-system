@@ -20,4 +20,9 @@
     <string name="view_routes">View Routes</string>
     <string name="name_label">Name: </string>
     <string name="route_instructions">Select a bus route below</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="action_driver_signIn">Driver Login</string>
 </resources>

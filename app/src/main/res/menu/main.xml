@@ -6,9 +6,10 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+
     <item
-        android:id="@+id/action_driver_login"
-        android:orderInCategory="50"
-        android:title="@string/driver_login"
-        />
+        android:id="@+id/action_signIn"
+        android:orderInCategory="100"
+        android:title="@string/action_driver_signIn"
+        app:showAsAction="never" />
 </menu>
