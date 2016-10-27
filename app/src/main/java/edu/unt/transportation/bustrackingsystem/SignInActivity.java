@@ -185,9 +185,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     // [START basic_write]
     private void writeNewUser(String userId, String name, String email) {
-        Driver user = new Driver(name, email);
+        Driver user = new Driver(userId, name, email);
 
-        mDatabase.child("users").child(userId).setValue(user);
+        mDatabase.child("drivers").child(userId).setValue(user);
     }
     // [END basic_write]
 

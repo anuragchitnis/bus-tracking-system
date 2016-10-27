@@ -6,22 +6,22 @@ package edu.unt.transportation.bustrackingsystem.model;
 
 public class Driver
 {
-    private int mDriverID;
+    private String driverId;
     private String name;
     private String email;
-    private String password;
 
     public Driver() {
         //Default constructor to use with firebase
     }
 
-    public Driver(int mDriverID, String name) {
-        this.mDriverID = mDriverID;
+    public Driver(String driverId, String name, String email) {
+        this.driverId = driverId;
         this.name = name;
+        this.email = email;
     }
 
-    public Driver(String name, String email) {
-        this.name = name;
+    public Driver(String driverId, String email) {
+        this.driverId = driverId;
         this.email = email;
     }
 
@@ -35,14 +35,14 @@ public class Driver
         this.email = email;
     }
 
-    public int getmDriverID()
+    public String getDriverId()
     {
-        return mDriverID;
+        return driverId;
     }
 
-    public void setmDriverID(int mDriverID)
+    public void setDriverId(String driverId)
     {
-        this.mDriverID = mDriverID;
+        this.driverId = driverId;
     }
 
     public String getName()
@@ -53,15 +53,5 @@ public class Driver
     public void setName(String name)
     {
         this.name = name;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
     }
 }

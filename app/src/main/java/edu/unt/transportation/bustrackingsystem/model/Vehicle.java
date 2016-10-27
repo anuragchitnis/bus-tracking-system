@@ -14,20 +14,20 @@ public class Vehicle {
     private int routeID;
     private String timestamp;
     private String vehicleType;
-    private Driver driver;
+    private String driverID;
 
     public Vehicle() {
         //Default Constructor for use with firebase
     }
 
-    public Vehicle(String vehicleID, double latitude, double longitude, int routeID, String timestamp, String vehicleType, Driver driver) {
+    public Vehicle(String vehicleID, double latitude, double longitude, int routeID, String timestamp, String vehicleType, String driverID) {
         this.vehicleID = vehicleID;
         this.latitude = latitude;
         this.longitude = longitude;
         this.routeID = routeID;
         this.timestamp = timestamp;
         this.vehicleType = vehicleType;
-        this.driver = driver;
+        this.driverID = driverID;
     }
 
     public String getVehicleID() {
@@ -80,12 +80,12 @@ public class Vehicle {
         this.latitude = latitude;
     }
 
-    public Driver getDriver() {
-        return driver;
+    public String getDriver() {
+        return driverID;
     }
 
-    public void setDriver(Driver driver) {
-        this.driver = driver;
+    public void setDriver(String driver) {
+        this.driverID = driver;
     }
 
 }
