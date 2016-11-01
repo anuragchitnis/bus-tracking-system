@@ -36,23 +36,6 @@ public class MainActivity extends AppCompatActivity
     public FirebaseController firebaseController;
 
     @Override
-    public void onBackPressed()
-    {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer != null)
-        {
-            if (drawer.isDrawerOpen(GravityCompat.START))
-            {
-                drawer.closeDrawer(GravityCompat.START);
-            }
-            else
-            {
-                super.onBackPressed();
-            }
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         firebaseController= new FirebaseController(MainActivity.this);
@@ -93,6 +76,8 @@ public class MainActivity extends AppCompatActivity
 /*
 
         Button firebaseTest = (Button) findViewById(R.id.firebase_test);
+        //Disabled the button to prevent it from making changes to database
+        firebaseTest.setEnabled(false);
         firebaseTest.setOnClickListener(new View.OnClickListener()
         {
             @Override

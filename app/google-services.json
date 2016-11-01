@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "696054571719-mit28grdb68jp5q24t499tr2g2mrqcej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.unt.transportation.bustrackingsystem",
+            "certificate_hash": "4E57F34AFE13A0A711E04A9F78255CBAF77D3E8A"
+          }
+        },
+        {
           "client_id": "696054571719-odf87mmmos1pdc2tnab9mb72tffqgorj.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class Driver implements Serializable
 {
-    private String mDriverID;
+    private String driverId;
     private String name;
     private String email;
     private String password;
@@ -16,12 +16,20 @@ public class Driver implements Serializable
     public Driver() {
         //Default constructor to use with firebase
     }
+
+    public Driver(String driverId, String name, String email) {
+        this.driverId = driverId;
+        this.name = name;
+        this.email = email;
+    }
+
+    public Driver(String driverId, String email) {
+        this.driverId = driverId;
+        this.email = email;
+    }
+
     public Driver(String id){
         this.mDriverID=id;
-    }
-    public Driver(String mDriverID, String name) {
-        this.mDriverID = mDriverID;
-        this.name = name;
     }
 
     public String getEmail()
@@ -34,14 +42,14 @@ public class Driver implements Serializable
         this.email = email;
     }
 
-    public String getmDriverID()
+    public String getDriverId()
     {
-        return mDriverID;
+        return driverId;
     }
 
-    public void setmDriverID(String mDriverID)
+    public void setDriverId(String driverId)
     {
-        this.mDriverID = mDriverID;
+        this.driverId = driverId;
     }
 
     public String getName()
@@ -52,15 +60,5 @@ public class Driver implements Serializable
     public void setName(String name)
     {
         this.name = name;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
     }
 }
