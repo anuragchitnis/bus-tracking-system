@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
             .add(new LatLng(33.2200683, -97.1618755))
             .add(new LatLng(33.2167771, -97.1619047))
             .build();
-    public FirebaseController firebaseController = new FirebaseController();
+    public FirebaseController firebaseController;
 
     @Override
     public void onBackPressed()
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        firebaseController= new FirebaseController(MainActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -147,12 +148,6 @@ public class MainActivity extends AppCompatActivity
         {
             return true;
         }
-        else if (id == R.id.action_driver_login)
-        {
-            navigateToDriverLogin();
-            return true;
-        }
-
         if (id == R.id.action_signIn) {
             startActivity(new Intent(this, SignInActivity.class));
             return true;
@@ -201,15 +196,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void navigateToDriverLogin()
-    {
-        //TODO Navigate to driver Login
-    }
-
     private void navigateToRouteList()
     {
         Bundle b = new Bundle();
-        b.putSerializable(FirebaseController.KEY_FIREBASE_CONTROLLER, firebaseController);
         ActivityUtil.showScreen(MainActivity.this, RouteListActivity.class,b);
     }
 

@@ -1,12 +1,13 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Anurag Chitnis on 10/20/2016.
  */
 
-public class StopSchedule {
+public class StopSchedule implements Serializable {
 
     private String dayOfWeek;
     private List<String> timingsList;

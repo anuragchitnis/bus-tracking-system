@@ -17,6 +17,10 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -36,6 +40,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.unt.transportation.bustrackingsystem.model.BusRoute;
+import edu.unt.transportation.bustrackingsystem.model.BusStop;
+import edu.unt.transportation.bustrackingsystem.model.Vehicle;
+
 /**
  * This shows how to place markers on a map.
  */
@@ -46,12 +54,14 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
         OnSeekBarChangeListener,
         OnMapReadyCallback,
         OnInfoWindowLongClickListener,
-        OnInfoWindowCloseListener
+        OnInfoWindowCloseListener,
+        ValueEventListener, ChildEventListener
 {
     public static final String ARG_LOCATIONS = "argLocations";
     public static final String ARG_PATHS = "argPaths";
     public static final String ARG_VEHICLES = "argVehicles";
-
+    public static final String ARG_CURRENT_ROUTE = "argRoute";
+    View mapView;
     private GoogleMap mMap;
     /**
      * Keeps track of the last selected marker (though it may no longer be selected).  This is
@@ -60,8 +70,25 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
     private RadioGroup mOptions;
     private LatLngBounds bounds;
     private HashMap<LatLng, Marker> markerMap = new HashMap<>();
-    private List<LatLng> currentRoute;
+    private BusRoute currentRoute;
+    private HashMap<String, BusStop> currentRouteStops;
     private List<CustomPath> currentPaths;
+    private HashMap<String, Vehicle> currentVehicles;
+    private FirebaseController firebaseController;
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        BusTrackingSystem.mapActivityPaused();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        BusTrackingSystem.mapActivityResumed();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -69,10 +96,11 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         Bundle args = getIntent().getExtras();
-        currentRoute = (List<LatLng>) args.getSerializable(ARG_LOCATIONS);
-//        currentPath = new PolylineOptions().addAll(currentRoute).width(5).color(Color.CYAN);
-        currentPaths = (List<CustomPath>)args.getSerializable(ARG_PATHS);
-
+//        currentRouteStops = (HashMap<String, BusStop>) args.getSerializable(ARG_LOCATIONS);
+//        currentPath = new PolylineOptions().addAll(currentRouteStops).width(5).color(Color.CYAN);
+        currentPaths = (List<CustomPath>) args.getSerializable(ARG_PATHS);
+//        currentVehicles = (HashMap<String, Vehicle>) args.getSerializable(ARG_VEHICLES);
+        setCurrentRoute((BusRoute) args.getSerializable(ARG_CURRENT_ROUTE));
 
         mOptions = (RadioGroup) findViewById(R.id.custom_info_window_options);
         mOptions.setOnCheckedChangeListener(new OnCheckedChangeListener()
@@ -90,6 +118,17 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        firebaseController = new FirebaseController(GoogleMapWithMarker.this);
+        firebaseController.getFirebaseInstance().addValueEventListener(this);
+        firebaseController.getFirebaseInstance().addChildEventListener(this);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        firebaseController.getFirebaseInstance().removeEventListener((ChildEventListener) this);
+        firebaseController.getFirebaseInstance().removeEventListener((ValueEventListener) this);
     }
 
     @Override
@@ -138,7 +177,7 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
 
         // Pan to see all markers in view.
         // Cannot zoom to bounds until the map has a size.
-        final View mapView = getSupportFragmentManager().findFragmentById(R.id.map).getView();
+        mapView = getSupportFragmentManager().findFragmentById(R.id.map).getView();
         if (mapView != null && mapView.getViewTreeObserver().isAlive())
         {
             mapView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener()
@@ -148,7 +187,6 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
                 @Override
                 public void onGlobalLayout()
                 {
-                    initBounds();
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
                     {
                         mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
@@ -157,19 +195,11 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
                     {
                         mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+                    setUpLayout();
                 }
+
             });
         }
-    }
-
-    private void addPathsToMap()
-    {
-        if(currentPaths==null)return;
-        for(CustomPath path : currentPaths){
-            mMap.addPolyline(path.getOptions());
-        }
-
     }
 
     @Override
@@ -287,22 +317,88 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
         // Do nothing.
     }
 
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot)
+    {
+
+    }
+
+    @Override
+    public void onCancelled(FirebaseError firebaseError)
+    {
+
+    }
+
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey)
+    {
+
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey)
+    {
+        if (dataSnapshot.getKey().equals(FirebaseController.FIREBASE_VEHICLES))
+        {
+            for (String key : currentVehicles.keySet())
+            {
+                currentVehicles.put(key, dataSnapshot.child(key).getValue(Vehicle.class));
+            }
+            setUpLayout();
+            onResetMap(mapView);
+            Toast.makeText(this,"Map refreshed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot)
+    {
+
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey)
+    {
+
+    }
+
+    private void addMarkersToMap()
+    {
+        if (currentRouteStops == null) return;
+        for (BusStop stop : currentRouteStops.values())
+        {
+            LatLng latLng = new LatLng(stop.getLatitude(), stop.getLongitude());
+            markerMap.put(latLng, mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(stop.getStopName())
+                    .snippet("Next Available Time")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus_stop))
+                    .infoWindowAnchor(0.5f, 0.5f)));
+        }
+        for (Vehicle v : currentVehicles.values())
+        {
+            LatLng latLng = new LatLng(v.getLatitude(), v.getLongitude());
+            markerMap.put(latLng, mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title("Vehicle")
+                    .snippet(currentRoute.getRouteName() + " Bus")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus))
+                    .infoWindowAnchor(0.5f, 0.5f)));
+        }
+    }
+
     //
     // Marker related listeners.
     //
 
-    private void addMarkersToMap()
+    private void addPathsToMap()
     {
-        if(currentRoute==null)return;
-        for (LatLng latLng : currentRoute)
+        if (currentPaths == null) return;
+        for (CustomPath path : currentPaths)
         {
-            markerMap.put(latLng, mMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title("Discovery Park Bus Stop")
-                    .snippet("Location")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus_stop))
-                    .infoWindowAnchor(0.5f, 0.5f)));
+            mMap.addPolyline(path.getOptions());
         }
+
     }
 
     private boolean checkReady()
@@ -318,11 +414,13 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
     private void initBounds()
     {
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        for (LatLng latLng : currentRoute)
+        for (BusStop bs : currentRouteStops.values())
         {
+            LatLng latLng = new LatLng(bs.getLatitude(), bs.getLongitude());
             boundsBuilder.include(latLng);
         }
         bounds = boundsBuilder.build();
+
     }
 
     /**
@@ -351,13 +449,27 @@ public class GoogleMapWithMarker extends AppCompatActivity implements
         addMarkersToMap();
     }
 
+    private void setCurrentRoute(BusRoute route)
+    {
+        currentRoute = route;
+        currentRouteStops = currentRoute.getBusStopObjectMap();
+        currentVehicles = currentRoute.getVehicleObjectMap();
+    }
+
+    private void setUpLayout()
+    {
+        if (currentRouteStops != null && currentRouteStops.size() > 0) initBounds();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+    }
+
     /**
      * Demonstrates customizing the info window and/or its contents.
      */
     class CustomInfoWindowAdapter implements InfoWindowAdapter
     {
 
-        // These are both viewgroups containing an ImageView with id "badge" and two TextViews with id
+        // These are both viewgroups containing an ImageView with id "badge" and two TextViews
+        // with id
         // "title" and "snippet".
         private final View mWindow;
 

@@ -1,11 +1,12 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Created by gdawg on 09/27/2016.
  */
-public class BusStop
+public class BusStop implements Serializable
 {
     private String stopID;
     private String stopName;

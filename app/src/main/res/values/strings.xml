@@ -18,7 +18,7 @@
     <string name="check_out">Checkout</string>
     <string name="driver_login">Driver Login</string>
     <string name="view_routes">View Routes</string>
-    <string name="name_label">Name: </string>
+    <string name="name_label">Route Name: </string>
     <string name="route_instructions">Select a bus route below</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>

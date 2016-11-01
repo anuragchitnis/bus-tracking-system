@@ -15,8 +15,20 @@ public class BusTrackingSystem extends Application {
     private static final String FIREBASE_VEHICLES = "vehicles";
     private static final String FIREBASE_ROUTES = "routes";
     private static final String FIREBASE_STOPS = "stops";
-
+    private static boolean mapActivityVisible;
     private Firebase mFirebase;
+
+    public static boolean isMapActivityVisible() {
+        return mapActivityVisible;
+    }
+
+    public static void mapActivityResumed() {
+        mapActivityVisible = true;
+    }
+
+    public static void mapActivityPaused() {
+        mapActivityVisible = false;
+    }
 
     @Override
     public void onCreate() {
