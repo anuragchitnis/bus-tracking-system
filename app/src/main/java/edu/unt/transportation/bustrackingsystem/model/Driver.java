@@ -13,33 +13,27 @@ public class Driver implements Serializable
     private String email;
     private String password;
 
-    public Driver() {
+    public Driver()
+    {
         //Default constructor to use with firebase
     }
 
-    public Driver(String driverId, String name, String email) {
+    public Driver(String driverId, String name, String email)
+    {
         this.driverId = driverId;
         this.name = name;
         this.email = email;
     }
 
-    public Driver(String driverId, String email) {
+    public Driver(String driverId, String email)
+    {
         this.driverId = driverId;
         this.email = email;
     }
 
-    public Driver(String id){
-        this.mDriverID=id;
-    }
-
-    public String getEmail()
+    public Driver(String id)
     {
-        return email;
-    }
-
-    public void setEmail(String email)
-    {
-        this.email = email;
+        this.driverId = id;
     }
 
     public String getDriverId()
@@ -50,6 +44,16 @@ public class Driver implements Serializable
     public void setDriverId(String driverId)
     {
         this.driverId = driverId;
+    }
+
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public void setEmail(String email)
+    {
+        this.email = email;
     }
 
     public String getName()

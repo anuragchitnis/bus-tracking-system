@@ -2,11 +2,7 @@ package edu.unt.transportation.bustrackingsystem;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -20,13 +16,14 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 
-import static edu.unt.transportation.bustrackingsystem.GoogleMapWithMarker.ARG_PATHS;
 import static edu.unt.transportation.bustrackingsystem.GoogleMapWithMarker.ARG_LOCATIONS;
+import static edu.unt.transportation.bustrackingsystem.GoogleMapWithMarker.ARG_PATHS;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener
 {
-    private final ImmutableList<LatLng> DISCOVERY_PARK_BUS_STOP_LOCATIONS = ImmutableList.<LatLng>builder()
+    private final ImmutableList<LatLng> DISCOVERY_PARK_BUS_STOP_LOCATIONS = ImmutableList
+            .<LatLng>builder()
             .add(new LatLng(33.2539457, -97.1550846))
             .add(new LatLng(33.2401949, -97.1624592))
             .add(new LatLng(33.2401949, -97.1624592))
@@ -38,41 +35,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        firebaseController= new FirebaseController(MainActivity.this);
+        firebaseController = new FirebaseController(MainActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         Firebase.setAndroidContext(this);
 
-        if (fab != null)
-        {
-            fab.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                    showMap();
-                }
-            });
-        }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        if (drawer != null)
-        {
-            drawer.addDrawerListener(toggle);
-        }
-        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null)
-        {
-            navigationView.setNavigationItemSelectedListener(this);
-        }
 /*
 
         Button firebaseTest = (Button) findViewById(R.id.firebase_test);
@@ -97,7 +67,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
-                Toast.makeText(MainActivity.this, "Data changed " + dataSnapshot.toString(), Toast.LENGTH_LONG);
+                Toast.makeText(MainActivity.this, "Data changed " + dataSnapshot.toString(),
+                Toast.LENGTH_LONG);
             }
 
             @Override
@@ -133,7 +104,8 @@ public class MainActivity extends AppCompatActivity
         {
             return true;
         }
-        if (id == R.id.action_signIn) {
+        if (id == R.id.action_signIn)
+        {
             startActivity(new Intent(this, SignInActivity.class));
             return true;
         }
@@ -173,18 +145,22 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer != null)
-        {
-            drawer.closeDrawer(GravityCompat.START);
-        }
         return true;
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        if (v.getId() == R.id.btn_go_to_routes)
+        {
+            navigateToRouteList();
+        }
     }
 
     private void navigateToRouteList()
     {
         Bundle b = new Bundle();
-        ActivityUtil.showScreen(MainActivity.this, RouteListActivity.class,b);
+        ActivityUtil.showScreen(MainActivity.this, RouteListActivity.class, b);
     }
 
     private void showMap()
@@ -197,15 +173,6 @@ public class MainActivity extends AppCompatActivity
         pathList.add(customPath);
         bundle.putSerializable(ARG_PATHS, pathList);
         ActivityUtil.showScreen(MainActivity.this, GoogleMapWithMarker.class, bundle);
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        if (v.getId() == R.id.btn_go_to_routes)
-        {
-            navigateToRouteList();
-        }
     }
 
 
