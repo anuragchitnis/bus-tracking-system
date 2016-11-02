@@ -156,6 +156,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         Intent checkoutActivityIntent = new Intent(SignInActivity.this, CheckoutActivity.class);
         checkoutActivityIntent.putExtra("vehicleId", "1230");
         startActivity(checkoutActivityIntent);
+        startActivity(new Intent(SignInActivity.this, TrackerMapActivity.class));
         finish();
     }
 

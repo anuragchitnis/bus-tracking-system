@@ -2,16 +2,18 @@ package edu.unt.transportation.bustrackingsystem.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
+
 /**
  * Created by Anurag Chitnis on 10/4/2016.
  */
 
 @IgnoreExtraProperties
-public class Vehicle {
+public class Vehicle implements Serializable{
     private String vehicleID;
     private double latitude;
     private double longitude;
-    private int routeID;
+    private String routeID;
     private String timestamp;
     private String vehicleType;
     private String driverID;
@@ -20,7 +22,7 @@ public class Vehicle {
         //Default Constructor for use with firebase
     }
 
-    public Vehicle(String vehicleID, double latitude, double longitude, int routeID, String timestamp, String vehicleType, String driverID) {
+    public Vehicle(String vehicleID, double latitude, double longitude, String routeID, String timestamp, String vehicleType, String driverID) {
         this.vehicleID = vehicleID;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -55,11 +57,11 @@ public class Vehicle {
         this.timestamp = timestamp;
     }
 
-    public int getRouteID() {
+    public String getRouteID() {
         return routeID;
     }
 
-    public void setRouteID(int routeID) {
+    public void setRouteID(String routeID) {
         this.routeID = routeID;
     }
 
@@ -88,4 +90,13 @@ public class Vehicle {
         this.driverID = driver;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Vehicle) {
+            Vehicle vehicle = (Vehicle) o;
+            if(vehicle.getVehicleID().equals(this.getVehicleID()))
+                return true;
+        }
+        return false;
+    }
 }

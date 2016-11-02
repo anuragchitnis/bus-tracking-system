@@ -1,28 +1,67 @@
 package edu.unt.transportation.bustrackingsystem;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.Serializable;
 import java.util.List;
 
 import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
 
-/**
- * Created by Anurag Chitnis on 10/5/2016.
- */
-
-public class FirebaseController {
+public class FirebaseController implements Serializable
+{
 
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
-    private static final String FIREBASE_ROOT_NODE = "checkouts";
-    private static final String FIREBASE_VEHICLES = "vehicles";
-    private static final String FIREBASE_ROUTES = "routes";
-    private static final String FIREBASE_STOPS = "stops";
+    public static final String KEY_FIREBASE_CONTROLLER = "keyFirebaseController";
+
+    public static final String FIREBASE_ROOT_NODE = "checkouts";
+    public static final String FIREBASE_VEHICLES = "vehicles";
+    public static final String FIREBASE_ROUTES = "routes";
+    public static final String FIREBASE_STOPS = "stops";
+
+    public Firebase getmFirebase()
+    {
+        return mFirebase;
+    }
+
+    public void setmFirebase(Firebase mFirebase)
+    {
+        this.mFirebase = mFirebase;
+    }
 
     private Firebase mFirebase;
+
+    public Firebase getFirebaseInstance()
+    {
+        if (mFirebase == null)
+        {
+            mFirebase = new Firebase(FIREBASE_URL);
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            mAuth.signInWithCustomToken("vaaleKOSxYr6ApZTHL2OY1EFD1u44zBCGEdidQs9");
+            mFirebase.authWithCustomToken("vaaleKOSxYr6ApZTHL2OY1EFD1u44zBCGEdidQs9", new Firebase.AuthResultHandler()
+            {
+                @Override
+                public void onAuthenticated(AuthData authData)
+                {
+
+                }
+
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError)
+                {
+                    Log.e("Auth", "onAuthenticationError: " + firebaseError.getMessage() + " -- " + firebaseError.getDetails());
+                }
+            });
+        }
+        return mFirebase;
+    }
 
     public FirebaseController(Context context) {
         // Set up Firebase

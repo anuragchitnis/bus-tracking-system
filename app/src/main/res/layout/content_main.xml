@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/main_container"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:context="edu.unt.transportation.bustrackingsystem.MainActivity"
-                tools:showIn="@layout/app_bar_main">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+<LinearLayout android:id="@+id/main_container"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              app:layout_behavior="@string/appbar_scrolling_view_behavior"
+              tools:context="edu.unt.transportation.bustrackingsystem.MainActivity"
+              tools:showIn="@layout/app_bar_main">
 
     <Button
         android:id="@+id/firebase_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test Firebase" />
-</RelativeLayout>
+        android:text="Test Firebase"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/btn_go_to_routes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/view_routes"/>
+</LinearLayout>
