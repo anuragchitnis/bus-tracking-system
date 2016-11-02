@@ -25,6 +25,7 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="action_driver_signIn">Driver Login</string>
+    <string name="action_driver_signOut">Logout</string>
     <string name="stops">Show stops</string>
 
     <!--    Permissions    -->
