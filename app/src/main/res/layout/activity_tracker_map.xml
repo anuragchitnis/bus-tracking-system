@@ -6,6 +6,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/app_bar_layout"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -21,6 +22,7 @@
         android:id="@+id/trackerMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/app_bar_layout"
         class="com.google.android.gms.maps.SupportMapFragment" />
     <!-- A set of test checkboxes. -->
     <LinearLayout
@@ -32,16 +34,11 @@
         android:padding="6dp"
         android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/layers_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <CheckBox
-            android:id="@+id/traffic"
+            android:id="@+id/stopCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onTrafficToggled"
-            android:text="@string/accept" />
+            android:onClick="onStopToggled"
+            android:text="@string/stops" />
         </LinearLayout>
     </RelativeLayout>

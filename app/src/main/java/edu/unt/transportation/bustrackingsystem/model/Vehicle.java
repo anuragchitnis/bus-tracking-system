@@ -90,4 +90,13 @@ public class Vehicle implements Serializable{
         this.driverID = driver;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Vehicle) {
+            Vehicle vehicle = (Vehicle) o;
+            if(vehicle.getVehicleID().equals(this.getVehicleID()))
+                return true;
+        }
+        return false;
+    }
 }

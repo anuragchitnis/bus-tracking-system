@@ -9,6 +9,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -19,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -28,7 +31,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
 
@@ -37,7 +42,6 @@ import edu.unt.transportation.bustrackingsystem.model.Vehicle;
  */
 
 public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback, ValueEventListener {
 
     private static final String TAG = TrackerMapActivity.class.getName();
@@ -54,6 +58,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     private List<String> vehicleIdList;
     private ValueEventListener vehicleChangeListener;
     private DatabaseReference vehiclesRef;
+    private Map<String, Marker> markerMap;
 
     private String routeID = "dp_00";
 
@@ -82,11 +87,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                 getSupportFragmentManager().findFragmentById(R.id.trackerMap);
         mapFragment.getMapAsync(this);
 
-        // Set up the API client for Places API
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addApi(Places.GEO_DATA_API)
-//                .build();
-//        mGoogleApiClient.connect();
+        markerMap = new HashMap<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         vehiclesRef = mDatabase.child(FIREBASE_VEHICLES);
@@ -107,7 +108,8 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                //Remove the listener for this bus as we don't want to receive updates from it anymore
+                vehiclesRef.child(dataSnapshot.getKey()).removeEventListener(TrackerMapActivity.this);
             }
 
             @Override
@@ -125,17 +127,16 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setOnMyLocationButtonClickListener(this);
         enableMyLocation();
-        LatLng mapCenter = new LatLng(33.2528625,-97.15247265625);
+        LatLng mapCenter = new LatLng(33.2139981,-97.1483429);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 13));
         // Flat markers will rotate when the map is rotated,
         // and change perspective when the map is tilted.
         //addPointToViewPort(mapCenter);
-        mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus))
-                .position(mapCenter)
-                .flat(true));
+//        mMap.addMarker(new MarkerOptions()
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus))
+//                .position(mapCenter)
+//                .flat(true));
 
     }
 
@@ -143,15 +144,37 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     public void onDataChange(DataSnapshot dataSnapshot) {
         Log.d(TAG,"vehicleChangeListener : onDataChange "+dataSnapshot.getKey());
         Vehicle vehicleSnapShot = dataSnapshot.getValue(Vehicle.class);
+        LatLng vehiclePosition = new LatLng(vehicleSnapShot.getLatitude(),vehicleSnapShot.getLongitude());
         if(vehicleList.contains(vehicleSnapShot)) {
-            //TODO: Change the vehicle data on the User Interface
+            // Replace the old vehicle object with the new one
+            vehicleList.set(vehicleList.indexOf(vehicleSnapShot), vehicleSnapShot);
+            /**
+             * If the vehicle is already present on the UI and in the vehicleList,
+             * most probably the position is updated, so we update the marker position
+             */
+            markerMap.get(vehicleSnapShot.getVehicleID()).setPosition(vehiclePosition);
         }
-        else
-            vehicleList.add(dataSnapshot.getValue(Vehicle.class));
+        else {
+            /**
+             * Perform following operations if new vehicle is added on the route
+             */
+            vehicleList.add(vehicleSnapShot);
+            Marker newVehicleMarker = mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus))
+                    .position(vehiclePosition)
+                    .flat(true));
+            markerMap.put(vehicleSnapShot.getVehicleID(),newVehicleMarker);
+        }
     }
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
+
+    }
+
+    public void onStopToggled(View view) {
+        Toast.makeText(TrackerMapActivity.this, "Stop Checkbox Clicked",
+                Toast.LENGTH_LONG);
 
     }
 
@@ -173,7 +196,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         } else if (mMap != null) {
             // Access to the location has been granted to the app.
             mMap.setMyLocationEnabled(true);
-            //mMap.getUiSettings().setMyLocationButtonEnabled(true);
         }
     }
 
@@ -210,12 +232,5 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
-    }
-
-    @Override
-    public boolean onMyLocationButtonClick() {
-        // Return false so that we don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
-        return false;
     }
 }

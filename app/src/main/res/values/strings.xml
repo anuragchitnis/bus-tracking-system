@@ -25,6 +25,7 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="action_driver_signIn">Driver Login</string>
+    <string name="stops">Show stops</string>
 
     <!--    Permissions    -->
     <string name="permission_rationale_location">Access to the location service is required to demonstrate the \'my location\' feature, which shows your current location on the map.</string>
