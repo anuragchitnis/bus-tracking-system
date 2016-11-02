@@ -152,7 +152,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         writeNewUser(user.getUid(), username, user.getEmail());
 
         // Go to MainActivity
-        startActivity(new Intent(SignInActivity.this, CheckoutActivity.class));
+        // Changed by Satya, to pass vehicle id to checkout activity
+        Intent checkoutActivityIntent = new Intent(SignInActivity.this, CheckoutActivity.class);
+        checkoutActivityIntent.putExtra("vehicleId", "1230");
+        startActivity(checkoutActivityIntent);
         finish();
     }
 

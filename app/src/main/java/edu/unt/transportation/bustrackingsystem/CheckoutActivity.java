@@ -57,8 +57,13 @@ import java.util.Map;
 public class CheckoutActivity extends FragmentActivity implements OnMapReadyCallback,
         ChildEventListener {
 
-    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
-    private static final String FIREBASE_ROOT_NODE = "stops";
+//    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/vehicles/";
+//    private static final String FIREBASE_ROOT_NODE = "stops";
+
+    Intent myIntent = getIntent(); // gets the previously created intent
+
+    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/vehicles/";
+    private static String FIREBASE_ROOT_NODE;
 
     private static final int REQUEST_PLACE_PICKER = 1;
 
@@ -71,6 +76,8 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
+
+        FIREBASE_ROOT_NODE = myIntent.getStringExtra("vehicelId");
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
