@@ -63,7 +63,7 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
     Intent myIntent = getIntent(); // gets the previously created intent
 
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/vehicles/";
-    private static String FIREBASE_ROOT_NODE;
+    private static String FIREBASE_ROOT_NODE = null;
 
     private static final int REQUEST_PLACE_PICKER = 1;
 
@@ -77,7 +77,7 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
 
-        FIREBASE_ROOT_NODE = myIntent.getStringExtra("vehicelId");
+        FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicelId") : FIREBASE_ROOT_NODE;
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -212,5 +212,12 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
         mBounds.include(newPoint);
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mBounds.build(),
                 findViewById(R.id.checkout_button).getHeight()));
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+
+        // super.onBackPressed(); // Comment this super call to avoid calling finish()
     }
 }
