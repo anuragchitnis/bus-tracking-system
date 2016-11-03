@@ -1,6 +1,7 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,7 +13,7 @@ public class BusStop implements Serializable
     private String stopName;
     private double latitude;
     private double longitude;
-    private Map<String, StopSchedule> routeSchedule;
+    private Map<String, List<StopSchedule>> routeSchedule;
 
     public BusStop() {
         //Default constructor to use with firebase
@@ -57,11 +58,11 @@ public class BusStop implements Serializable
         this.longitude = longitude;
     }
 
-    public Map<String, StopSchedule> getRouteSchedule() {
+    public Map<String, List<StopSchedule>> getRouteSchedule() {
         return routeSchedule;
     }
 
-    public void setRouteSchedule(Map<String, StopSchedule> routeSchedule) {
+    public void setRouteSchedule(Map<String, List<StopSchedule>> routeSchedule) {
         this.routeSchedule = routeSchedule;
     }
 }
