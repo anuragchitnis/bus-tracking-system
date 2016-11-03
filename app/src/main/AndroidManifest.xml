@@ -45,5 +45,12 @@
         <activity
             android:name=".RouteListActivity"
             android:label="Routes"/>
+
+        <activity
+            android:name=".DriverActivity"
+            android:label="Bus Tracking System - Driver"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
 +    </application>
 </manifest>

@@ -27,7 +27,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,12 +79,9 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_checkout);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.checkouttoolbar);
-        setSupportActionBar(toolbar);
 
 
-        FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicelId") : FIREBASE_ROOT_NODE;
+        FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicleId") : FIREBASE_ROOT_NODE;
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -240,7 +236,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.checkout, menu);
+        getMenuInflater().inflate(R.menu.driver, menu);
         return true;
     }
 
