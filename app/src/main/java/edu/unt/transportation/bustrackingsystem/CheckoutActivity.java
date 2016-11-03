@@ -20,11 +20,13 @@ package edu.unt.transportation.bustrackingsystem;
  *  limitations under the License.
  */
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,7 +59,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CheckoutActivity extends FragmentActivity implements OnMapReadyCallback,
+public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCallback,
         ChildEventListener {
 
 //    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/vehicles/";
@@ -79,7 +81,9 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.checkouttoolbar);
+        setSupportActionBar(toolbar);
+
 
         FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicelId") : FIREBASE_ROOT_NODE;
 
@@ -143,9 +147,20 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
      * Map setup. This is called when the GoogleMap is available to manipulate.
      * @param googleMap
      */
+    @SuppressLint("NewApi")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            return;
+        }
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
@@ -219,33 +234,23 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
     }
 
     @Override
-    public void onBackPressed()
-    {
-
-        // super.onBackPressed(); // Comment this super call to avoid calling finish()
+    public void onBackPressed() {
+         super.onBackPressed(); // Comment this super call to avoid calling finish()
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.checkout, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-
-        if (id == R.id.action_signOut)
-        {
+        if (id == R.id.action_signOut) {
             startActivity(new Intent(this, SignInActivity.class));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
