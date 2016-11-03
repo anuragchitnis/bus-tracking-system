@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
@@ -35,7 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.unt.transportation.bustrackingsystem.model.BusStop;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
+
+import static edu.unt.transportation.bustrackingsystem.R.drawable.bus;
 
 /**
  * Created by Anurag Chitnis on 10/5/2016.
@@ -55,10 +59,14 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     private GoogleApiClient mGoogleApiClient;
     private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
     private List<Vehicle> vehicleList = new ArrayList<>();
-    private List<String> vehicleIdList;
+    private List<BusStop> busStopList = new ArrayList<>();
     private ValueEventListener vehicleChangeListener;
     private DatabaseReference vehiclesRef;
+    private List<Marker> mBusStopMarkerList = new ArrayList<>();
     private Map<String, Marker> markerMap;
+    private VehicleMapChangeListener vehicleMapChangeListener;
+    private BusStopListener busStopListener;
+    private CheckBox mStopCheckBox;
 
     private String routeID = "dp_00";
 
@@ -82,6 +90,8 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mStopCheckBox = (CheckBox) findViewById(R.id.stopCheckbox);
+
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.trackerMap);
@@ -91,30 +101,22 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         vehiclesRef = mDatabase.child(FIREBASE_VEHICLES);
-        DatabaseReference vehicleMapRef = mDatabase.child("routes/"+routeID+"/vehicleMap");
+        /**
+         * Set the routeID, whose vehicleMap we want to listen to and register for the listener
+         */
+        vehicleMapChangeListener = new VehicleMapChangeListener();
+        vehicleMapChangeListener.registerListener(routeID);
 
-        vehicleMapRef.addChildEventListener(new ChildEventListener() {
+        busStopListener = new BusStopListener();
+
+        DatabaseReference busStopRef = mDatabase.child("routes/"+routeID+"/busStopMap");
+        busStopRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG,"onChildAdded "+dataSnapshot.getKey());
-                //Register to listen to the changes made to all the vehicles on this route
-                vehiclesRef.child(dataSnapshot.getKey()).addValueEventListener(TrackerMapActivity.this);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //Remove the listener for this bus as we don't want to receive updates from it anymore
-                vehiclesRef.child(dataSnapshot.getKey()).removeEventListener(TrackerMapActivity.this);
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot busStop : dataSnapshot.getChildren()) {
+                    Log.d(TAG,"busStopRef : onDataChange "+busStop.getKey());
+                    busStopListener.registerListener(busStop.getKey());
+                }
             }
 
             @Override
@@ -160,7 +162,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
              */
             vehicleList.add(vehicleSnapShot);
             Marker newVehicleMarker = mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus))
+                    .icon(BitmapDescriptorFactory.fromResource(bus))
                     .position(vehiclePosition)
                     .flat(true));
             markerMap.put(vehicleSnapShot.getVehicleID(),newVehicleMarker);
@@ -169,19 +171,29 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
-
+        Log.e(TAG, "onCancelled() "+ databaseError.getMessage());
     }
 
     public void onStopToggled(View view) {
         Toast.makeText(TrackerMapActivity.this, "Stop Checkbox Clicked",
-                Toast.LENGTH_LONG);
+                Toast.LENGTH_LONG).show();
 
-    }
+        if(mStopCheckBox.isChecked()) {
 
-    private void addPointToViewPort(LatLng newPoint) {
-        mBounds.include(newPoint);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mBounds.build(),
-                findViewById(R.id.checkout_button).getHeight()));
+            for (BusStop busStop : busStopList) {
+                LatLng busStopLocation = new LatLng(busStop.getLatitude(), busStop.getLongitude());
+                mBusStopMarkerList.add(mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                        .position(busStopLocation)
+                        .title(busStop.getStopName())
+                        .flat(true)));
+            }
+        } else {
+            for(Marker marker : mBusStopMarkerList) {
+                marker.remove();
+            }
+        }
+
     }
 
     /**
@@ -232,5 +244,73 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
+    }
+
+    /**
+     * This class receives the callback for all the BusStops which exist on the currently selected route.
+     * Let us  keep the list of BusStop objects, so they can be displayed on the UI whenever user requests it
+     */
+    private class BusStopListener implements ValueEventListener {
+
+        DatabaseReference busStopReference;
+
+        public void registerListener(String stopID) {
+            busStopReference = mDatabase.child("stops");
+            busStopReference.child(stopID).addListenerForSingleValueEvent(this);
+        }
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            BusStop busStopSnapShot = dataSnapshot.getValue(BusStop.class);
+            if(!busStopList.contains(busStopSnapShot)) {
+                busStopList.add(busStopSnapShot);
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    }
+
+    /**
+     * This class tracks the changes to the vehicle map of the given route
+     */
+    private class VehicleMapChangeListener implements ChildEventListener {
+
+        DatabaseReference vehicleMapRef;
+
+        public void registerListener(String routeID) {
+            vehicleMapRef = mDatabase.child("routes/"+routeID+"/vehicleMap");
+            vehicleMapRef.addChildEventListener(this);
+        }
+
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            Log.d(TAG,"onChildAdded "+dataSnapshot.getKey());
+            //Register to listen to the changes made to all the vehicles on this route
+            vehiclesRef.child(dataSnapshot.getKey()).addValueEventListener(TrackerMapActivity.this);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            //Remove the listener for this bus as we don't want to receive updates from it anymore
+            vehiclesRef.child(dataSnapshot.getKey()).removeEventListener(TrackerMapActivity.this);
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
     }
 }
