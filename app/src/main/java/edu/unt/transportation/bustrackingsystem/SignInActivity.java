@@ -153,10 +153,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // Go to MainActivity
         // Changed by Satya, to pass vehicle id to driver activity
-        Intent driverActivityIntent = new Intent(SignInActivity.this, DriverActivity.class);
+        Intent driverActivityIntent = new Intent(this, DriverActivity.class);
         driverActivityIntent.putExtra("vehicleId", "1266");
         startActivity(driverActivityIntent);
-        startActivity(new Intent(SignInActivity.this, TrackerMapActivity.class));
+//        startActivity(new Intent(SignInActivity.this, TrackerMapActivity.class));
         finish();
     }
 

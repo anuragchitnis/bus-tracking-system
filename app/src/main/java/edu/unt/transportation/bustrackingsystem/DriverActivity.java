@@ -73,7 +73,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         setSupportActionBar(toolbar);
 
 
-        FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicleId") : FIREBASE_ROOT_NODE;
+//        FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicleId") : FIREBASE_ROOT_NODE;
+        FIREBASE_ROOT_NODE = "1266";
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -93,17 +94,21 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
         System.out.println("Vechile ID: [" + FIREBASE_ROOT_NODE + "]");
 
-        Log.d(TAG, "signIn");
-        mFirebase.child(FIREBASE_ROOT_NODE).addValueEventListener(new ValueEventListener() {
+        Log.d(TAG, "Vechile ID: [" + FIREBASE_ROOT_NODE + "]");
+        mFirebase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     //Getting the data from snapshot
                     Vehicle vechicle = postSnapshot.getValue(Vehicle.class);
-
+                    Log.d(TAG, String.valueOf(vehicle));
+                    if (vehicle.getVehicleID() == FIREBASE_ROOT_NODE){
+                        String string = "Name: " + vechicle.getDriver() + "\nAddress: " + vechicle.getRouteID() + "\n\n";
+                        Log.d(TAG, string);
+                        break;
+                    }
                     //Adding it to a string
-                    String string = "Name: " + vechicle.getDriver() + "\nAddress: " + vechicle.getRouteID() + "\n\n";
-                    System.out.println(string);
+
 //                    //Displaying it on textview
 //                    textViewPersons.setText(string);
                 }
@@ -266,7 +271,7 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_signOut) {
-            startActivity(new Intent(this, SignInActivity.class));
+            startActivity(new Intent(this, SignOutActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
