@@ -70,6 +70,14 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
     private String routeID = "dp_00";
 
+    public List<Vehicle> getVehicleList() {
+        return vehicleList;
+    }
+
+    public List<BusStop> getBusStopList() {
+        return busStopList;
+    }
+
     /**
      * Request code for location permission request.
      *
