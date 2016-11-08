@@ -1,9 +1,11 @@
 package edu.unt.transportation.bustrackingsystem;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -61,6 +63,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     LatLng latLng;
     Marker currLocationMarker;
 
+    LocationManager mlocManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +73,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         setSupportActionBar(toolbar);
 
         Bundle bundle = getIntent().getExtras();
+
+        mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         FIREBASE_VEHICLE_NODE = bundle.getString("vehicleId");
         FIREBASE_ROUTE_NODE = bundle.getString("routeId");
@@ -153,6 +159,10 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
             }
         });
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     /**
@@ -258,28 +268,37 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_signOut) {
-            startActivity(new Intent(this, SignOutActivity.class));
-            return true;
+//            route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
+//            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        if (currLocationMarker != null) {
-            currLocationMarker.remove();
-        }
+//        if (currLocationMarker != null) {
+//            currLocationMarker.remove();
+//        }
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        vehicle.setLatitude(location.getLatitude());
-        vehicle.setLongitude(location.getLongitude());
-        mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+//        if(route != null){
+//            route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
+//            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+//        }
+        if(vehicle != null){
+            vehicle.setLatitude(location.getLatitude());
+            vehicle.setLongitude(location.getLongitude());
+            mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+//            Toast.makeText(this, "Location Changed", Toast.LENGTH_SHORT).show();
+        }
 //        MarkerOptions markerOptions = new MarkerOptions();
 //        markerOptions.position(latLng);
 //        markerOptions.title("Current Position");
 //        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 //        currLocationMarker = mMap.addMarker(markerOptions);
 
-        Toast.makeText(this,"Location Changed",Toast.LENGTH_SHORT).show();
+
 
         //zoom to current position:
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -310,9 +329,15 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             //place marker at current position
             //mGoogleMap.clear();
             latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            vehicle.setLatitude(mLastLocation.getLatitude());
-            vehicle.setLongitude(mLastLocation.getLongitude());
-            mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+//            if(route != null){
+//                route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
+//                mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+//            }
+            if (vehicle != null){
+                vehicle.setLatitude(mLastLocation.getLatitude());
+                vehicle.setLongitude(mLastLocation.getLongitude());
+                mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+            }
 //            MarkerOptions markerOptions = new MarkerOptions();
 //            markerOptions.position(latLng);
 //            markerOptions.title("Current Position");
