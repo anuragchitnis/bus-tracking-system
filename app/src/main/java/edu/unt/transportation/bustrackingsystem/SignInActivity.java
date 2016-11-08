@@ -8,10 +8,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -20,18 +27,25 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.unt.transportation.bustrackingsystem.model.Driver;
 
 /**
  * Created by Anurag Chitnis on 10/22/2016.
  */
 
-public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignInActivity extends AppCompatActivity implements View.OnClickListener,
+        ChildEventListener {
+
+    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
 
     private static final String TAG = "SignInActivity";
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+    private Firebase mFirebase;
 
     private EditText mEmailField;
     private EditText mPasswordField;
@@ -39,6 +53,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private Button mSignUpButton;
 
     private ProgressDialog mProgressDialog;
+
+    private Spinner spinner1, spinner2;
+
+    private static String vehicleId;
+    private static String routeId;
+
+    List<String> list1 = new ArrayList<String>();
+    List<String> list2 = new ArrayList<String>();
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -71,6 +93,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Views
         mEmailField = (EditText) findViewById(R.id.field_email);
         mPasswordField = (EditText) findViewById(R.id.field_password);
+
+        //Drop down for Route ids
+        addItemsOnSpinner1();
+        list1.add("Select Vehicle");
+        addItemsOnSpinner2();
+        list2.add("Select Route");
+
         mSignInButton = (Button) findViewById(R.id.button_sign_in);
         mSignUpButton = (Button) findViewById(R.id.button_sign_up);
         //Temperarily disabling the Sign up button to prevent users from creating new account
@@ -79,6 +108,101 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Click listeners
         mSignInButton.setOnClickListener(this);
         mSignUpButton.setOnClickListener(this);
+
+        Firebase.setAndroidContext(this);
+        mFirebase = new Firebase(FIREBASE_URL);
+        mFirebase.child("/vehicles/").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                list1.add(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        mFirebase.child("/routes/").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                list2.add(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    // add items into spinner dynamically
+    public void addItemsOnSpinner1() {
+        spinner1 = (Spinner) findViewById(R.id.spinner1);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list1);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner1.setAdapter(dataAdapter);
+        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                vehicleId = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    public void addItemsOnSpinner2() {
+        spinner2 = (Spinner) findViewById(R.id.spinner2);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list2);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner2.setAdapter(dataAdapter);
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                routeId = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -86,9 +210,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         super.onStart();
 
         // Check auth on Activity start
-        if (mAuth.getCurrentUser() != null) {
-            onAuthSuccess(mAuth.getCurrentUser());
-        }
+//        if (mAuth.getCurrentUser() != null) {
+//            onAuthSuccess(mAuth.getCurrentUser());
+//        }
     }
 
     private void signIn() {
@@ -206,5 +330,30 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         } else if (i == R.id.button_sign_up) {
             signUp();
         }
+    }
+
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onCancelled(FirebaseError firebaseError) {
+
     }
 }

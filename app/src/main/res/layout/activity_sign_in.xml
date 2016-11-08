@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/icon"
         android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/field_email"
@@ -36,6 +36,7 @@
             android:inputType="textEmailAddress"
             android:maxLines="1" />
 
+
         <EditText
             android:id="@+id/field_password"
             android:layout_width="150dp"
@@ -45,6 +46,19 @@
             android:hint="@string/hint_password"
             android:inputType="textPassword"
             android:maxLines="1" />
+
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"/>
+
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"/>
+
 
     </LinearLayout>
 
