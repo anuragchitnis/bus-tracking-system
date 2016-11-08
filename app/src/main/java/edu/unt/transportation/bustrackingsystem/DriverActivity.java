@@ -270,6 +270,10 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         if (id == R.id.action_signOut) {
 //            route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
 //            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+            SignInActivity.list1.clear();
+            SignInActivity.list2.clear();
+            SignInActivity.vehicleId = null;
+            SignInActivity.routeId = null;
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }

@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,11 +55,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private Spinner spinner1, spinner2;
 
-    private static String vehicleId;
-    private static String routeId;
-
-    List<String> list1 = new ArrayList<String>();
-    List<String> list2 = new ArrayList<String>();
+    public static String vehicleId;
+    public static String routeId;
+    public static List<String> list1 = new ArrayList<String>();
+    public static List<String> list2 = new ArrayList<String>();
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -107,99 +105,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-        mFirebase.child("/vehicles/").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                list1.add(dataSnapshot.getKey());
-            }
+        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler());;
+        mFirebase.child("/routes/").addChildEventListener(new RouteChildEventHandler());
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-        mFirebase.child("/routes/").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                list2.add(dataSnapshot.getKey());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-        //Drop down for Route ids
-        spinner1 = (Spinner) findViewById(R.id.spinner1);
-        spinner1.setVisibility(View.VISIBLE);
-        spinner1.setPrompt("Select Vehicle");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list1);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner1.setAdapter(dataAdapter);
-        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                vehicleId = spinner1.getSelectedItem().toString();
-                Log.d(TAG, "onItemSelected : [" + vehicleId + "]");
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spinner2 = (Spinner) findViewById(R.id.spinner2);
-        spinner2.setPrompt("Select Route");
-        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list2);
-        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner2.setAdapter(dataAdapter2);
-        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                routeId = spinner2.getSelectedItem().toString();
-                Log.d(TAG, "onItemSelected : [" + routeId + "]");
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        addItemsOnSpinner1();
+        addItemsOnSpinner2();
     }
 
     // add items into spinner dynamically
@@ -211,18 +121,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 android.R.layout.simple_spinner_item, list1);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner1.setAdapter(dataAdapter);
-        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                vehicleId = spinner1.getSelectedItem().toString();
-                Log.d(TAG, "onItemSelected : ["+vehicleId+"]");
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        spinner1.setOnItemSelectedListener(new VehicleSpinner());
     }
 
     public void addItemsOnSpinner2() {
@@ -232,18 +131,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 android.R.layout.simple_spinner_item, list2);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner2.setAdapter(dataAdapter);
-        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                routeId = spinner2.getSelectedItem().toString();
-                Log.d(TAG, "onItemSelected : ["+routeId+"]");
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        spinner2.setOnItemSelectedListener(new RouteSpinner());
     }
 
     @Override
@@ -261,7 +149,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (!validateForm()) {
             return;
         }
-
         showProgressDialog();
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
@@ -324,7 +211,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         bundle.putString("routeId", routeId);
         driverActivityIntent.putExtras(bundle);
         startActivity(driverActivityIntent);
-//        startActivity(new Intent(SignInActivity.this, TrackerMapActivity.class));
         finish();
     }
 
