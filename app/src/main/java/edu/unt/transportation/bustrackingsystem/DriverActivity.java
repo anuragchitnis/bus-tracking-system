@@ -20,14 +20,11 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,7 +33,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -73,8 +69,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         setSupportActionBar(toolbar);
 
 
-//        FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicleId") : FIREBASE_ROOT_NODE;
-        FIREBASE_ROOT_NODE = "1266";
+        FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicleId") : FIREBASE_ROOT_NODE;
+//        FIREBASE_ROOT_NODE = "1266";
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -90,41 +86,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         // Set up Firebase
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-        mFirebase.child(FIREBASE_ROOT_NODE).addChildEventListener(this);
-
-        System.out.println("Vechile ID: [" + FIREBASE_ROOT_NODE + "]");
-
+        mFirebase.addChildEventListener(this);
         Log.d(TAG, "Vechile ID: [" + FIREBASE_ROOT_NODE + "]");
-        mFirebase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    //Getting the data from snapshot
-                    Vehicle vechicle = postSnapshot.getValue(Vehicle.class);
-                    Log.d(TAG, String.valueOf(vehicle));
-                    if (vehicle.getVehicleID() == FIREBASE_ROOT_NODE){
-                        String string = "Name: " + vechicle.getDriver() + "\nAddress: " + vechicle.getRouteID() + "\n\n";
-                        Log.d(TAG, string);
-                        break;
-                    }
-                    //Adding it to a string
-
-//                    //Displaying it on textview
-//                    textViewPersons.setText(string);
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
-
-//        mFirebase.child(FIREBASE_ROOT_NODE).on("value", function(snapshot) {
-//            console.log(snapshot.val()); // here's your data object
-//        });
-//        mDatabase = FirebaseDatabase.getInstance().getReference();
-//        mDatabase.getDatabase.("vehicles/" + FIREBASE_ROOT_NODE).once;
     }
 
     /**
@@ -213,21 +176,29 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
      */
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        String placeId = dataSnapshot.getKey();
-        if (placeId != null) {
-            Places.GeoDataApi
-                    .getPlaceById(mGoogleApiClient, placeId)
-                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                                           @Override
-                                           public void onResult(PlaceBuffer places) {
-                                               LatLng location = places.get(0).getLatLng();
-                                               addPointToViewPort(location);
-                                               mMap.addMarker(new MarkerOptions().position(location));
-                                               places.release();
-                                           }
-                                       }
-                    );
-        }
+
+//        mFirebase.child(dataSnapshot.getKey());
+//        dataSnapshot.getKey()
+
+        Log.d(TAG, dataSnapshot.getKey());
+        Vehicle vehicle = (Vehicle) dataSnapshot.getValue(Vehicle.class);
+        Log.d(TAG, String.valueOf(vehicle));
+
+//        String placeId = dataSnapshot.getKey();
+//        if (placeId != null) {
+//            Places.GeoDataApi
+//                    .getPlaceById(mGoogleApiClient, placeId)
+//                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
+//                                           @Override
+//                                           public void onResult(PlaceBuffer places) {
+//                                               LatLng location = places.get(0).getLatLng();
+//                                               addPointToViewPort(location);
+//                                               mMap.addMarker(new MarkerOptions().position(location));
+//                                               places.release();
+//                                           }
+//                                       }
+//                    );
+//        }
     }
 
     @Override
