@@ -167,6 +167,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     // add items into spinner dynamically
     public void addItemsOnSpinner1() {
         spinner1 = (Spinner) findViewById(R.id.spinner1);
+        spinner1.setPrompt("Select Vehicle");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, list1);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -174,7 +175,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                vehicleId = parent.getItemAtPosition(position).toString();
+                vehicleId = parent.getSelectedItem().toString();
             }
 
             @Override
@@ -186,6 +187,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     public void addItemsOnSpinner2() {
         spinner2 = (Spinner) findViewById(R.id.spinner2);
+        spinner2.setPrompt("Select Route");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, list2);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -193,7 +195,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                routeId = parent.getItemAtPosition(position).toString();
+                routeId = parent.getSelectedItem().toString();
+                Log.d(TAG, "onItemSelected : ["+routeId+"]");
             }
 
             @Override
