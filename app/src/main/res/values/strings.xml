@@ -27,6 +27,8 @@
     <string name="action_driver_signIn">Driver Login</string>
     <string name="action_driver_signOut">Logout</string>
     <string name="stops">Show stops</string>
+    <string name="select_vehicle">Select Vehicle</string>
+    <string name="select_route">Select Route</string>
 
     <!--    Permissions    -->
     <string name="permission_rationale_location">Access to the location service is required to demonstrate the \'my location\' feature, which shows your current location on the map.</string>

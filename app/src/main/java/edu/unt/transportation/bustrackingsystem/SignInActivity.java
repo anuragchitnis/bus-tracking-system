@@ -96,9 +96,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         //Drop down for Route ids
         addItemsOnSpinner1();
-        list1.add("Select Vehicle");
         addItemsOnSpinner2();
-        list2.add("Select Route");
 
         mSignInButton = (Button) findViewById(R.id.button_sign_in);
         mSignUpButton = (Button) findViewById(R.id.button_sign_up);
@@ -279,8 +277,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Changed by Satya, to pass vehicle id to driver activity
         Bundle bundle = new Bundle();
         Intent driverActivityIntent = new Intent(SignInActivity.this, DriverActivity.class);
-        bundle.putString("vehicleId", "1266");
-        bundle.putString("routeId", "dp_00");
+        bundle.putString("vehicleId", vehicleId);
+        bundle.putString("routeId", routeId);
         driverActivityIntent.putExtras(bundle);
         startActivity(driverActivityIntent);
 //        startActivity(new Intent(SignInActivity.this, TrackerMapActivity.class));
