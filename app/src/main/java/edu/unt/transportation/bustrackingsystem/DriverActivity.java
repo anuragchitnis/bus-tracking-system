@@ -1,12 +1,9 @@
 package edu.unt.transportation.bustrackingsystem;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,8 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
@@ -34,12 +29,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -135,6 +128,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
                 String key = dataSnapshot.getKey();
                 if (key == FIREBASE_ROUTE_NODE) {
                     route = dataSnapshot.getValue(BusRoute.class);
+                    route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
+                    mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
                 }
             }
 
@@ -203,11 +198,12 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
      * Map setup. This is called when the GoogleMap is available to manipulate.
      * @param googleMap
      */
-    @SuppressLint("NewApi")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    123);
             // TODO: Consider calling
             //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
             // here to request the missing permissions, and then overriding
@@ -230,15 +226,15 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
         // Pad the map controls to make room for the button - note that the button may not have
         // been laid out yet.
-        final Button button = (Button) findViewById(R.id.checkout_button);
-        button.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        mMap.setPadding(0, button.getHeight(), 0, 0);
-                    }
-                }
-        );
+//        final Button button = (Button) findViewById(R.id.checkout_button);
+//        button.getViewTreeObserver().addOnGlobalLayoutListener(
+//                new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        mMap.setPadding(0, button.getHeight(), 0, 0);
+//                    }
+//                }
+//        );
     }
 
     private void addPointToViewPort(LatLng newPoint) {
@@ -277,11 +273,11 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         vehicle.setLatitude(location.getLatitude());
         vehicle.setLongitude(location.getLongitude());
         mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        currLocationMarker = mMap.addMarker(markerOptions);
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(latLng);
+//        markerOptions.title("Current Position");
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+//        currLocationMarker = mMap.addMarker(markerOptions);
 
         Toast.makeText(this,"Location Changed",Toast.LENGTH_SHORT).show();
 
@@ -294,10 +290,11 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onConnected(Bundle bundle) {
         if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    123);
             // TODO: Consider calling
             //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
             // here to request the missing permissions, and then overriding
@@ -316,11 +313,11 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             vehicle.setLatitude(mLastLocation.getLatitude());
             vehicle.setLongitude(mLastLocation.getLongitude());
             mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title("Current Position");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-            currLocationMarker = mMap.addMarker(markerOptions);
+//            MarkerOptions markerOptions = new MarkerOptions();
+//            markerOptions.position(latLng);
+//            markerOptions.title("Current Position");
+//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+//            currLocationMarker = mMap.addMarker(markerOptions);
         }
 
         LocationRequest mLocationRequest;
