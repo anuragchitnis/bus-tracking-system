@@ -10,18 +10,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Spinner;
 
-import com.firebase.client.Firebase;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
@@ -37,11 +38,14 @@ import java.util.List;
 import java.util.Map;
 
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
+import edu.unt.transportation.bustrackingsystem.model.StopSchedule;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
 
 import static edu.unt.transportation.bustrackingsystem.R.drawable.bus;
 
 /**
+ * This is the central activity of the project which displays the bus locations on the Google Maps and It has the option of showing bus stops and
+ * bus top schedule on the Map.<br>
  * Created by Anurag Chitnis on 10/5/2016.
  */
 
@@ -49,25 +53,58 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         ActivityCompat.OnRequestPermissionsResultCallback, ValueEventListener {
 
     private static final String TAG = TrackerMapActivity.class.getName();
-    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
     private static final String FIREBASE_VEHICLES = "vehicles";
-    private static final String FIREBASE_ROUTES = "routes";
 
     private GoogleMap mMap;
-    private Firebase mFirebase;
     private DatabaseReference mDatabase;
-    private GoogleApiClient mGoogleApiClient;
-    private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
     private List<Vehicle> vehicleList = new ArrayList<>();
     private List<BusStop> busStopList = new ArrayList<>();
-    private ValueEventListener vehicleChangeListener;
     private DatabaseReference vehiclesRef;
     private List<Marker> mBusStopMarkerList = new ArrayList<>();
+    /**
+     * Map of markers to keep track of all the markers added for bus tops and remove them whene ever necessary
+     */
     private Map<String, Marker> markerMap;
     private VehicleMapChangeListener vehicleMapChangeListener;
     private BusStopListener busStopListener;
+    /**
+     * Checkbox view to show and hide bus stop location
+     */
     private CheckBox mStopCheckBox;
-
+    /**
+     * Checkbox view to show and hide schedule list view
+     */
+    private CheckBox mScheduleCheckBox;
+    /**
+     * List of schedule which will appear on the display
+     */
+    private List<String> scheduleList;
+    /**
+     * Map to keep track of the busName and the linked schedule
+     * Key - busName, Value - List of schedule
+     */
+    private Map<String, List<String>> scheduleListMap;
+    /**
+     * List of all the names of bus stops which are scheduled, i.e we have a schedule of timings for those bus stops
+     * Example: For Discovery Park route, we have dp_main and gab as schedules stops
+     */
+    private List<String> scheduledStopsList;
+    /**
+     * Adapter for the list view on which we show the schedule
+     */
+    private ArrayAdapter scheduleListAdapter;
+    /**
+     * Adapter for the spinner where we show the list of scheduled stops
+     */
+    private ArrayAdapter<String> scheduledStopsAdapter;
+    /**
+     * Schedule list layout : layout with transparent black background
+     * we show this layout when user clicks on 'show schedule' otherwise its visibility is set to 'GONE' be default
+     */
+    private LinearLayout scheduleListLayout;
+    /**
+     * TODO: Taking hardcoded route id for now, change it to the route selected by user form previous activity
+     */
     private String routeID = "dp_00";
 
     public List<Vehicle> getVehicleList() {
@@ -97,8 +134,44 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_tracker_map);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        scheduleList = new ArrayList<>();
+        scheduledStopsList = new ArrayList<>();
+        scheduleListMap = new HashMap<>();
 
         mStopCheckBox = (CheckBox) findViewById(R.id.stopCheckbox);
+        mScheduleCheckBox = (CheckBox) findViewById(R.id.scheduleCheckbox);
+
+        scheduleListAdapter = new ArrayAdapter<>(this,
+                R.layout.schedule_listview, scheduleList);
+
+        scheduleListLayout = (LinearLayout) findViewById(R.id.scheduleListLayout);
+
+        ListView listView = (ListView) findViewById(R.id.scheduleList);
+        listView.setAdapter(scheduleListAdapter);
+
+        Spinner spinner = (Spinner) findViewById(R.id.busStopSpinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        scheduledStopsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, scheduledStopsList);
+        // Specify the layout to use when the list of choices appears
+        scheduledStopsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the scheduleListAdapter to the spinner
+        spinner.setAdapter(scheduledStopsAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String busStopName = (String) parent.getItemAtPosition(position);
+                List<String> scheduleStringList = scheduleListMap.get(busStopName);
+                scheduleList.clear();
+                scheduleList.addAll(scheduleStringList);
+                scheduleListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -140,14 +213,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         enableMyLocation();
         LatLng mapCenter = new LatLng(33.2139981,-97.1483429);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 13));
-        // Flat markers will rotate when the map is rotated,
-        // and change perspective when the map is tilted.
-        //addPointToViewPort(mapCenter);
-//        mMap.addMarker(new MarkerOptions()
-//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus))
-//                .position(mapCenter)
-//                .flat(true));
-
     }
 
     @Override
@@ -182,9 +247,11 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         Log.e(TAG, "onCancelled() "+ databaseError.getMessage());
     }
 
+    /**
+     * This method is invoked when the user clicks on show stops checkbox on the user interface
+     * @param view
+     */
     public void onStopToggled(View view) {
-        Toast.makeText(TrackerMapActivity.this, "Stop Checkbox Clicked",
-                Toast.LENGTH_LONG).show();
 
         if(mStopCheckBox.isChecked()) {
 
@@ -202,6 +269,19 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
             }
         }
 
+    }
+
+    /**
+     * This method is invoked when user clicks on the show schedule checkbox on the User Interface
+     * @param view
+     */
+    public void onScheduleToggled(View view) {
+        if(mScheduleCheckBox.isChecked()) {
+            loadSchedule();
+            scheduleListLayout.setVisibility(View.VISIBLE);
+        }
+        else
+            scheduleListLayout.setVisibility(View.GONE);
     }
 
     /**
@@ -252,6 +332,27 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
+    }
+
+    /**
+     * This method parses the list of bus stops and add the scheduled bus stops and schedule for those bus stops in the appropriate list.
+     * We later use these list to show the data in spinner and list view respectively
+     */
+    private void loadSchedule() {
+        scheduledStopsList.clear();
+        for(BusStop busStop : busStopList) {
+            Map<String, List<StopSchedule>> scheduleMap = busStop.getRouteSchedule();
+            if(scheduleMap != null) {
+                scheduledStopsList.add(busStop.getStopName());
+                scheduledStopsAdapter.notifyDataSetChanged();
+                List<StopSchedule> stopScheduleList = scheduleMap.get(routeID);
+                for(StopSchedule stopSchedule : stopScheduleList) {
+                    scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
+                }
+            }
+        }
+
+        scheduleListAdapter.notifyDataSetChanged();
     }
 
     /**
