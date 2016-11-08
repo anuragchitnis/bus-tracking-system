@@ -27,9 +27,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.Driver;
+import edu.unt.transportation.bustrackingsystem.model.Vehicle;
 
 /**
  * Created by Anurag Chitnis on 10/22/2016.
@@ -60,6 +64,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     public static List<String> list1 = new ArrayList<String>();
     public static List<String> list2 = new ArrayList<String>();
 
+    private ArrayAdapter<String> dataAdapter1;
+    private ArrayAdapter<String> dataAdapter2;
+
+    public static Map<String, Vehicle> vehicles;
+    public static Map<String, BusRoute> routes;
+
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -85,6 +95,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        dataAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list1);
+        dataAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list2);
+
+        vehicles = new HashMap<String, Vehicle>();
+        routes = new HashMap<String, BusRoute>();
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
@@ -103,13 +119,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         mSignInButton.setOnClickListener(this);
         mSignUpButton.setOnClickListener(this);
 
-        Firebase.setAndroidContext(this);
-        mFirebase = new Firebase(FIREBASE_URL);
-        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler());;
-        mFirebase.child("/routes/").addChildEventListener(new RouteChildEventHandler());
-
         addItemsOnSpinner1();
         addItemsOnSpinner2();
+
+        Firebase.setAndroidContext(this);
+        mFirebase = new Firebase(FIREBASE_URL);
+        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler(dataAdapter1));;
+        mFirebase.child("/routes/").addChildEventListener(new RouteChildEventHandler(dataAdapter2));
+
     }
 
     // add items into spinner dynamically
@@ -117,20 +134,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         spinner1 = (Spinner) findViewById(R.id.spinner1);
         spinner1.setVisibility(View.VISIBLE);
         spinner1.setPrompt("Select Vehicle");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list1);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner1.setAdapter(dataAdapter);
+        dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner1.setAdapter(dataAdapter1);
         spinner1.setOnItemSelectedListener(new VehicleSpinner());
     }
 
     public void addItemsOnSpinner2() {
         spinner2 = (Spinner) findViewById(R.id.spinner2);
         spinner2.setPrompt("Select Route");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list2);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner2.setAdapter(dataAdapter);
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner2.setAdapter(dataAdapter2);
         spinner2.setOnItemSelectedListener(new RouteSpinner());
     }
 
@@ -207,6 +220,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Changed by Satya, to pass vehicle id to driver activity
         Bundle bundle = new Bundle();
         Intent driverActivityIntent = new Intent(SignInActivity.this, DriverActivity.class);
+        bundle.putSerializable(vehicleId, vehicles.get(vehicleId));
+        bundle.putSerializable(routeId, routes.get(routeId));
         bundle.putString("vehicleId", vehicleId);
         bundle.putString("routeId", routeId);
         driverActivityIntent.putExtras(bundle);

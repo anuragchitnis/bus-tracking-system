@@ -1,11 +1,9 @@
 package edu.unt.transportation.bustrackingsystem;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +14,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -34,7 +31,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,9 +57,6 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     private static final String TAG = "DriverActivity";
 
     LatLng latLng;
-    Marker currLocationMarker;
-
-    LocationManager mlocManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +67,10 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
         Bundle bundle = getIntent().getExtras();
 
-        mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         FIREBASE_VEHICLE_NODE = bundle.getString("vehicleId");
         FIREBASE_ROUTE_NODE = bundle.getString("routeId");
-        FIREBASE_VEHICLE_NODE = "1266";
-        FIREBASE_ROUTE_NODE = "dp_00";
+        vehicle = (Vehicle)bundle.getSerializable(FIREBASE_VEHICLE_NODE);
+        route = (BusRoute)bundle.getSerializable((FIREBASE_ROUTE_NODE));
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -99,66 +90,10 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         mFirebase = new Firebase(FIREBASE_URL);
         Log.d(TAG, "Vechile ID: [" + FIREBASE_VEHICLE_NODE + "]");
         Log.d(TAG, "Route ID: [" + FIREBASE_ROUTE_NODE + "]");
-        mFirebase.child("/vehicles/").addChildEventListener(new com.firebase.client.ChildEventListener() {
-            @Override
-            public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
-                String key = dataSnapshot.getKey();
-                if (key == FIREBASE_VEHICLE_NODE) {
-                    vehicle = dataSnapshot.getValue(Vehicle.class);
-                }
-            }
 
-            @Override
-            public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+        route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
+        mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
 
-            }
-
-            @Override
-            public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-        mFirebase.child("/routes/").addChildEventListener(new com.firebase.client.ChildEventListener() {
-            @Override
-            public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
-                String key = dataSnapshot.getKey();
-                if (key == FIREBASE_ROUTE_NODE) {
-                    route = dataSnapshot.getValue(BusRoute.class);
-                    route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
-                    mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
-                }
-            }
-
-            @Override
-            public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
     }
 
     public void onDestroy() {
@@ -224,27 +159,7 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             return;
         }
         mMap.setMyLocationEnabled(true);
-//        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-//            @Override
-//            public void onMyLocationChange(Location location) {
-//                LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-//                addPointToViewPort(ll);
-//                // we only want to grab the location once, to allow the user to pan and zoom freely.
-//                mMap.setOnMyLocationChangeListener(null);
-//            }
-//        });
 
-        // Pad the map controls to make room for the button - note that the button may not have
-        // been laid out yet.
-//        final Button button = (Button) findViewById(R.id.checkout_button);
-//        button.getViewTreeObserver().addOnGlobalLayoutListener(
-//                new ViewTreeObserver.OnGlobalLayoutListener() {
-//                    @Override
-//                    public void onGlobalLayout() {
-//                        mMap.setPadding(0, button.getHeight(), 0, 0);
-//                    }
-//                }
-//        );
     }
 
     private void addPointToViewPort(LatLng newPoint) {
@@ -268,8 +183,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_signOut) {
-//            route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
-//            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+            route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
+            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
             SignInActivity.list1.clear();
             SignInActivity.list2.clear();
             SignInActivity.vehicleId = null;
@@ -282,28 +197,13 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public void onLocationChanged(Location location) {
-//        if (currLocationMarker != null) {
-//            currLocationMarker.remove();
-//        }
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
-//        if(route != null){
-//            route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
-//            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
-//        }
         if(vehicle != null){
             vehicle.setLatitude(location.getLatitude());
             vehicle.setLongitude(location.getLongitude());
             mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
 //            Toast.makeText(this, "Location Changed", Toast.LENGTH_SHORT).show();
         }
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        markerOptions.position(latLng);
-//        markerOptions.title("Current Position");
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-//        currLocationMarker = mMap.addMarker(markerOptions);
-
-
-
         //zoom to current position:
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng).zoom(14).build();
@@ -330,23 +230,12 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
-            //place marker at current position
-            //mGoogleMap.clear();
             latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-//            if(route != null){
-//                route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
-//                mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
-//            }
             if (vehicle != null){
                 vehicle.setLatitude(mLastLocation.getLatitude());
                 vehicle.setLongitude(mLastLocation.getLongitude());
                 mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
             }
-//            MarkerOptions markerOptions = new MarkerOptions();
-//            markerOptions.position(latLng);
-//            markerOptions.title("Current Position");
-//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-//            currLocationMarker = mMap.addMarker(markerOptions);
         }
 
         LocationRequest mLocationRequest;
@@ -355,7 +244,6 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         mLocationRequest.setFastestInterval(3000); //3 seconds
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
-
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
