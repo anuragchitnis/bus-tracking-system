@@ -52,5 +52,11 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
+        <activity
+            android:name=".SignOutActivity"
+            android:label="Bus Tracking System"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
 +    </application>
 </manifest>

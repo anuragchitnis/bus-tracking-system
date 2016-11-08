@@ -41,14 +41,9 @@ import edu.unt.transportation.bustrackingsystem.model.Vehicle;
 
 public class DriverActivity extends AppCompatActivity implements OnMapReadyCallback,
         ChildEventListener {
-
-//    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/vehicles/";
-//    private static final String FIREBASE_ROOT_NODE = "stops";
-
-    Intent myIntent = getIntent(); // gets the previously created intent
-
-    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/vehicles/";
-    private static String FIREBASE_ROOT_NODE = null;
+    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
+    private static String FIREBASE_VEHICLE_NODE = null;
+    private static String FIREBASE_ROUTE_NODE = null;
 
     private static final int REQUEST_PLACE_PICKER = 1;
 
@@ -68,9 +63,10 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         Toolbar toolbar = (Toolbar) findViewById(R.id.drivertoolbar);
         setSupportActionBar(toolbar);
 
+        Bundle bundle = getIntent().getExtras();
 
-        FIREBASE_ROOT_NODE = FIREBASE_ROOT_NODE == null ? myIntent.getStringExtra("vehicleId") : FIREBASE_ROOT_NODE;
-//        FIREBASE_ROOT_NODE = "1266";
+        FIREBASE_VEHICLE_NODE = bundle.getString("vehicleId");
+        FIREBASE_ROUTE_NODE = bundle.getString("routeId");
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -86,8 +82,9 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         // Set up Firebase
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-        mFirebase.addChildEventListener(this);
-        Log.d(TAG, "Vechile ID: [" + FIREBASE_ROOT_NODE + "]");
+        mFirebase.child("/vehicles/").addChildEventListener(this);
+        Log.d(TAG, "Vechile ID: [" + FIREBASE_VEHICLE_NODE + "]");
+        Log.d(TAG, "Route ID: [" + FIREBASE_ROUTE_NODE + "]");
     }
 
     /**
@@ -118,7 +115,7 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
                 checkoutData.put("latitude", place.getLatLng().latitude);
                 checkoutData.put("longitude", place.getLatLng().longitude);
 
-                mFirebase.child(FIREBASE_ROOT_NODE).child(place.getId()).setValue(checkoutData);
+                mFirebase.child(FIREBASE_VEHICLE_NODE).child(place.getId()).setValue(checkoutData);
 
             } else if (resultCode == PlacePicker.RESULT_ERROR) {
                 Toast.makeText(this, "Places API failure! Check the API is enabled for your key",
@@ -176,14 +173,7 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
      */
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-//        mFirebase.child(dataSnapshot.getKey());
-//        dataSnapshot.getKey()
-
-        Log.d(TAG, dataSnapshot.getKey());
         Vehicle vehicle = (Vehicle) dataSnapshot.getValue(Vehicle.class);
-        Log.d(TAG, String.valueOf(vehicle));
-
 //        String placeId = dataSnapshot.getKey();
 //        if (placeId != null) {
 //            Places.GeoDataApi
