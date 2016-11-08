@@ -1,10 +1,12 @@
 package edu.unt.transportation.bustrackingsystem;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,31 +18,37 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
 
 public class DriverActivity extends AppCompatActivity implements OnMapReadyCallback,
-        ChildEventListener {
+        LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
     private static String FIREBASE_VEHICLE_NODE = null;
     private static String FIREBASE_ROUTE_NODE = null;
@@ -53,8 +61,12 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
 
     private Vehicle vehicle;
+    private BusRoute route;
 
     private static final String TAG = "DriverActivity";
+
+    LatLng latLng;
+    Marker currLocationMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +79,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
         FIREBASE_VEHICLE_NODE = bundle.getString("vehicleId");
         FIREBASE_ROUTE_NODE = bundle.getString("routeId");
+        FIREBASE_VEHICLE_NODE = "1266";
+        FIREBASE_ROUTE_NODE = "dp_00";
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -75,16 +89,75 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
         // Set up the API client for Places API
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Places.GEO_DATA_API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
 
         // Set up Firebase
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-        mFirebase.child("/vehicles/").addChildEventListener(this);
         Log.d(TAG, "Vechile ID: [" + FIREBASE_VEHICLE_NODE + "]");
         Log.d(TAG, "Route ID: [" + FIREBASE_ROUTE_NODE + "]");
+        mFirebase.child("/vehicles/").addChildEventListener(new com.firebase.client.ChildEventListener() {
+            @Override
+            public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+                String key = dataSnapshot.getKey();
+                if (key == FIREBASE_VEHICLE_NODE) {
+                    vehicle = dataSnapshot.getValue(Vehicle.class);
+                }
+            }
+
+            @Override
+            public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+        mFirebase.child("/routes/").addChildEventListener(new com.firebase.client.ChildEventListener() {
+            @Override
+            public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+                String key = dataSnapshot.getKey();
+                if (key == FIREBASE_ROUTE_NODE) {
+                    route = dataSnapshot.getValue(BusRoute.class);
+                }
+            }
+
+            @Override
+            public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
     /**
@@ -145,15 +218,15 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             return;
         }
         mMap.setMyLocationEnabled(true);
-        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-                addPointToViewPort(ll);
-                // we only want to grab the location once, to allow the user to pan and zoom freely.
-                mMap.setOnMyLocationChangeListener(null);
-            }
-        });
+//        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+//            @Override
+//            public void onMyLocationChange(Location location) {
+//                LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+//                addPointToViewPort(ll);
+//                // we only want to grab the location once, to allow the user to pan and zoom freely.
+//                mMap.setOnMyLocationChangeListener(null);
+//            }
+//        });
 
         // Pad the map controls to make room for the button - note that the button may not have
         // been laid out yet.
@@ -166,49 +239,6 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
                     }
                 }
         );
-    }
-
-    /**
-     * Act upon new check-outs when they appear.
-     */
-    @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        Vehicle vehicle = (Vehicle) dataSnapshot.getValue(Vehicle.class);
-//        String placeId = dataSnapshot.getKey();
-//        if (placeId != null) {
-//            Places.GeoDataApi
-//                    .getPlaceById(mGoogleApiClient, placeId)
-//                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
-//                                           @Override
-//                                           public void onResult(PlaceBuffer places) {
-//                                               LatLng location = places.get(0).getLatLng();
-//                                               addPointToViewPort(location);
-//                                               mMap.addMarker(new MarkerOptions().position(location));
-//                                               places.release();
-//                                           }
-//                                       }
-//                    );
-//        }
-    }
-
-    @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        // TODO
-    }
-
-    @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
-        // TODO
-    }
-
-    @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-        // TODO
-    }
-
-    @Override
-    public void onCancelled(FirebaseError firebaseError) {
-        // TODO
     }
 
     private void addPointToViewPort(LatLng newPoint) {
@@ -236,5 +266,80 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (currLocationMarker != null) {
+            currLocationMarker.remove();
+        }
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        vehicle.setLatitude(location.getLatitude());
+        vehicle.setLongitude(location.getLongitude());
+        mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        currLocationMarker = mMap.addMarker(markerOptions);
+
+        Toast.makeText(this,"Location Changed",Toast.LENGTH_SHORT).show();
+
+        //zoom to current position:
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(latLng).zoom(14).build();
+
+        mMap.animateCamera(CameraUpdateFactory
+                .newCameraPosition(cameraPosition));
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            return;
+        }
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            //place marker at current position
+            //mGoogleMap.clear();
+            latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            vehicle.setLatitude(mLastLocation.getLatitude());
+            vehicle.setLongitude(mLastLocation.getLongitude());
+            mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            currLocationMarker = mMap.addMarker(markerOptions);
+        }
+
+        LocationRequest mLocationRequest;
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(5000); //5 seconds
+        mLocationRequest.setFastestInterval(3000); //3 seconds
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }
