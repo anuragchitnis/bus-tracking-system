@@ -63,7 +63,7 @@
             android:layout_below="@id/checkBoxLayout"
             android:padding="5dp"
             android:layout_height="match_parent"
-            android:layout_width="250dp"
+            android:layout_width="180dp"
             android:visibility="gone">
 
             <Spinner

@@ -151,7 +151,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
         Spinner spinner = (Spinner) findViewById(R.id.busStopSpinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        scheduledStopsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, scheduledStopsList);
+        scheduledStopsAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, scheduledStopsList);
         // Specify the layout to use when the list of choices appears
         scheduledStopsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the scheduleListAdapter to the spinner
@@ -163,7 +163,12 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                 String busStopName = (String) parent.getItemAtPosition(position);
                 List<String> scheduleStringList = scheduleListMap.get(busStopName);
                 scheduleList.clear();
-                scheduleList.addAll(scheduleStringList);
+                if(scheduleStringList != null) {
+                    scheduleList.addAll(scheduleStringList);
+                }
+                else {
+                    Log.e(TAG,"while taking the spinner found that scheduleStringList is null");
+                }
                 scheduleListAdapter.notifyDataSetChanged();
             }
 
@@ -346,9 +351,13 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                 scheduledStopsList.add(busStop.getStopName());
                 scheduledStopsAdapter.notifyDataSetChanged();
                 List<StopSchedule> stopScheduleList = scheduleMap.get(routeID);
-                for(StopSchedule stopSchedule : stopScheduleList) {
-                    scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
+                if(stopScheduleList != null) {
+                    for (StopSchedule stopSchedule : stopScheduleList) {
+                        scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
+                    }
                 }
+                else
+                    Log.e(TAG,"stopScheduleList is null");
             }
         }
 
