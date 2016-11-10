@@ -1,5 +1,6 @@
 package edu.unt.transportation.bustrackingsystem;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,8 @@ import java.util.HashMap;
 import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
+
+import static edu.unt.transportation.bustrackingsystem.TrackerMapActivity.KEY_ROUTE_ID;
 
 /**
  * Created by gdawg on 10/15/2016.
@@ -175,9 +178,11 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
 
     private void navigateToMap()
     {
-        Bundle b = new Bundle();
-        b.putSerializable(TrackerMapActivity.KEY_ROUTE_ID, getSelectedRoute().getRouteId());
-        ActivityUtil.showScreen(RouteListActivity.this, TrackerMapActivity.class, b);
+        //Bundle b = new Bundle();
+        //b.putSerializable(TrackerMapActivity.KEY_ROUTE_ID, getSelectedRoute().getRouteId());
+        Intent intent = new Intent(RouteListActivity.this,TrackerMapActivity.class);
+        intent.putExtra(KEY_ROUTE_ID, getSelectedRoute().getRouteId());
+        startActivity(intent);
     }
 
     private void setUpRoutes(DataSnapshot dataSnapshot)
