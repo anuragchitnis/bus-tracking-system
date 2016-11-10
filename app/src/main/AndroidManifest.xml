@@ -41,10 +41,6 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".GoogleMapWithMarker"
-            android:label="Map"/>
-
-        <activity
             android:name=".RouteListActivity"
             android:label="Routes"/>
 

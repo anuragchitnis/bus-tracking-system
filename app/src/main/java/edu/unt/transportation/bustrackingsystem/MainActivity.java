@@ -14,10 +14,6 @@ import com.firebase.client.Firebase;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.ImmutableList;
 
-import java.util.ArrayList;
-
-import static edu.unt.transportation.bustrackingsystem.GoogleMapWithMarker.ARG_LOCATIONS;
-import static edu.unt.transportation.bustrackingsystem.GoogleMapWithMarker.ARG_PATHS;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener
@@ -161,18 +157,6 @@ public class MainActivity extends AppCompatActivity
     {
         Bundle b = new Bundle();
         ActivityUtil.showScreen(MainActivity.this, RouteListActivity.class, b);
-    }
-
-    private void showMap()
-    {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_LOCATIONS, DISCOVERY_PARK_BUS_STOP_LOCATIONS);
-        CustomPath customPath = new CustomPath();
-        customPath.setLocations(DISCOVERY_PARK_BUS_STOP_LOCATIONS);
-        ArrayList<CustomPath> pathList = new ArrayList<>();
-        pathList.add(customPath);
-        bundle.putSerializable(ARG_PATHS, pathList);
-        ActivityUtil.showScreen(MainActivity.this, GoogleMapWithMarker.class, bundle);
     }
 
 
