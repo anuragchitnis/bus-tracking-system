@@ -1,63 +1,75 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
-import java.util.Date;
+import com.google.firebase.database.Exclude;
+
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gdawg on 09/27/2016.
  */
-public class BusStop
+public class BusStop implements Serializable
 {
-    private int mStopID;
-    private String mStopName;
-    private double mLatitude;
-    private double mLongitude;
-    private List<Date> scheduledStops;
+    private String stopID;
+    private String stopName;
+    private double latitude;
+    private double longitude;
+    @Exclude
+    private Map<String, List<StopSchedule>> routeSchedule;
 
-    public BusStop(int i, double latitude, double longitude)
+    public BusStop() {
+        //Default constructor to use with firebase
+    }
+
+    public BusStop(String stopID, String stopName, double latitude, double longitude) {
+        this.stopID = stopID;
+        this.stopName = stopName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Map<String, List<StopSchedule>> getRouteSchedule() {
+        return routeSchedule;
+    }
+
+    public void setRouteSchedule(Map<String, List<StopSchedule>> routeSchedule) {
+        this.routeSchedule = routeSchedule;
+    }
+
+    public String getStopID()
     {
-        this.mStopID=i;
-        this.mLatitude=latitude;
-        this.mLongitude=longitude;
+        return stopID;
     }
 
-    public int getmStopID() {
-        return mStopID;
+    public void setStopID(String stopID)
+    {
+        this.stopID = stopID;
     }
 
-    public void setmStopID(int mStopID) {
-        this.mStopID = mStopID;
+    public String getStopName()
+    {
+        return stopName;
     }
 
-    public String getmStopName() {
-        return mStopName;
-    }
-
-    public void setmStopName(String mStopName) {
-        this.mStopName = mStopName;
-    }
-
-    public double getmLatitude() {
-        return mLatitude;
-    }
-
-    public void setmLatitude(double mLatitude) {
-        this.mLatitude = mLatitude;
-    }
-
-    public double getmLongitude() {
-        return mLongitude;
-    }
-
-    public void setmLongitude(double mLongitude) {
-        this.mLongitude = mLongitude;
-    }
-
-    public List<Date> getScheduledStops() {
-        return scheduledStops;
-    }
-
-    public void setScheduledStops(List<Date> scheduledStops) {
-        this.scheduledStops = scheduledStops;
+    public void setStopName(String stopName)
+    {
+        this.stopName = stopName;
     }
 }

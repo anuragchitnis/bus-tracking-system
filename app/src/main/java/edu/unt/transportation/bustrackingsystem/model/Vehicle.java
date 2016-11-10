@@ -1,116 +1,102 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.io.Serializable;
 
 /**
  * Created by Anurag Chitnis on 10/4/2016.
  */
 
-public class Vehicle {
-    private int mID;
-    private double mLatitude;
-    private double mLongitude;
-    private int routeID;
-    private int mSpeedKmHr;
-    private String mTimestamp;
-    private String mVehicleType;
-    private Driver mCurrentDriver;
-    private Map<Integer, Object> mFirebaseDataMap;
+@IgnoreExtraProperties
+public class Vehicle implements Serializable{
+    private String vehicleID;
+    private double latitude;
+    private double longitude;
+    private String routeID;
+    private String timestamp;
+    private String vehicleType;
+    private String driverID;
 
-    public int getmID() {
-        return mID;
+    public Vehicle() {
+        //Default Constructor for use with firebase
     }
 
-    public void setmID(int mID) {
-        this.mID = mID;
+    public Vehicle(String vehicleID, double latitude, double longitude, String routeID, String timestamp, String vehicleType, String driverID) {
+        this.vehicleID = vehicleID;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.routeID = routeID;
+        this.timestamp = timestamp;
+        this.vehicleType = vehicleType;
+        this.driverID = driverID;
+    }
+
+    public String getVehicleID() {
+        return vehicleID;
+    }
+
+    public void setVehicleID(String vehicleID) {
+        this.vehicleID = vehicleID;
     }
 
 
-    public String getmVehicleType() {
-        return mVehicleType;
+    public String getVehicleType() {
+        return vehicleType;
     }
 
-    public void setmVehicleType(String mVehicleType) {
-        this.mVehicleType = mVehicleType;
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
     }
 
-    public String getmTimestamp() {
-        return mTimestamp;
+    public String getTimestamp() {
+        return timestamp;
     }
 
-    public void setmTimestamp(String mTimestamp) {
-        this.mTimestamp = mTimestamp;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public int getmSpeedKmHr() {
-        return mSpeedKmHr;
-    }
-
-    public void setmSpeedKmHr(int mSpeedKmHr) {
-        this.mSpeedKmHr = mSpeedKmHr;
-    }
-
-    public int getRouteID() {
+    public String getRouteID() {
         return routeID;
     }
 
-    public void setRouteID(int routeID) {
+    public void setRouteID(String routeID) {
         this.routeID = routeID;
     }
 
-    public double getmLongitude() {
-        return mLongitude;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setmLongitude(double mLongitude) {
-        this.mLongitude = mLongitude;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
-    public double getmLatitude() {
-        return mLatitude;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setmLatitude(double mLatitude) {
+    public void setLatitude(double latitude) {
 
-        this.mLatitude = mLatitude;
+        this.latitude = latitude;
     }
 
-    public Driver getmCurrentDriver() {
-        return mCurrentDriver;
+    public String getDriver() {
+        return driverID;
     }
 
-    public void setmCurrentDriver(Driver mCurrentDriver) {
-        this.mCurrentDriver = mCurrentDriver;
-    }
-
-    public Map<Integer, Object> getJsonDataMap() {
-        mFirebaseDataMap = new HashMap<>();
-        Map<String, Object> vehichleMap = new HashMap<>();
-        vehichleMap.put("latitude",this.mLatitude);
-        vehichleMap.put("longitude",this.mLongitude);
-        vehichleMap.put("routeID",this.routeID);
-        vehichleMap.put("speedKmHr",this.mSpeedKmHr);
-        vehichleMap.put("timestamp",this.mTimestamp);
-        vehichleMap.put("vehicleType",this.mVehicleType);
-
-        mFirebaseDataMap.put(this.mID,vehichleMap);
-        return mFirebaseDataMap;
+    public void setDriver(String driver) {
+        this.driverID = driver;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Vehicle vehicle = (Vehicle) o;
-
-        return mID == vehicle.mID;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return mID;
+        if(o instanceof Vehicle) {
+            Vehicle vehicle = (Vehicle) o;
+            if(vehicle.getVehicleID().equals(this.getVehicleID()))
+                return true;
+        }
+        return false;
     }
 }

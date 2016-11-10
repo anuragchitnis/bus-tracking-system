@@ -58,7 +58,7 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
         ChildEventListener {
 
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
-    private static final String FIREBASE_ROOT_NODE = "stops";
+    private static final String FIREBASE_ROOT_NODE = "checkouts";
 
     private static final int REQUEST_PLACE_PICKER = 1;
 

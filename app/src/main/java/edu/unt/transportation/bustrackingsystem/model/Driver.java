@@ -1,15 +1,50 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
+import java.io.Serializable;
+
 /**
  * Created by gdawg on 09/27/2016.
  */
 
-public class Driver
+public class Driver implements Serializable
 {
-    private int mDriverID;
+    private String driverId;
     private String name;
     private String email;
     private String password;
+
+    public Driver()
+    {
+        //Default constructor to use with firebase
+    }
+
+    public Driver(String driverId, String name, String email)
+    {
+        this.driverId = driverId;
+        this.name = name;
+        this.email = email;
+    }
+
+    public Driver(String driverId, String email)
+    {
+        this.driverId = driverId;
+        this.email = email;
+    }
+
+    public Driver(String id)
+    {
+        this.driverId = id;
+    }
+
+    public String getDriverId()
+    {
+        return driverId;
+    }
+
+    public void setDriverId(String driverId)
+    {
+        this.driverId = driverId;
+    }
 
     public String getEmail()
     {
@@ -21,16 +56,6 @@ public class Driver
         this.email = email;
     }
 
-    public int getmDriverID()
-    {
-        return mDriverID;
-    }
-
-    public void setmDriverID(int mDriverID)
-    {
-        this.mDriverID = mDriverID;
-    }
-
     public String getName()
     {
         return name;
@@ -39,15 +64,5 @@ public class Driver
     public void setName(String name)
     {
         this.name = name;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
     }
 }
