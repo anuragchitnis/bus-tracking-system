@@ -52,9 +52,15 @@ import static edu.unt.transportation.bustrackingsystem.R.drawable.bus;
 public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback, ValueEventListener {
 
+    public static final String KEY_ROUTE_ID = "keyRouteID";
     private static final String TAG = TrackerMapActivity.class.getName();
     private static final String FIREBASE_VEHICLES = "vehicles";
-
+    /**
+     * Request code for location permission request.
+     *
+     * @see #onRequestPermissionsResult(int, String[], int[])
+     */
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private GoogleMap mMap;
     private DatabaseReference mDatabase;
     private List<Vehicle> vehicleList = new ArrayList<>();
@@ -106,22 +112,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      * TODO: Taking hardcoded route id for now, change it to the route selected by user form previous activity
      */
     private String routeID = "dp_00";
-
-    public List<Vehicle> getVehicleList() {
-        return vehicleList;
-    }
-
-    public List<BusStop> getBusStopList() {
-        return busStopList;
-    }
-
-    /**
-     * Request code for location permission request.
-     *
-     * @see #onRequestPermissionsResult(int, String[], int[])
-     */
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
     /**
      * Flag indicating whether a requested permission has been denied after returning in
      * {@link #onRequestPermissionsResult(int, String[], int[])}.
@@ -156,7 +146,11 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         scheduledStopsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the scheduleListAdapter to the spinner
         spinner.setAdapter(scheduledStopsAdapter);
-
+        Bundle extras = getIntent().getExtras();
+        if (extras.containsKey(KEY_ROUTE_ID))
+        {
+            routeID = extras.getString(KEY_ROUTE_ID);
+        }
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -221,6 +215,60 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     @Override
+    protected void onResumeFragments()
+    {
+        super.onResumeFragments();
+        if (mPermissionDenied)
+        {
+            // Permission was not granted, display error dialog.
+            showMissingPermissionError();
+            mPermissionDenied = false;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE)
+        {
+            return;
+        }
+
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                Manifest.permission.ACCESS_FINE_LOCATION))
+        {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        }
+        else
+        {
+            // Display the missing permission error dialog when the fragments resume.
+            mPermissionDenied = true;
+        }
+    }
+
+    /**
+     * Enables the My Location layer if the fine location permission has been granted.
+     */
+    private void enableMyLocation()
+    {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                .ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
+        else if (mMap != null)
+        {
+            // Access to the location has been granted to the app.
+            mMap.setMyLocationEnabled(true);
+        }
+    }
+
+    @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         Log.d(TAG,"vehicleChangeListener : onDataChange "+dataSnapshot.getKey());
         Vehicle vehicleSnapShot = dataSnapshot.getValue(Vehicle.class);
@@ -247,33 +295,49 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
+    public List<BusStop> getBusStopList()
+    {
+        return busStopList;
+    }
+
     @Override
     public void onCancelled(DatabaseError databaseError) {
         Log.e(TAG, "onCancelled() "+ databaseError.getMessage());
     }
 
+    public List<Vehicle> getVehicleList()
+    {
+        return vehicleList;
+    }
+
     /**
-     * This method is invoked when the user clicks on show stops checkbox on the user interface
-     * @param view
+     * This method parses the list of bus stops and add the scheduled bus stops and schedule for those bus stops in the appropriate list.
+     * We later use these list to show the data in spinner and list view respectively
      */
-    public void onStopToggled(View view) {
-
-        if(mStopCheckBox.isChecked()) {
-
-            for (BusStop busStop : busStopList) {
-                LatLng busStopLocation = new LatLng(busStop.getLatitude(), busStop.getLongitude());
-                mBusStopMarkerList.add(mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                        .position(busStopLocation)
-                        .title(busStop.getStopName())
-                        .flat(true)));
-            }
-        } else {
-            for(Marker marker : mBusStopMarkerList) {
-                marker.remove();
+    private void loadSchedule()
+    {
+        scheduledStopsList.clear();
+        for (BusStop busStop : busStopList)
+        {
+            Map<String, List<StopSchedule>> scheduleMap = busStop.getRouteSchedule();
+            if (scheduleMap != null)
+            {
+                scheduledStopsList.add(busStop.getStopName());
+                scheduledStopsAdapter.notifyDataSetChanged();
+                List<StopSchedule> stopScheduleList = scheduleMap.get(routeID);
+                if (stopScheduleList != null)
+                {
+                    for (StopSchedule stopSchedule : stopScheduleList)
+                    {
+                        scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
+                    }
+                }
+                else
+                    Log.e(TAG, "stopScheduleList is null");
             }
         }
 
+        scheduleListAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -290,45 +354,32 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     /**
-     * Enables the My Location layer if the fine location permission has been granted.
+     * This method is invoked when the user clicks on show stops checkbox on the user interface
+     * @param view
      */
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION, true);
-        } else if (mMap != null) {
-            // Access to the location has been granted to the app.
-            mMap.setMyLocationEnabled(true);
-        }
-    }
+    public void onStopToggled(View view)
+    {
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            return;
-        }
+        if (mStopCheckBox.isChecked())
+        {
 
-        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
-            // Enable the my location layer if the permission has been granted.
-            enableMyLocation();
+            for (BusStop busStop : busStopList)
+            {
+                LatLng busStopLocation = new LatLng(busStop.getLatitude(), busStop.getLongitude());
+                mBusStopMarkerList.add(mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory
+                                .HUE_AZURE))
+                        .position(busStopLocation)
+                        .title(busStop.getStopName())
+                        .flat(true)));
+            }
         } else {
-            // Display the missing permission error dialog when the fragments resume.
-            mPermissionDenied = true;
+            for (Marker marker : mBusStopMarkerList)
+            {
+                marker.remove();
+            }
         }
-    }
 
-    @Override
-    protected void onResumeFragments() {
-        super.onResumeFragments();
-        if (mPermissionDenied) {
-            // Permission was not granted, display error dialog.
-            showMissingPermissionError();
-            mPermissionDenied = false;
-        }
     }
 
     /**
@@ -337,31 +388,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
-    }
-
-    /**
-     * This method parses the list of bus stops and add the scheduled bus stops and schedule for those bus stops in the appropriate list.
-     * We later use these list to show the data in spinner and list view respectively
-     */
-    private void loadSchedule() {
-        scheduledStopsList.clear();
-        for(BusStop busStop : busStopList) {
-            Map<String, List<StopSchedule>> scheduleMap = busStop.getRouteSchedule();
-            if(scheduleMap != null) {
-                scheduledStopsList.add(busStop.getStopName());
-                scheduledStopsAdapter.notifyDataSetChanged();
-                List<StopSchedule> stopScheduleList = scheduleMap.get(routeID);
-                if(stopScheduleList != null) {
-                    for (StopSchedule stopSchedule : stopScheduleList) {
-                        scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
-                    }
-                }
-                else
-                    Log.e(TAG,"stopScheduleList is null");
-            }
-        }
-
-        scheduleListAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -398,11 +424,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
         DatabaseReference vehicleMapRef;
 
-        public void registerListener(String routeID) {
-            vehicleMapRef = mDatabase.child("routes/"+routeID+"/vehicleMap");
-            vehicleMapRef.addChildEventListener(this);
-        }
-
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             Log.d(TAG,"onChildAdded "+dataSnapshot.getKey());
@@ -430,5 +451,13 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         public void onCancelled(DatabaseError databaseError) {
 
         }
+
+        public void registerListener(String routeID)
+        {
+            vehicleMapRef = mDatabase.child("routes/" + routeID + "/vehicleMap");
+            vehicleMapRef.addChildEventListener(this);
+        }
     }
+
+
 }

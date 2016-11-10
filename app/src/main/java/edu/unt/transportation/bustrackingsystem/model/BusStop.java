@@ -1,5 +1,7 @@
 package edu.unt.transportation.bustrackingsystem.model;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ public class BusStop implements Serializable
     private String stopName;
     private double latitude;
     private double longitude;
+    @Exclude
     private Map<String, List<StopSchedule>> routeSchedule;
 
     public BusStop() {
@@ -24,22 +27,6 @@ public class BusStop implements Serializable
         this.stopName = stopName;
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-
-    public String getStopID() {
-        return stopID;
-    }
-
-    public void setStopID(String stopID) {
-        this.stopID = stopID;
-    }
-
-    public String getStopName() {
-        return stopName;
-    }
-
-    public void setStopName(String stopName) {
-        this.stopName = stopName;
     }
 
     public double getLatitude() {
@@ -64,5 +51,25 @@ public class BusStop implements Serializable
 
     public void setRouteSchedule(Map<String, List<StopSchedule>> routeSchedule) {
         this.routeSchedule = routeSchedule;
+    }
+
+    public String getStopID()
+    {
+        return stopID;
+    }
+
+    public void setStopID(String stopID)
+    {
+        this.stopID = stopID;
+    }
+
+    public String getStopName()
+    {
+        return stopName;
+    }
+
+    public void setStopName(String stopName)
+    {
+        this.stopName = stopName;
     }
 }
