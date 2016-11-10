@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -47,23 +50,20 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_routes);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         Firebase.setAndroidContext(this);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras.containsKey(FirebaseController.KEY_FIREBASE_CONTROLLER))
-        {
-            firebaseController = (FirebaseController) extras.getSerializable(FirebaseController
-                    .KEY_FIREBASE_CONTROLLER);
-        }
-        else
-        {
-            firebaseController = new FirebaseController(RouteListActivity.this);
-        }
+        firebaseController = new FirebaseController(RouteListActivity.this);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.addChildEventListener(this);
         routeRoot = mDatabase.child(ROOT_ROUTE);
         routeRoot.addValueEventListener(this);
-        setContentView(R.layout.activity_routes);
+
         routeList = (ListView) findViewById(R.id.list_routes);
         routeAdapter = new RouteAdapter(RouteListActivity.this, R.layout.row_template_routes);
         routeList.setAdapter(routeAdapter);
@@ -145,6 +145,28 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     public void onCancelled(DatabaseError databaseError)
     {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_signIn:
+                startActivity(new Intent(this, SignInActivity.class));
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private HashMap<String, BusRoute> getBusRoutes()

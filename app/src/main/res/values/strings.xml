@@ -3,6 +3,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
+    <string name="action_schedule">Schedule</string>
     <string name="clear_map">Clear</string>
     <string name="reset_map">Reset</string>
     <string name="default_info_window">Default info window</string>
