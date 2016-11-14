@@ -8,7 +8,8 @@ import com.firebase.client.Firebase;
  * Created by Anurag Chitnis on 10/4/2016.
  */
 
-public class BusTrackingSystem extends Application {
+public class BusTrackingSystem extends Application
+{
 
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
     private static final String FIREBASE_ROOT_NODE = "checkouts";
@@ -18,20 +19,24 @@ public class BusTrackingSystem extends Application {
     private static boolean mapActivityVisible;
     private Firebase mFirebase;
 
-    public static boolean isMapActivityVisible() {
+    public static boolean isMapActivityVisible()
+    {
         return mapActivityVisible;
     }
 
-    public static void mapActivityResumed() {
-        mapActivityVisible = true;
-    }
-
-    public static void mapActivityPaused() {
+    public static void mapActivityPaused()
+    {
         mapActivityVisible = false;
     }
 
+    public static void mapActivityResumed()
+    {
+        mapActivityVisible = true;
+    }
+
     @Override
-    public void onCreate() {
+    public void onCreate()
+    {
         super.onCreate();
 
         // Set up Firebase
@@ -39,7 +44,8 @@ public class BusTrackingSystem extends Application {
         mFirebase = new Firebase(FIREBASE_URL);
     }
 
-    public Firebase getmFirebase() {
+    public Firebase getmFirebase()
+    {
         return mFirebase;
     }
 }

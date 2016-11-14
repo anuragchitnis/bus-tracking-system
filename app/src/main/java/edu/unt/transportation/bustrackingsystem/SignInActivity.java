@@ -40,58 +40,33 @@ import edu.unt.transportation.bustrackingsystem.model.Vehicle;
  */
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener,
-        ChildEventListener {
+        ChildEventListener
+{
 
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
 
     private static final String TAG = "SignInActivity";
-
-    private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
-    private Firebase mFirebase;
-
-    private EditText mEmailField;
-    private EditText mPasswordField;
-    private Button mSignInButton;
-    private Button mSignUpButton;
-
-    private ProgressDialog mProgressDialog;
-
-    private Spinner spinner1, spinner2;
-
     public static String vehicleId;
     public static String routeId;
     public static List<String> list1 = new ArrayList<String>();
     public static List<String> list2 = new ArrayList<String>();
-
+    public static Map<String, Vehicle> vehicles;
+    public static Map<String, BusRoute> routes;
+    private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
+    private Firebase mFirebase;
+    private EditText mEmailField;
+    private EditText mPasswordField;
+    private Button mSignInButton;
+    private Button mSignUpButton;
+    private ProgressDialog mProgressDialog;
+    private Spinner spinner1, spinner2;
     private ArrayAdapter<String> dataAdapter1;
     private ArrayAdapter<String> dataAdapter2;
 
-    public static Map<String, Vehicle> vehicles;
-    public static Map<String, BusRoute> routes;
-
-    public void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setMessage("Loading...");
-        }
-
-        mProgressDialog.show();
-    }
-
-    public void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
-    }
-
-    public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
-    }
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
@@ -124,31 +99,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler(dataAdapter1));;
+        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler
+                (dataAdapter1));
+        ;
         mFirebase.child("/routes/").addChildEventListener(new RouteChildEventHandler(dataAdapter2));
 
     }
 
-    // add items into spinner dynamically
-    public void addItemsOnSpinner1() {
-        spinner1 = (Spinner) findViewById(R.id.spinner1);
-        spinner1.setVisibility(View.VISIBLE);
-        spinner1.setPrompt("Select Vehicle");
-        dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner1.setAdapter(dataAdapter1);
-        spinner1.setOnItemSelectedListener(new VehicleSpinner());
-    }
-
-    public void addItemsOnSpinner2() {
-        spinner2 = (Spinner) findViewById(R.id.spinner2);
-        spinner2.setPrompt("Select Route");
-        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner2.setAdapter(dataAdapter2);
-        spinner2.setOnItemSelectedListener(new RouteSpinner());
-    }
-
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
 
         // Check auth on Activity start
@@ -157,60 +117,98 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 //        }
     }
 
-    private void signIn() {
-        Log.d(TAG, "signIn");
-        if (!validateForm()) {
-            return;
+    @Override
+    public void onClick(View v)
+    {
+        int i = v.getId();
+        if (i == R.id.button_sign_in)
+        {
+            signIn();
         }
-        showProgressDialog();
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
-
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Toast.makeText(SignInActivity.this, "Sign In Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        else if (i == R.id.button_sign_up)
+        {
+            signUp();
+        }
     }
 
-    private void signUp() {
-        Log.d(TAG, "signUp");
-        if (!validateForm()) {
-            return;
-        }
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s)
+    {
 
-        showProgressDialog();
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
-
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Toast.makeText(SignInActivity.this, "Sign Up Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 
-    private void onAuthSuccess(FirebaseUser user) {
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s)
+    {
+
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot)
+    {
+
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s)
+    {
+
+    }
+
+    @Override
+    public void onCancelled(FirebaseError firebaseError)
+    {
+
+    }
+
+    // add items into spinner dynamically
+    public void addItemsOnSpinner1()
+    {
+        spinner1 = (Spinner) findViewById(R.id.spinner1);
+        spinner1.setVisibility(View.VISIBLE);
+        spinner1.setPrompt("Select Vehicle");
+        dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner1.setAdapter(dataAdapter1);
+        spinner1.setOnItemSelectedListener(new VehicleSpinner());
+    }
+
+    public void addItemsOnSpinner2()
+    {
+        spinner2 = (Spinner) findViewById(R.id.spinner2);
+        spinner2.setPrompt("Select Route");
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner2.setAdapter(dataAdapter2);
+        spinner2.setOnItemSelectedListener(new RouteSpinner());
+    }
+
+    public String getUid()
+    {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    public void hideProgressDialog()
+    {
+        if (mProgressDialog != null && mProgressDialog.isShowing())
+        {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    public void showProgressDialog()
+    {
+        if (mProgressDialog == null)
+        {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setMessage("Loading...");
+        }
+
+        mProgressDialog.show();
+    }
+    // [END basic_write]
+
+    private void onAuthSuccess(FirebaseUser user)
+    {
         String username = usernameFromEmail(user.getEmail());
 
         // Write new user
@@ -229,27 +227,105 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
-    private String usernameFromEmail(String email) {
-        if (email.contains("@")) {
+    private void signIn()
+    {
+        Log.d(TAG, "signIn");
+        if (!validateForm())
+        {
+            return;
+        }
+        showProgressDialog();
+        String email = mEmailField.getText().toString();
+        String password = mPasswordField.getText().toString();
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
+                {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task)
+                    {
+                        Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
+                        hideProgressDialog();
+
+                        if (task.isSuccessful())
+                        {
+                            onAuthSuccess(task.getResult().getUser());
+                        }
+                        else
+                        {
+                            Toast.makeText(SignInActivity.this, "Sign In Failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void signUp()
+    {
+        Log.d(TAG, "signUp");
+        if (!validateForm())
+        {
+            return;
+        }
+
+        showProgressDialog();
+        String email = mEmailField.getText().toString();
+        String password = mPasswordField.getText().toString();
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
+                {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task)
+                    {
+                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
+                        hideProgressDialog();
+
+                        if (task.isSuccessful())
+                        {
+                            onAuthSuccess(task.getResult().getUser());
+                        }
+                        else
+                        {
+                            Toast.makeText(SignInActivity.this, "Sign Up Failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private String usernameFromEmail(String email)
+    {
+        if (email.contains("@"))
+        {
             return email.split("@")[0];
-        } else {
+        }
+        else
+        {
             return email;
         }
     }
 
-    private boolean validateForm() {
+    private boolean validateForm()
+    {
         boolean result = true;
-        if (TextUtils.isEmpty(mEmailField.getText().toString())) {
+        if (TextUtils.isEmpty(mEmailField.getText().toString()))
+        {
             mEmailField.setError("Required");
             result = false;
-        } else {
+        }
+        else
+        {
             mEmailField.setError(null);
         }
 
-        if (TextUtils.isEmpty(mPasswordField.getText().toString())) {
+        if (TextUtils.isEmpty(mPasswordField.getText().toString()))
+        {
             mPasswordField.setError("Required");
             result = false;
-        } else {
+        }
+        else
+        {
             mPasswordField.setError(null);
         }
 
@@ -257,45 +333,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     // [START basic_write]
-    private void writeNewUser(String userId, String name, String email) {
+    private void writeNewUser(String userId, String name, String email)
+    {
         Driver user = new Driver(userId, name, email);
 
         mDatabase.child("drivers").child(userId).setValue(user);
-    }
-    // [END basic_write]
-
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.button_sign_in) {
-            signIn();
-        } else if (i == R.id.button_sign_up) {
-            signUp();
-        }
-    }
-
-    @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-    }
-
-    @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-    }
-
-    @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-    }
-
-    @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-    }
-
-    @Override
-    public void onCancelled(FirebaseError firebaseError) {
-
     }
 }
