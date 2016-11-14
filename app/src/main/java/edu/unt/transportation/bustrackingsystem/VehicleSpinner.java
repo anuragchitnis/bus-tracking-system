@@ -1,6 +1,5 @@
 package edu.unt.transportation.bustrackingsystem;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -10,8 +9,7 @@ import android.widget.AdapterView;
 public class VehicleSpinner implements AdapterView.OnItemSelectedListener  {
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        SignInActivity.vehicleId = parent.getItemAtPosition(position).toString();
-        Log.d("VehicleSpinner: [", SignInActivity.vehicleId);
+        //SignInActivity.vehicleId = parent.getItemAtPosition(position).toString();
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,39 +37,83 @@ import edu.unt.transportation.bustrackingsystem.model.Driver;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
 
 /**
- * Created by Anurag Chitnis on 10/22/2016.
+ * <b>Driver Activity:</b> When driver logs in, this activity updates the
+ * vehicle location.
+ * <b>Created By:</b> Anurag
+ * <b>Revised By:</b> Satyanarayana
+ * <b>Descritpion:</b> An activity that shows driver checkout form<br/>
+ * The vehicle and route is selected in this activity
+ * <b>Data Structre:</b> Uses some final static variables, instance of
+ * Vechicle and BusRoute classes. Spinners to show the vehicle and route dropdowns
  */
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener,
         ChildEventListener {
 
+    /**
+     * Firebase root URL
+     */
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
 
+    /**
+     * Log based Activity
+     */
     private static final String TAG = "SignInActivity";
 
-    private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
-    private Firebase mFirebase;
+    /**
+     * Firebase Databse reference,
+     * Auth reference, and Firebase reference
+     */
+    private DatabaseReference mDatabase = null;
+    private FirebaseAuth mAuth = null;
+    private Firebase mFirebase = null;
 
-    private EditText mEmailField;
-    private EditText mPasswordField;
-    private Button mSignInButton;
-    private Button mSignUpButton;
+    /**
+     * Input to email id field
+     */
+    private EditText mEmailField = null;
 
-    private ProgressDialog mProgressDialog;
+    /**
+     * Input to password field
+     */
+    private EditText mPasswordField = null;
 
-    private Spinner spinner1, spinner2;
+    /**
+     * Sign In buttong
+     */
+    private Button mSignInButton = null;
 
-    public static String vehicleId;
-    public static String routeId;
-    public static List<String> list1 = new ArrayList<String>();
-    public static List<String> list2 = new ArrayList<String>();
+    /**
+     * Sign Out Buttong
+     */
+    private Button mSignUpButton = null;
 
-    private ArrayAdapter<String> dataAdapter1;
-    private ArrayAdapter<String> dataAdapter2;
 
-    public static Map<String, Vehicle> vehicles;
-    public static Map<String, BusRoute> routes;
+    private ProgressDialog mProgressDialog = null;
+
+    /**
+     * Drop Downs to
+     * Vehicle and Route list
+     */
+    private Spinner spinner1 = null, spinner2 = null;
+
+    private String vehicleId = null;
+    private String routeId = null;
+    private List<String> list1 = new ArrayList<String>();
+    private List<String> list2 = new ArrayList<String>();
+
+    /**
+     * Data Adapaters of spinners,
+     * which lets notify on data change
+     */
+    private ArrayAdapter<String> dataAdapter1 = null;
+    private ArrayAdapter<String> dataAdapter2 = null;
+
+    /**
+     * list of vehicle and routes
+     */
+    public static Map<String, Vehicle> vehicles = null;
+    public static Map<String, BusRoute> routes = null;
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -124,8 +169,65 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler(dataAdapter1));;
-        mFirebase.child("/routes/").addChildEventListener(new RouteChildEventHandler(dataAdapter2));
+//        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler(dataAdapter1));
+        mFirebase.child("/vehicles/").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                vehicles.put(dataSnapshot.getKey(), dataSnapshot.getValue(Vehicle.class));
+                dataAdapter1.add(dataSnapshot.getKey());
+                dataAdapter1.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+//        mFirebase.child("/routes/").addChildEventListener(new RouteChildEventHandler(dataAdapter2));
+        mFirebase.child("/routes/").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                routes.put(dataSnapshot.getKey(), dataSnapshot.getValue(BusRoute.class));
+                dataAdapter2.add(dataSnapshot.getKey());
+                dataAdapter2.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
 
     }
 
@@ -136,7 +238,17 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         spinner1.setPrompt("Select Vehicle");
         dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner1.setAdapter(dataAdapter1);
-        spinner1.setOnItemSelectedListener(new VehicleSpinner());
+        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                vehicleId = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     public void addItemsOnSpinner2() {
@@ -144,7 +256,17 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         spinner2.setPrompt("Select Route");
         dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner2.setAdapter(dataAdapter2);
-        spinner2.setOnItemSelectedListener(new RouteSpinner());
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                routeId = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -259,7 +381,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     // [START basic_write]
     private void writeNewUser(String userId, String name, String email) {
         Driver user = new Driver(userId, name, email);
-
         mDatabase.child("drivers").child(userId).setValue(user);
     }
     // [END basic_write]

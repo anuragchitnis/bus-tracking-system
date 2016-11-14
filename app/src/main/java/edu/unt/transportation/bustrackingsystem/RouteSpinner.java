@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 public class RouteSpinner implements AdapterView.OnItemSelectedListener {
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        SignInActivity.routeId = parent.getItemAtPosition(position).toString();
+        //SignInActivity.routeId = parent.getItemAtPosition(position).toString();
     }
 
     @Override

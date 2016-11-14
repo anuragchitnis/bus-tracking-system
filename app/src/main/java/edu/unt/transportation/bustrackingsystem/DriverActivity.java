@@ -6,7 +6,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -28,10 +27,14 @@ import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
 
 /**
- * Created By: Anurag
- * Revised By: Satyanarayana
- * Descritpion: An activity that shows map and
- * keep pushing the latest location to firebase
+ * <b>Driver Activity:</b> When driver logs in, this activity updates the
+ * vehicle location.
+ * <b>Created By:</b> Satyanarayana
+ * <b>Revised By:</b> Satyanarayana
+ * <b>Descritpion:</b> An activity that shows map and<br/>
+ * keep pushing the latest location to firebase as vehicle moves
+ * <b>Data Structre:</b> Uses some final static variables, instance of
+ * Vechicle and BusRoute classes
  */
 public class DriverActivity extends AppCompatActivity implements OnMapReadyCallback,
         LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
@@ -56,42 +59,97 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
      * Google Map private variable, that was called
      * onMapReady event fired
      */
-    private GoogleMap mMap;
+    private GoogleMap mMap = null;
 
     /**
      * Firebase instance variable
      */
-    private Firebase mFirebase;
-    private GoogleApiClient mGoogleApiClient;
+    private Firebase mFirebase = null;
+
+    /**
+     * GogoleAPIClient, to receieve map
+     * location updates
+     */
+    private GoogleApiClient mGoogleApiClient = null;
+
+    /**
+     * LatLong bounds of hte
+     * location
+     */
     private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
 
-    private Vehicle vehicle;
-    private BusRoute route;
+    /**
+     * An instance of Vehicle class
+     * passed from SignInActivity, the
+     * vehicle that the driver checked out
+     */
+    private Vehicle vehicle = null;
 
+    /**
+     * An instance of BusRoute class
+     * passed from SignInActivity, the
+     * route that the driver checked out
+     */
+    private BusRoute route = null;
+
+    /**
+     * Activity name used to
+     * Log the comments
+     */
     private static final String TAG = "DriverActivity";
 
-    LatLng latLng;
+    /**
+     * Actual location parameters are
+     * stored in this instance
+     */
+    LatLng latLng = null;
 
+    /**
+     * When the activty is called, this
+     * function gets invoked which creates and
+     * render the UI
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /**
+         * setting content view/layout of
+         * Driver Activity
+         */
         setContentView(R.layout.activity_driver);
+
+        /**
+         * creating toolbar of the DriverActivity
+         */
         Toolbar toolbar = (Toolbar) findViewById(R.id.drivertoolbar);
         setSupportActionBar(toolbar);
-
         Bundle bundle = getIntent().getExtras();
 
+        /**
+         * Extracting paramters passed from
+         * SignInActivity
+         */
         FIREBASE_VEHICLE_NODE = bundle.getString("vehicleId");
         FIREBASE_ROUTE_NODE = bundle.getString("routeId");
+
+        /**
+         * Deserializing instances passed from
+         * SignInActivity
+         */
         vehicle = (Vehicle)bundle.getSerializable(FIREBASE_VEHICLE_NODE);
         route = (BusRoute)bundle.getSerializable((FIREBASE_ROUTE_NODE));
 
-        // Set up Google Maps
+        /**
+         * Set up Google Maps
+         */
         SupportMapFragment mapFragment = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        // Set up the API client for Places API
+        /**
+         * Set up the API client for Places API
+         */
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -99,17 +157,26 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
                 .build();
         mGoogleApiClient.connect();
 
-        // Set up Firebase
+        /**
+         * Set up Firebase
+         */
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-        Log.d(TAG, "Vechile ID: [" + FIREBASE_VEHICLE_NODE + "]");
-        Log.d(TAG, "Route ID: [" + FIREBASE_ROUTE_NODE + "]");
 
+        /**
+         * Making an entry into route's vehicle map
+         * with the vehicle id as true
+         */
         route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
         mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
-
     }
 
+    /**
+     * on this activity is
+     * closed or moved to anotehr
+     * activity, onDestory() method
+     * would be called
+     */
     public void onDestroy() {
         super.onDestroy();
     }
@@ -121,55 +188,79 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    123);
-            // TODO: Consider calling
-            //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            /**
+             * If location services are not enabled,
+             * the function following requests the user
+             * to enable them
+             */
+            requestPermissions(new String[] {
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION},
+                            123);
             return;
         }
+        /**
+         * setting the GPS locatio checkup and
+         * button enabled, that shows the button
+         * on the top right corner
+         */
         mMap.setMyLocationEnabled(true);
 
     }
 
-    private void addPointToViewPort(LatLng newPoint) {
-        mBounds.include(newPoint);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mBounds.build(),
-                findViewById(R.id.checkout_button).getHeight()));
-    }
-
+    /**
+     * On backbutton pressed, letting
+     * the super class know about the
+     * event
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed(); // Comment this super call to avoid calling finish()
     }
 
+    /**
+     * a callback method called onCreate()
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.driver, menu);
         return true;
     }
 
+    /**
+     * onSelect options menu from top right corner,
+     * this method gets called.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        /**
+         * on Click of sign out
+         * the following block of code clears
+         * route list, vehicle list and deletes
+         * an entry from vehicel map
+         */
         if (id == R.id.action_signOut) {
             route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
             mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
-            SignInActivity.list1.clear();
-            SignInActivity.list2.clear();
-            SignInActivity.vehicleId = null;
-            SignInActivity.routeId = null;
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, RouteListActivity.class));
             finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * onLocation changed, when vehicle is in motion,
+     * the method following would get called as callback,
+     * and updates the location in Firebase
+     * @param location
+     */
     @Override
     public void onLocationChanged(Location location) {
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -177,9 +268,10 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             vehicle.setLatitude(location.getLatitude());
             vehicle.setLongitude(location.getLongitude());
             mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
-//            Toast.makeText(this, "Location Changed", Toast.LENGTH_SHORT).show();
         }
-        //zoom to current position:
+        /**
+         * zoom to current position
+         */
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng).zoom(14).build();
 
@@ -188,22 +280,39 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
+    /**
+     * on First time GoogleApiClient connected, this
+     * callback gets called.
+     * @param bundle
+     */
     @Override
     public void onConnected(Bundle bundle) {
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    123);
-            // TODO: Consider calling
-            //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            /**
+             * If location services are not enabled,
+             * the function following requests the user
+             * to enable them
+             */
+            requestPermissions(new String[] {
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION},
+                            123);
             return;
         }
+        /**
+         * getting the last location available location
+         * onConnected
+         */
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
+
+        /**
+         * If last location is found,
+         * creating the LatLng instance and
+         * updating the firebase with vehicles
+         * latest position
+         */
         if (mLastLocation != null) {
             latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             if (vehicle != null){
@@ -213,12 +322,17 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             }
         }
 
+        /**
+         * setting the frequency of
+         * location requestor, calling
+         * for every 500ms and at fastestinterval of
+         * 300ms
+         */
         LocationRequest mLocationRequest;
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(500); //5 seconds
         mLocationRequest.setFastestInterval(300); //3 seconds
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
