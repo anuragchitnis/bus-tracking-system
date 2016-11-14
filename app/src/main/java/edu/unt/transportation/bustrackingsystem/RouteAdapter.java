@@ -23,9 +23,12 @@ import edu.unt.transportation.bustrackingsystem.model.StopSchedule;
 
 /**
  * Created by Gil Wasserman on 10/15/2016.
+ * <p>
+ * RouteAdapter to be used with any ListView or Spinner displaying BusRoutes.  This uses the
+ * row_template_routes layout to display some basic route information to the user.
+ * Extends ArrayAdapter class, so each item can be retrieved using a list index, however all the
+ * data must be ready to be parsed when this adapter's getView method is triggered.
  */
-//RouteAdapter to be used with any ListView or Spinner displaying BusRoutes
-//Extends ArrayAdapter class
 public class RouteAdapter extends ArrayAdapter<BusRoute>
 {
     //The number of times to show in each row per BusStop
