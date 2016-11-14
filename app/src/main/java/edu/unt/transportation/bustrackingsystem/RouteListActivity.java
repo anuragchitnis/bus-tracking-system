@@ -30,7 +30,15 @@ import static edu.unt.transportation.bustrackingsystem.TrackerMapActivity.KEY_RO
 
 /**
  * Created by Gil Wasserman on 10/15/2016.
+ * This is the main RouteList Activity.  The view will show the user a list of all Bus Routes
+ * currently available
+ * and allow them to select a route to view it on TrackerMapActivity.
+ *
+ * This is the main launcher class for the app, so it will also contain a Driver Sign-In option
+ * item to allow
+ * navigating to the Driver Sign-In screen where the driver will be assigned a bus and route
  */
+
 public class RouteListActivity extends AppCompatActivity implements AdapterView
         .OnItemSelectedListener, AdapterView.OnItemClickListener, Serializable,
         ValueEventListener, ChildEventListener
