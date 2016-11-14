@@ -76,6 +76,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     private static final String FIREBASE_VEHICLES = "vehicles";
 
     public static String KEY_ROUTE_ID = "keyRouteId";
+    public static String KEY_ROUTE_NAME = "keyRouteName";
 
     /**
      * Instance of Google Map to show currently running buses and bus stops
@@ -146,6 +147,10 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      * This is the route id which we get from the previous activity
      */
     private String routeID;
+    /**
+     * This is the route name which we get from the previous activity
+     */
+    private String routeName;
 
     /**
      * Get the list of vehicles available on the currently selected route
@@ -182,6 +187,8 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_tracker_map);
 
         routeID = getIntent().getStringExtra(KEY_ROUTE_ID);
+//        routeName = getIntent().getStringExtra(KEY_ROUTE_NAME);
+        setTitle(routeID);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null) {

@@ -19,9 +19,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="@string/route_instructions"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

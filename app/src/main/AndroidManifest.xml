@@ -18,7 +18,7 @@
             android:value="AIzaSyDwamOUrPa1908hvuRdRzvdPJTAlLiZwKY"/>
         <activity
             android:name=".RouteListActivity"
-            android:label="@string/app_name"
+            android:label="@string/title_route_list"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
