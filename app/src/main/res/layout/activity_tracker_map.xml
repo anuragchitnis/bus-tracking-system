@@ -1,9 +1,15 @@
+<!--
+Layout File used by TrackerMapActivity.
+Created By Anurag Chitnis
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-
+<!--
+Shows App Bar - toolbar on the UI
+-->
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,12 +28,17 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
+        <!--
+        Shows Google Map Fragment on the UI
+        -->
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/trackerMap"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             class="com.google.android.gms.maps.SupportMapFragment" />
+        <!--
+            This layout shows Checkboxes for bus stops and schedules on the UI
+        -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,6 +65,9 @@
                 android:text="Show Schedule" />
 
         </LinearLayout>
+        <!--
+            This layout shows the schedule list along with the spinner to select the name of bus stop
+        -->
 
         <LinearLayout
             android:layout_gravity="bottom|left"

@@ -48,8 +48,22 @@ import static edu.unt.transportation.bustrackingsystem.R.drawable.bus;
 
 /**
  * This is the central activity of the project which displays the bus locations on the Google Maps and It has the option of showing bus stops and
- * bus top schedule on the Map.<br>
- * Created by Anurag Chitnis on 10/5/2016.
+ * bus stop schedule on the Map.<br>
+ *     <b>Data Structure :</b><br>
+ *     We have used ArrayList in the class to store the list of vehicles, bus stops.
+ *     We have used HashMap to Map the bus name to the list of schedule. <br>
+ * Created by Anurag Chitnis on 10/5/2016. <br>
+ *     <b>Revision History: </b><br>
+ * 	11/10/2016 4:50 PM	Anurag Chitnis	Added the Options Menu<br>
+ * 	11/10/2016 12:37 PM	Anurag Chitnis	Changed the method of invocation of Tracker Map Activity<br>
+ * 	11/9/2016 10:40 PM	Gill Wasserman	Added next 3 times at each main stop to Route List adapter.  Selecting a route takes you to TrackerMapActivity<br>
+ * 	11/9/2016 7:01 PM	Anurag Chitnis	Changed the layout parameters for Schedule list, Added error handling<br>
+ * 	11/8/2016 12:43 PM	Anurag Chitnis	Added the view for showing schedule list on the Map<br>
+ * 	11/7/2016 12:26 PM	Anurag Chitnis	Added unit test class for tracker map activity<br>
+ * 	11/3/2016 1:57 PM	Anurag Chitnis	Added Bus stop display feature on the google map<br>
+ * 	11/1/2016 7:52 PM	Anurag Chitnis	Updated the tracker map to show the runtime updates<br>
+ * 	10/29/2016 7:19 PM	Anurag Chitnis	Added the my location feature and permissions model for map<br>
+ * 	10/28/2016 5:32 PM	Anurag Chitnis	Added the Tracker Map Activity<br>
  */
 
 public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyCallback,
@@ -63,9 +77,18 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
     public static String KEY_ROUTE_ID = "keyRouteId";
 
+    /**
+     * Instance of Google Map to show currently running buses and bus stops
+     */
     private GoogleMap mMap;
     private DatabaseReference mDatabase;
+    /**
+     * List of the vehicles running on the currently selected
+     */
     private List<Vehicle> vehicleList = new ArrayList<>();
+    /**
+     * List of the bus stops available on the currently selected route
+     */
     private List<BusStop> busStopList = new ArrayList<>();
     /**
      * Reference of the 'vehicles' node, where we have all the vehicle objects located
@@ -120,14 +143,22 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      */
     private LinearLayout scheduleListLayout;
     /**
-     * TODO: Taking hardcoded route id for now, change it to the route selected by user form previous activity
+     * This is the route id which we get from the previous activity
      */
     private String routeID;
 
+    /**
+     * Get the list of vehicles available on the currently selected route
+     * @return List of Vehicles
+     */
     public List<Vehicle> getVehicleList() {
         return vehicleList;
     }
 
+    /**
+     * Get the list of bus stops available on the currently selected route
+     * @return List of Bus stops
+     */
     public List<BusStop> getBusStopList() {
         return busStopList;
     }
@@ -198,7 +229,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                Log.w(TAG,"Spinner: Nothing is selected");
             }
         });
 
@@ -211,29 +242,31 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         vehiclesRef = mDatabase.child(FIREBASE_VEHICLES);
+        busStopListener = new BusStopListener();
         /**
          * Set the routeID, whose vehicleMap we want to listen to and register for the listener
          */
         VehicleMapChangeListener vehicleMapChangeListener = new VehicleMapChangeListener();
-        vehicleMapChangeListener.registerListener(routeID);
-
-        busStopListener = new BusStopListener();
-
-        DatabaseReference busStopRef = mDatabase.child("routes/"+routeID+"/busStopMap");
-        busStopRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot busStop : dataSnapshot.getChildren()) {
-                    Log.d(TAG,"busStopRef : onDataChange "+busStop.getKey());
-                    busStopListener.registerListener(busStop.getKey());
+        if (null != routeID) {
+            vehicleMapChangeListener.registerListener(routeID);
+            DatabaseReference busStopRef = mDatabase.child("routes/" + routeID + "/busStopMap");
+            busStopRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot busStop : dataSnapshot.getChildren()) {
+                        Log.d(TAG, "busStopRef : onDataChange " + busStop.getKey());
+                        busStopListener.registerListener(busStop.getKey());
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "busStopRef : onCancelled() "+ databaseError.getMessage());
+                }
+            });
+        } else {
+            Log.e(TAG,"RouteID is null");
+        }
     }
 
     @Override
@@ -295,7 +328,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
-        Log.e(TAG, "onCancelled() "+ databaseError.getMessage());
+        Log.e(TAG, "vehicleChangeListener : onCancelled() "+ databaseError.getMessage());
     }
 
     /**
