@@ -1,6 +1,5 @@
 package edu.unt.transportation.bustrackingsystem;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -34,46 +33,42 @@ import edu.unt.transportation.bustrackingsystem.model.Vehicle;
  * keep pushing the latest location to firebase
  */
 public class DriverActivity extends AppCompatActivity implements OnMapReadyCallback,
-        LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient
+                .OnConnectionFailedListener
+{
     /**
      * Firebase root URL
      */
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
-
+    private static final String TAG = "DriverActivity";
     /**
      * Firebase vehicle root, the vehicle that
      * was selected by driver while logging in
      */
     private static String FIREBASE_VEHICLE_NODE = null;
-
     /**
      * Firebase route root, the route that
      * wast selected by driver while logging in
      */
     private static String FIREBASE_ROUTE_NODE = null;
-
+    LatLng latLng;
     /**
      * Google Map private variable, that was called
      * onMapReady event fired
      */
     private GoogleMap mMap;
-
     /**
      * Firebase instance variable
      */
     private Firebase mFirebase;
     private GoogleApiClient mGoogleApiClient;
     private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
-
     private Vehicle vehicle;
     private BusRoute route;
 
-    private static final String TAG = "DriverActivity";
-
-    LatLng latLng;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver);
         Toolbar toolbar = (Toolbar) findViewById(R.id.drivertoolbar);
@@ -83,8 +78,8 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
         FIREBASE_VEHICLE_NODE = bundle.getString("vehicleId");
         FIREBASE_ROUTE_NODE = bundle.getString("routeId");
-        vehicle = (Vehicle)bundle.getSerializable(FIREBASE_VEHICLE_NODE);
-        route = (BusRoute)bundle.getSerializable((FIREBASE_ROUTE_NODE));
+        vehicle = (Vehicle) bundle.getSerializable(FIREBASE_VEHICLE_NODE);
+        route = (BusRoute) bundle.getSerializable((FIREBASE_ROUTE_NODE));
 
         // Set up Google Maps
         SupportMapFragment mapFragment = (SupportMapFragment)
@@ -110,19 +105,26 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
     }
 
     /**
      * Map setup. This is called when the GoogleMap is available to manipulate.
+     *
      * @param googleMap
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap)
+    {
         mMap = googleMap;
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION},
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest
+                .permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION},
                     123);
             // TODO: Consider calling
             //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
@@ -137,46 +139,45 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
-    private void addPointToViewPort(LatLng newPoint) {
-        mBounds.include(newPoint);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mBounds.build(),
-                findViewById(R.id.checkout_button).getHeight()));
-    }
-
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         super.onBackPressed(); // Comment this super call to avoid calling finish()
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.driver, menu);
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+//        getMenuInflater().inflate(R.menu.driver, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         int id = item.getItemId();
-        if (id == R.id.action_signOut) {
+       /* if (id == R.id.action_signOut) {
             route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
             mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
             SignInActivity.list1.clear();
             SignInActivity.list2.clear();
             SignInActivity.vehicleId = null;
             SignInActivity.routeId = null;
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, RouteListActivity.class));
             finish();
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location)
+    {
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        if(vehicle != null){
+        if (vehicle != null)
+        {
             vehicle.setLatitude(location.getLatitude());
             vehicle.setLongitude(location.getLongitude());
-            mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+            mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
 //            Toast.makeText(this, "Location Changed", Toast.LENGTH_SHORT).show();
         }
         //zoom to current position:
@@ -189,9 +190,14 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION},
+    public void onConnected(Bundle bundle)
+    {
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest
+                .permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION},
                     123);
             // TODO: Consider calling
             //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
@@ -204,12 +210,14 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         }
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        if (mLastLocation != null) {
+        if (mLastLocation != null)
+        {
             latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            if (vehicle != null){
+            if (vehicle != null)
+            {
                 vehicle.setLatitude(mLastLocation.getLatitude());
                 vehicle.setLongitude(mLastLocation.getLongitude());
-                mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+                mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
             }
         }
 
@@ -219,16 +227,26 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         mLocationRequest.setFastestInterval(300); //3 seconds
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this);
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onConnectionSuspended(int i)
+    {
 
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(ConnectionResult connectionResult)
+    {
 
+    }
+
+    private void addPointToViewPort(LatLng newPoint)
+    {
+        mBounds.include(newPoint);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mBounds.build(),
+                findViewById(R.id.checkout_button).getHeight()));
     }
 }

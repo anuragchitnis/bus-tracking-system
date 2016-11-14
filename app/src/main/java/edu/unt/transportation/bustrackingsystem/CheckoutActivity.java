@@ -55,7 +55,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CheckoutActivity extends FragmentActivity implements OnMapReadyCallback,
-        ChildEventListener {
+        ChildEventListener
+{
 
     private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
     private static final String FIREBASE_ROOT_NODE = "checkouts";
@@ -68,7 +69,36 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
     private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == REQUEST_PLACE_PICKER)
+        {
+            if (resultCode == Activity.RESULT_OK)
+            {
+                Place place = PlacePicker.getPlace(data, this);
+
+                Map<String, Object> checkoutData = new HashMap<>();
+                checkoutData.put("latitude", place.getLatLng().latitude);
+                checkoutData.put("longitude", place.getLatLng().longitude);
+
+                mFirebase.child(FIREBASE_ROOT_NODE).child(place.getId()).setValue(checkoutData);
+
+            }
+            else if (resultCode == PlacePicker.RESULT_ERROR)
+            {
+                Toast.makeText(this, "Places API failure! Check the API is enabled for your key",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+        else
+        {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
 
@@ -86,59 +116,25 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
         // Set up Firebase
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
+
         mFirebase.child(FIREBASE_ROOT_NODE).addChildEventListener(this);
     }
 
     /**
-     * Prompt the user to check out of their location. Called when the "Check Out!" button
-     * is clicked.
-     */
-    public void checkOut(View view) {
-        try {
-            PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
-            Intent intent = intentBuilder.build(this);
-            startActivityForResult(intent, REQUEST_PLACE_PICKER);
-        } catch (GooglePlayServicesRepairableException e) {
-            GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(),
-                    REQUEST_PLACE_PICKER);
-        } catch (GooglePlayServicesNotAvailableException e) {
-            Toast.makeText(this, "Please install Google Play Services!", Toast.LENGTH_LONG).show();
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_PLACE_PICKER) {
-            if (resultCode == Activity.RESULT_OK) {
-                Place place = PlacePicker.getPlace(data, this);
-
-                Map<String, Object> checkoutData = new HashMap<>();
-                checkoutData.put("latitude", place.getLatLng().latitude);
-                checkoutData.put("longitude", place.getLatLng().longitude);
-
-                mFirebase.child(FIREBASE_ROOT_NODE).child(place.getId()).setValue(checkoutData);
-
-            } else if (resultCode == PlacePicker.RESULT_ERROR) {
-                Toast.makeText(this, "Places API failure! Check the API is enabled for your key",
-                        Toast.LENGTH_LONG).show();
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    /**
      * Map setup. This is called when the GoogleMap is available to manipulate.
+     *
      * @param googleMap
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap)
+    {
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
-        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener()
+        {
             @Override
-            public void onMyLocationChange(Location location) {
+            public void onMyLocationChange(Location location)
+            {
                 LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
                 addPointToViewPort(ll);
                 // we only want to grab the location once, to allow the user to pan and zoom freely.
@@ -150,9 +146,11 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
         // been laid out yet.
         final Button button = (Button) findViewById(R.id.checkout_button);
         button.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
+                new ViewTreeObserver.OnGlobalLayoutListener()
+                {
                     @Override
-                    public void onGlobalLayout() {
+                    public void onGlobalLayout()
+                    {
                         mMap.setPadding(0, button.getHeight(), 0, 0);
                     }
                 }
@@ -163,17 +161,22 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
      * Act upon new check-outs when they appear.
      */
     @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+    public void onChildAdded(DataSnapshot dataSnapshot, String s)
+    {
         String placeId = dataSnapshot.getKey();
-        if (placeId != null) {
+        if (placeId != null)
+        {
             Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId)
-                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                    .setResultCallback(new ResultCallback<PlaceBuffer>()
+                                       {
                                            @Override
-                                           public void onResult(PlaceBuffer places) {
+                                           public void onResult(PlaceBuffer places)
+                                           {
                                                LatLng location = places.get(0).getLatLng();
                                                addPointToViewPort(location);
-                                               mMap.addMarker(new MarkerOptions().position(location));
+                                               mMap.addMarker(new MarkerOptions().position
+                                                       (location));
                                                places.release();
                                            }
                                        }
@@ -182,26 +185,53 @@ public class CheckoutActivity extends FragmentActivity implements OnMapReadyCall
     }
 
     @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    public void onChildChanged(DataSnapshot dataSnapshot, String s)
+    {
         // TODO
     }
 
     @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
+    public void onChildRemoved(DataSnapshot dataSnapshot)
+    {
         // TODO
     }
 
     @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+    public void onChildMoved(DataSnapshot dataSnapshot, String s)
+    {
         // TODO
     }
 
     @Override
-    public void onCancelled(FirebaseError firebaseError) {
+    public void onCancelled(FirebaseError firebaseError)
+    {
         // TODO
     }
 
-    private void addPointToViewPort(LatLng newPoint) {
+    /**
+     * Prompt the user to check out of their location. Called when the "Check Out!" button
+     * is clicked.
+     */
+    public void checkOut(View view)
+    {
+        try
+        {
+            PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+            Intent intent = intentBuilder.build(this);
+            startActivityForResult(intent, REQUEST_PLACE_PICKER);
+        } catch (GooglePlayServicesRepairableException e)
+        {
+            GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(),
+                    REQUEST_PLACE_PICKER);
+        } catch (GooglePlayServicesNotAvailableException e)
+        {
+            Toast.makeText(this, "Please install Google Play Services!", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void addPointToViewPort(LatLng newPoint)
+    {
         mBounds.include(newPoint);
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mBounds.build(),
                 findViewById(R.id.checkout_button).getHeight()));
