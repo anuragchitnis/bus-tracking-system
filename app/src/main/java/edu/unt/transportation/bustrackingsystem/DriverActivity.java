@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.ConnectionResult;
@@ -105,6 +106,13 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     LatLng latLng = null;
 
     /**
+     * Textviews
+     */
+    TextView routeTextView = null;
+    TextView vehicleTextView = null;
+    TextView speedTextView = null;
+
+    /**
      * When the activty is called, this
      * function gets invoked which creates and
      * render the UI
@@ -169,6 +177,13 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
          */
         route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
         mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+
+        routeTextView = (TextView) findViewById(R.id.textView3);
+        vehicleTextView = (TextView) findViewById(R.id.textView4);
+        speedTextView = (TextView) findViewById(R.id.textView5);
+        routeTextView.setText("Route: ["+FIREBASE_ROUTE_NODE+"]");
+        vehicleTextView.setText("Vehicle: ["+FIREBASE_VEHICLE_NODE+"]");
+        vehicleTextView.setText("Speed: ["+0.0+"]");
     }
 
     /**
@@ -268,6 +283,7 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             vehicle.setLatitude(location.getLatitude());
             vehicle.setLongitude(location.getLongitude());
             mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+            speedTextView.setText("Speed: ["+location.getSpeed()+"], m/s");
         }
         /**
          * zoom to current position
