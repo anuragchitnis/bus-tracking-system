@@ -55,6 +55,8 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.4'
     // Set this dependency to use JUnit 4 rules
     androidTestCompile 'com.android.support.test:rules:0.4'
+    // Set this dependency to build and run Espresso tests
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     // Required -- JUnit 4 framework
     testCompile 'junit:junit:4.12'
 }

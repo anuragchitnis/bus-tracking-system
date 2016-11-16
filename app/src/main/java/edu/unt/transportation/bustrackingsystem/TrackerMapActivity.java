@@ -369,6 +369,22 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         return vehicleList;
     }
 
+    public List<Marker> getmBusStopMarkerList() {
+        return mBusStopMarkerList;
+    }
+
+    public Map<String, Marker> getMarkerMap() {
+        return markerMap;
+    }
+
+    public List<String> getScheduledStopsList() {
+        return scheduledStopsList;
+    }
+
+    public Map<String, List<String>> getScheduleListMap() {
+        return scheduleListMap;
+    }
+
     @Override
     public void onDataChange(DataSnapshot dataSnapshot)
     {

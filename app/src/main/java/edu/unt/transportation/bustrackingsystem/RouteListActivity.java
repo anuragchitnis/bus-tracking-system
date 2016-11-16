@@ -59,6 +59,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routes);
+        setTitle(R.string.title_route_list);
         // Set up toolbar to be used in activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
