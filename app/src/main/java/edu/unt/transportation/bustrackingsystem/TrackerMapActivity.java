@@ -178,8 +178,8 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_tracker_map);
 
         routeID = getIntent().getStringExtra(KEY_ROUTE_ID);
-//        routeName = getIntent().getStringExtra(KEY_ROUTE_NAME);
-        setTitle(routeID);
+        routeName = getIntent().getStringExtra(KEY_ROUTE_NAME);
+        setTitle(routeName);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)

@@ -9,7 +9,7 @@
     <application
         android:name=".BusTrackingSystem"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_directions_bus_black_24dp"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

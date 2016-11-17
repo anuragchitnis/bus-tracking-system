@@ -27,6 +27,7 @@ import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 
 import static edu.unt.transportation.bustrackingsystem.TrackerMapActivity.KEY_ROUTE_ID;
+import static edu.unt.transportation.bustrackingsystem.TrackerMapActivity.KEY_ROUTE_NAME;
 
 /**
  * Created by Gil Wasserman on 10/15/2016.
@@ -207,6 +208,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     {
         Intent intent = new Intent(RouteListActivity.this, TrackerMapActivity.class);
         intent.putExtra(KEY_ROUTE_ID, getSelectedRoute().getRouteId());
+        intent.putExtra(KEY_ROUTE_NAME, getSelectedRoute().getRouteName());
         startActivity(intent);
     }
 
