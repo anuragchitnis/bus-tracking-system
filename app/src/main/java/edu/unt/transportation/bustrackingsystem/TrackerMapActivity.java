@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.unt.transportation.bustrackingsystem.firebase.BusStopListener;
+import edu.unt.transportation.bustrackingsystem.firebase.BusStopReceiver;
+import edu.unt.transportation.bustrackingsystem.firebase.VehicleMapChangeListener;
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 import edu.unt.transportation.bustrackingsystem.model.StopSchedule;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
@@ -72,7 +74,7 @@ import static edu.unt.transportation.bustrackingsystem.R.drawable.bus;
  */
 
 public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyCallback,
-        ActivityCompat.OnRequestPermissionsResultCallback, ValueEventListener
+        ActivityCompat.OnRequestPermissionsResultCallback, ValueEventListener, BusStopListener
 {
 
     /**
@@ -119,7 +121,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     /**
      * Listener to receive callbacks for bus stops on the selected route
      */
-    private BusStopListener busStopListener;
+    private BusStopReceiver busStopReceiver;
     /**
      * Checkbox view to show and hide bus stop location
      */
@@ -247,14 +249,14 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         vehiclesRef = mDatabase.child(FIREBASE_VEHICLES);
-        busStopListener = new BusStopListener();
+        busStopReceiver = new BusStopReceiver();
         /**
          * Set the routeID, whose vehicleMap we want to listen to and register for the listener
          */
         VehicleMapChangeListener vehicleMapChangeListener = new VehicleMapChangeListener();
         if (null != routeID)
         {
-            vehicleMapChangeListener.registerListener(routeID);
+            vehicleMapChangeListener.registerListener(this,routeID);
             DatabaseReference busStopRef = mDatabase.child("routes/" + routeID + "/busStopMap");
             busStopRef.addListenerForSingleValueEvent(new ValueEventListener()
             {
@@ -264,7 +266,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                     for (DataSnapshot busStop : dataSnapshot.getChildren())
                     {
                         Log.d(TAG, "busStopRef : onDataChange " + busStop.getKey());
-                        busStopListener.registerListener(busStop.getKey());
+                        busStopReceiver.registerListener(TrackerMapActivity.this, busStop.getKey());
                     }
                 }
 
@@ -529,87 +531,9 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
-    /**
-     * This class receives the callback for all the BusStops which exist on the currently
-     * selected route.
-     * Let us  keep the list of BusStop objects, so they can be displayed on the UI whenever user
-     * requests it
-     */
-    private class BusStopListener implements ValueEventListener
-    {
-
-        DatabaseReference busStopReference;
-
-        void registerListener(String stopID)
-        {
-            busStopReference = mDatabase.child("stops");
-            busStopReference.child(stopID).addListenerForSingleValueEvent(this);
-        }
-
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot)
-        {
-            BusStop busStopSnapShot = dataSnapshot.getValue(BusStop.class);
-            if (!busStopList.contains(busStopSnapShot))
-            {
-                busStopList.add(busStopSnapShot);
-            }
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError)
-        {
-            Log.e(TAG, "BusStopListener : onCancelled() " + databaseError.getMessage());
-        }
+    @Override
+    public void onBusStopAdded(BusStop busStop) {
+        if (!busStopList.contains(busStop))
+            busStopList.add(busStop);
     }
-
-    /**
-     * This class tracks the changes to the vehicle map of the given route
-     */
-    private class VehicleMapChangeListener implements ChildEventListener
-    {
-
-        DatabaseReference vehicleMapRef;
-
-        @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String s)
-        {
-            Log.d(TAG, "onChildAdded " + dataSnapshot.getKey());
-            //Register to listen to the changes made to all the vehicles on this route
-            vehiclesRef.child(dataSnapshot.getKey()).addValueEventListener(TrackerMapActivity.this);
-        }
-
-        @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String s)
-        {
-
-        }
-
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot)
-        {
-            //Remove the listener for this bus as we don't want to receive updates from it anymore
-            vehiclesRef.child(dataSnapshot.getKey()).removeEventListener(TrackerMapActivity.this);
-        }
-
-        @Override
-        public void onChildMoved(DataSnapshot dataSnapshot, String s)
-        {
-
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError)
-        {
-            Log.e(TAG, "VehicleMapChangeListener : onCancelled() " + databaseError.getMessage());
-        }
-
-        void registerListener(String routeID)
-        {
-            vehicleMapRef = mDatabase.child("routes/" + routeID + "/vehicleMap");
-            vehicleMapRef.addChildEventListener(this);
-        }
-    }
-
-
 }

@@ -3,6 +3,7 @@ package edu.unt.transportation.bustrackingsystem;
 import android.app.Application;
 
 import com.firebase.client.Firebase;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Anurag Chitnis on 10/4/2016.
@@ -42,6 +43,8 @@ public class BusTrackingSystem extends Application
         // Set up Firebase
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
+        // Make the data persist for offline usage
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     public Firebase getmFirebase()

@@ -33,7 +33,7 @@ public class TrackerMapActivityTest {
         @Override
         protected Intent getActivityIntent() {
             Intent intent = new Intent();
-            intent.putExtra(KEY_ROUTE_ID, "dp_00");
+            intent.putExtra(KEY_ROUTE_ID, "Discovery Park");
             return intent;
         }
     };
@@ -85,8 +85,6 @@ public class TrackerMapActivityTest {
     @Test
     public void vehicleMarkerMapTest() {
         assertThat("Vehicle marker map should not be empty", !trackerMapActivity.getMarkerMap().isEmpty());
-        assertEquals("vehicleMarkerMapTest : Size mismatch", 2, trackerMapActivity.getMarkerMap().size());
-
     }
 
     @Test
