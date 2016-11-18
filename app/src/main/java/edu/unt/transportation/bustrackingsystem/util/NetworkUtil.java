@@ -1,4 +1,4 @@
-package edu.unt.transportation.bustrackingsystem;
+package edu.unt.transportation.bustrackingsystem.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

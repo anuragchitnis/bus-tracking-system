@@ -21,6 +21,8 @@ import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 import edu.unt.transportation.bustrackingsystem.model.StopSchedule;
 
+import static edu.unt.transportation.bustrackingsystem.util.GeneralUtil.getDayStringForToday;
+
 /**
  * Created by Gil Wasserman on 10/15/2016.
  * <p>
@@ -92,7 +94,6 @@ public class RouteAdapter extends ArrayAdapter<BusRoute>
     {
         String timeString = "";
         Calendar calendar = Calendar.getInstance();
-        String today = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
         int counter = 0;
         //If the bus stop has a route schedule, as non major bus stops will not have a set
         // schedule and may be skipped
@@ -107,7 +108,7 @@ public class RouteAdapter extends ArrayAdapter<BusRoute>
                 // schedule times in a more easily readable list variable
                 for (StopSchedule stopSchedule : scheduleTimes) //Loop through the StopSchedules
                 {
-                    if (!stopSchedule.getDayOfWeek().equalsIgnoreCase(today))
+                    if (!stopSchedule.getDayOfWeek().equalsIgnoreCase(getDayStringForToday()))
                         continue; //Not current day, ignore
                     for (String time : stopSchedule.getTimingsList())   //Loop through each time
                     // value in the day's schedule

@@ -25,11 +25,6 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/stops_at"/>
-
-        <TextView
             android:id="@+id/text_view_route_stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

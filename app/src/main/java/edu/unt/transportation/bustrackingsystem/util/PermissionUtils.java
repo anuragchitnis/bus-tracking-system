@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.unt.transportation.bustrackingsystem;
+package edu.unt.transportation.bustrackingsystem.util;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -26,6 +26,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import edu.unt.transportation.bustrackingsystem.R;
 
 /**
  * Utility class for access to runtime permissions.

@@ -19,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,8 +46,11 @@ import edu.unt.transportation.bustrackingsystem.firebase.VehicleMapChangeListene
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 import edu.unt.transportation.bustrackingsystem.model.StopSchedule;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
+import edu.unt.transportation.bustrackingsystem.util.NetworkUtil;
+import edu.unt.transportation.bustrackingsystem.util.PermissionUtils;
 
 import static edu.unt.transportation.bustrackingsystem.R.drawable.bus;
+import static edu.unt.transportation.bustrackingsystem.util.GeneralUtil.getDayStringForToday;
 
 /**
  * This is the central activity of the project which displays the bus locations on the Google
@@ -135,8 +139,8 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      */
     private List<String> scheduleList;
     /**
-     * Map to keep track of the busName and the linked schedule
-     * Key - busName, Value - List of schedule
+     * Map to keep track of the busStopName and the linked schedule
+     * Key - busStopName, Value - List of schedule
      */
     private Map<String, List<String>> scheduleListMap;
     /**
@@ -281,6 +285,13 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         {
             Log.e(TAG, "RouteID is null");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!NetworkUtil.isNetworkAvailable(getBaseContext()))
+            Toast.makeText(this, "Internet connection unavailable", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -499,6 +510,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     private void loadSchedule()
     {
         scheduledStopsList.clear();
+
         for (BusStop busStop : busStopList)
         {
             Map<String, List<StopSchedule>> scheduleMap = busStop.getRouteSchedule();
@@ -511,6 +523,9 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                 {
                     for (StopSchedule stopSchedule : stopScheduleList)
                     {
+                        if(!stopSchedule.getDayOfWeek().equalsIgnoreCase(getDayStringForToday()))
+                            continue;
+
                         scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
                     }
                 }
