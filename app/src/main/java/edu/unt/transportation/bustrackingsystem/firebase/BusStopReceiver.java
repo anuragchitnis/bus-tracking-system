@@ -26,10 +26,16 @@ public class BusStopReceiver implements ValueEventListener{
     DatabaseReference busStopReference;
     private DatabaseReference mDatabase;
     List<BusStopListener> busStopListenerList;
+    private String assiciatedRouteId;
 
     public BusStopReceiver() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         busStopListenerList = new LinkedList<>();
+    }
+
+    public BusStopReceiver(String assiciatedRouteId) {
+        this();
+        this.assiciatedRouteId = assiciatedRouteId;
     }
 
     public void registerListener(BusStopListener busStopListener, String stopID)

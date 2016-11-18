@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,16 +12,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.firebase.client.Firebase;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
+import edu.unt.transportation.bustrackingsystem.firebase.BusRouteListener;
+import edu.unt.transportation.bustrackingsystem.firebase.BusRouteReceiver;
+import edu.unt.transportation.bustrackingsystem.firebase.BusStopListener;
+import edu.unt.transportation.bustrackingsystem.firebase.BusStopReceiver;
 import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 
@@ -41,8 +40,7 @@ import static edu.unt.transportation.bustrackingsystem.TrackerMapActivity.KEY_RO
  */
 
 public class RouteListActivity extends AppCompatActivity implements AdapterView
-        .OnItemSelectedListener, AdapterView.OnItemClickListener, Serializable,
-        ValueEventListener, ChildEventListener
+        .OnItemSelectedListener, AdapterView.OnItemClickListener, Serializable, BusStopListener, BusRouteListener
 {
     //constant for root node used in this activity
     private static final String ROOT_ROUTE = "routes";
@@ -68,10 +66,12 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         Firebase.setAndroidContext(this);
         //Initialize mDatabase value and add activity as ChildEvent Listener
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.addChildEventListener(this);
+//        mDatabase.addChildEventListener(this);
         //Iniitalize routeRoot value and add activity as ValueEvent listener
         routeRoot = mDatabase.child(ROOT_ROUTE);
-        routeRoot.addValueEventListener(this);
+        BusRouteReceiver busRouteReceiver = new BusRouteReceiver();
+        busRouteReceiver.registerListener(this);
+//        routeRoot.addValueEventListener(this);
         //Initialize routeList component with routeAdapter and set current class listeners
         routeList = (ListView) findViewById(R.id.list_routes);
         routeAdapter = new RouteAdapter(RouteListActivity.this, R.layout.row_template_routes);
@@ -84,7 +84,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     protected void onDestroy()
     {
         super.onDestroy();
-        routeRoot.removeEventListener((ChildEventListener) this);   //remove the event listener
+//        routeRoot.removeEventListener((ChildEventListener) this);   //remove the event listener
         // from routeRoot now that we're done with the activity
     }
 
@@ -109,7 +109,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     {
     }
 
-    @Override
+/*    @Override
     public void onDataChange(DataSnapshot dataSnapshot)
     {
         try
@@ -154,7 +154,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     public void onChildMoved(DataSnapshot dataSnapshot, String s)
     {
 
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -215,23 +215,119 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     //Set up Routes takes a datasnapshot as a parameter.  The parameter datasnapshot should be
     // the root of the BusRoute node
     //setUpRoutes does the work of setting up the data within the routeAdapter
-    private void setUpRoutes(DataSnapshot dataSnapshot)
-    {
-        for (DataSnapshot snapshot : dataSnapshot.getChildren())    //For each BusRoute node
-        {
-            BusRoute b = snapshot.getValue(BusRoute.class);         //Bind the snapshot to an
-            // instance of BusRoute
-            getBusRoutes().put(b.getRouteId(), b);                  //Add BusRoute object to HashMap
-            if (b.getBusStopMap() != null)
+//    private void setUpRoutes(DataSnapshot dataSnapshot)
+//    {
+//        for (DataSnapshot snapshot : dataSnapshot.getChildren())    //For each BusRoute node
+//        {
+//            BusRoute b = snapshot.getValue(BusRoute.class);         //Bind the snapshot to an
+//            // instance of BusRoute
+//            getBusRoutes().put(b.getRouteId(), b);                  //Add BusRoute object to HashMap
+//            if (b.getBusStopMap() != null)
+//            {
+//                for (String id : b.getBusStopMap().keySet())    //For each bus stop, register a
+//                // listener for that BusStop ID
+//                {
+//                    BusStopReceiver busStopReceiver = new BusStopReceiver();
+//                    busStopReceiver.registerListener(this, id);
+//                }
+//            }
+//        }
+//        //Clear the current routeAdapter values, add the current set of BusRoute values, and
+//        // notify the adapter that the underlying data has changed
+//        routeAdapter.clear();
+//        routeAdapter.addAll(getBusRoutes().values());
+//        routeAdapter.notifyDataSetChanged();
+//        //If we're viewing the map activity, navigate to the map with the new route data
+//        if (BusTrackingSystem.isMapActivityVisible())
+//        {
+//            navigateToMap();
+//        }
+//    }
+
+//    //Implementation of ValueEventLister
+//    private class BusStopListener implements ValueEventListener
+//    {
+//
+//        private final String routeID;           //The Bus Stop's associated Route ID
+//        DatabaseReference busStopReference;     //DatabaseReference to a specific bus stop
+//
+//        public BusStopListener(String routeId)
+//        {
+//            this.routeID = routeId;
+//        }
+//
+//        //Registers a BusStop listener for any changes to a single BusStop
+//        //parameter stopID is the key for the bus stop registered
+//        public void registerListener(String stopID)
+//        {
+//            busStopReference = mDatabase.child("stops");
+//            busStopReference.child(stopID).addListenerForSingleValueEvent(this);
+//        }        //When the BusStop data has changed, rebuild the BusRoutes map and notify the
+//        // adapter
+//
+//        // that changes were made
+//        @Override
+//        public void onDataChange(DataSnapshot dataSnapshot)
+//        {
+//            BusStop busStopSnapShot = dataSnapshot.getValue(BusStop.class); //Get an instance of
+//            // BusStop from the dataSnapshot
+//            if (getBusRoutes().containsKey(routeID))    //The bus routes listed reference a bus
+//            // route using this stop
+//            {
+//                //Get the BusRoute by routeID, and add this BusStop, using its StopID as a key,
+//                // to the BusStopObjectMap
+//                //The BusStopObjectMap will be used in the RouteAdapter
+//                getBusRoutes().get(routeID).getBusStopObjectMap().put(busStopSnapShot.getStopID()
+//                        , busStopSnapShot);
+//                routeAdapter.notifyDataSetChanged();
+//
+//            }
+//        }
+//
+//        //Empty override method, nothing to do here at the moment
+//        @Override
+//        public void onCancelled(DatabaseError databaseError)
+//        {
+//
+//        }
+//
+//
+//    }
+//
+//    @Override
+//    public void onCancelled(DatabaseError databaseError)
+//    {
+//
+//    }
+
+
+    @Override
+    public void onBusStopAdded(BusStop busStop) {
+            if (getBusRoutes().containsKey(selectedRoute))    //The bus routes listed reference a bus
+            // route using this stop
             {
-                for (String id : b.getBusStopMap().keySet())    //For each bus stop, register a
-                // listener for that BusStop ID
-                {
-                    BusStopListener busStopListener = new BusStopListener(b.getRouteId());
-                    busStopListener.registerListener(id);
-                }
+                //Get the BusRoute by routeID, and add this BusStop, using its StopID as a key,
+                // to the BusStopObjectMap
+                //The BusStopObjectMap will be used in the RouteAdapter
+                getBusRoutes().get(selectedRoute).getBusStopObjectMap().put(busStop.getStopID()
+                        , busStop);
+                routeAdapter.notifyDataSetChanged();
+            }
+    }
+
+    @Override
+    public void onBusRouteAdded(BusRoute busRoute) {
+        getBusRoutes().put(busRoute.getRouteId(), busRoute);                  //Add BusRoute object to HashMap
+        if (busRoute.getBusStopMap() != null)
+        {
+            for (String busStopId : busRoute.getBusStopMap().keySet())    //For each bus stop, register a
+            // listener for that BusStop ID
+            {
+                BusStopReceiver busStopReceiver = new BusStopReceiver(busRoute.getRouteId());
+                busStopReceiver.registerListener(this, busStopId);
             }
         }
+
         //Clear the current routeAdapter values, add the current set of BusRoute values, and
         // notify the adapter that the underlying data has changed
         routeAdapter.clear();
@@ -243,62 +339,4 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
             navigateToMap();
         }
     }
-
-    //Implementation of ValueEventLister
-    private class BusStopListener implements ValueEventListener
-    {
-
-        private final String routeID;           //The Bus Stop's associated Route ID
-        DatabaseReference busStopReference;     //DatabaseReference to a specific bus stop
-
-        public BusStopListener(String routeId)
-        {
-            this.routeID = routeId;
-        }
-
-        //Registers a BusStop listener for any changes to a single BusStop
-        //parameter stopID is the key for the bus stop registered
-        public void registerListener(String stopID)
-        {
-            busStopReference = mDatabase.child("stops");
-            busStopReference.child(stopID).addListenerForSingleValueEvent(this);
-        }        //When the BusStop data has changed, rebuild the BusRoutes map and notify the
-        // adapter
-
-        // that changes were made
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot)
-        {
-            BusStop busStopSnapShot = dataSnapshot.getValue(BusStop.class); //Get an instance of
-            // BusStop from the dataSnapshot
-            if (getBusRoutes().containsKey(routeID))    //The bus routes listed reference a bus
-            // route using this stop
-            {
-                //Get the BusRoute by routeID, and add this BusStop, using its StopID as a key,
-                // to the BusStopObjectMap
-                //The BusStopObjectMap will be used in the RouteAdapter
-                getBusRoutes().get(routeID).getBusStopObjectMap().put(busStopSnapShot.getStopID()
-                        , busStopSnapShot);
-                routeAdapter.notifyDataSetChanged();
-
-            }
-        }
-
-        //Empty override method, nothing to do here at the moment
-        @Override
-        public void onCancelled(DatabaseError databaseError)
-        {
-
-        }
-
-
-    }
-
-    @Override
-    public void onCancelled(DatabaseError databaseError)
-    {
-
-    }
-
-
 }
