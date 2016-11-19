@@ -303,16 +303,17 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
 
     @Override
     public void onBusStopAdded(BusStop busStop) {
-            if (getBusRoutes().containsKey(selectedRoute))    //The bus routes listed reference a bus
-            // route using this stop
-            {
-                //Get the BusRoute by routeID, and add this BusStop, using its StopID as a key,
-                // to the BusStopObjectMap
-                //The BusStopObjectMap will be used in the RouteAdapter
-                getBusRoutes().get(selectedRoute).getBusStopObjectMap().put(busStop.getStopID()
+        //Check if the bus stop is scheduled or not, StopSchedule List Map will be null
+        // if it is unscheduled
+        if(busStop.getRouteSchedule() != null) {
+            //Iterate through all the routes for that stop
+            for(String busRouteKey : busStop.getRouteSchedule().keySet()) {
+                //Add the bus stop to the map to keep track of it
+                getBusRoutes().get(busRouteKey).getBusStopObjectMap().put(busStop.getStopID()
                         , busStop);
                 routeAdapter.notifyDataSetChanged();
             }
+        }
     }
 
     @Override
