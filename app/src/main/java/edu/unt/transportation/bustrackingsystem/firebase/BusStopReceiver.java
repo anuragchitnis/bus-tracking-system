@@ -15,23 +15,27 @@ import edu.unt.transportation.bustrackingsystem.model.BusStop;
 /**
  * This class receives the callback for all the BusStops which exist on the currently
  * selected route.
- * Let us  keep the list of BusStop objects, so they can be displayed on the UI whenever user
- * requests it
+ * Best use of this class can be made by registering for all the bus stops existing in busStopMap of each route.<br>
  * Created by Anurag Chitnis on 11/17/2016.
  */
 
 public class BusStopReceiver implements ValueEventListener{
 
     private String TAG = BusStopReceiver.class.getName();
-    DatabaseReference busStopReference;
+    private DatabaseReference busStopReference;
     private DatabaseReference mDatabase;
-    List<BusStopListener> busStopListenerList;
+    private List<BusStopListener> busStopListenerList;
 
     public BusStopReceiver() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         busStopListenerList = new LinkedList<>();
     }
 
+    /**
+     * Register to listen for the BusStop with the stopId.
+     * @param busStopListener implementer of this listener will receive callbacks
+     * @param stopID stopId existing in the firebase
+     */
     public void registerListener(BusStopListener busStopListener, String stopID)
     {
         busStopListenerList.add(busStopListener);
@@ -39,7 +43,7 @@ public class BusStopReceiver implements ValueEventListener{
         busStopReference.child(stopID).addListenerForSingleValueEvent(this);
     }
 
-    public void unregisterListener(BusStopListener busStopListener) {
+    public void removeListener(BusStopListener busStopListener) {
         busStopListenerList.remove(busStopListener);
     }
 
@@ -56,6 +60,10 @@ public class BusStopReceiver implements ValueEventListener{
         Log.e(TAG, "BusStopListener : onCancelled() " + databaseError.getMessage());
     }
 
+    /**
+     * Perform callbacks to all the listeners
+     * @param busStop
+     */
     private void performCallBacks(BusStop busStop) {
         for(BusStopListener busStopListener : busStopListenerList) {
             busStopListener.onBusStopAdded(busStop);

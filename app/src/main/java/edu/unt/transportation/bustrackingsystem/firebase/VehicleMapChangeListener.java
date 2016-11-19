@@ -17,7 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 public class VehicleMapChangeListener implements ChildEventListener{
     private String TAG = VehicleMapChangeListener.class.getName();
     private static final String FIREBASE_VEHICLES = "vehicles";
-    DatabaseReference vehicleMapRef;
+    private DatabaseReference vehicleMapRef;
     private ValueEventListener valueEventListener;
     private DatabaseReference mDatabase;
     /**
@@ -54,7 +54,7 @@ public class VehicleMapChangeListener implements ChildEventListener{
     @Override
     public void onChildMoved(DataSnapshot dataSnapshot, String s)
     {
-
+        Log.w(TAG, "VehicleMapChangeListener : onChildMoved() " + s);
     }
 
     @Override
@@ -63,6 +63,11 @@ public class VehicleMapChangeListener implements ChildEventListener{
         Log.e(TAG, "VehicleMapChangeListener : onCancelled() " + databaseError.getMessage());
     }
 
+    /**
+     * Register for receiving the callbacks for all the vehicles on the specified route
+     * @param valueEventListener This listener will receive callbacks whenever a new child is added
+     * @param routeID route, whose vehicles you want to keep track of
+     */
     public void registerListener(ValueEventListener valueEventListener, String routeID)
     {
         this.valueEventListener = valueEventListener;
@@ -70,7 +75,7 @@ public class VehicleMapChangeListener implements ChildEventListener{
         vehicleMapRef.addChildEventListener(this);
     }
 
-    public void unregisterListener(ValueEventListener valueEventListener) {
+    public void removeListener(ValueEventListener valueEventListener) {
         vehicleMapRef.removeEventListener(valueEventListener);
     }
 }
