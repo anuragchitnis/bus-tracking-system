@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.unt.transportation.bustrackingsystem.firebase.BusRouteListener;
 import edu.unt.transportation.bustrackingsystem.firebase.BusRouteReceiver;
@@ -47,7 +48,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
 
     private ListView routeList; //ListView showing list of routes in UI
     private RouteAdapter routeAdapter;  //Adapter of routes to be linked with routeList
-    private HashMap<String, BusRoute> busRoute; //Map of RouteIDs to BusRoute objects
+    private Map<String, BusRoute> busRouteMap; //Map of RouteIDs to BusRoute objects
     private BusRoute selectedRoute; //The bus route selected by the user
     private DatabaseReference mDatabase;  //reference to the root node of the Firebase database
     private DatabaseReference routeRoot;  //reference to the root node of the routes in the
@@ -64,6 +65,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         setSupportActionBar(toolbar);
         //Sets the context of the Firebase database to the current activity
         Firebase.setAndroidContext(this);
+        busRouteMap = new HashMap<>();
         //Initialize mDatabase value and add activity as ChildEvent Listener
         mDatabase = FirebaseDatabase.getInstance().getReference();
 //        mDatabase.addChildEventListener(this);
@@ -192,16 +194,6 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         this.selectedRoute = selectedRoute;
     }
 
-    //getter method for BusRoute Map
-    private HashMap<String, BusRoute> getBusRoutes()
-    {
-        if (busRoute == null)
-        {
-            busRoute = new HashMap<>();
-        }
-        return busRoute;
-    }
-
     //Create an intent and start the TrackerMapActivity
     //This should pass the currently selected route ID to the TrackerMapActivity
     private void navigateToMap()
@@ -309,7 +301,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
             //Iterate through all the routes for that stop
             for(String busRouteKey : busStop.getRouteSchedule().keySet()) {
                 //Add the bus stop to the map to keep track of it
-                getBusRoutes().get(busRouteKey).getBusStopObjectMap().put(busStop.getStopID()
+                busRouteMap.get(busRouteKey).getBusStopObjectMap().put(busStop.getStopID()
                         , busStop);
                 routeAdapter.notifyDataSetChanged();
             }
@@ -318,7 +310,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
 
     @Override
     public void onBusRouteAdded(BusRoute busRoute) {
-        getBusRoutes().put(busRoute.getRouteId(), busRoute);                  //Add BusRoute object to HashMap
+        busRouteMap.put(busRoute.getRouteId(), busRoute);                  //Add BusRoute object to HashMap
         if (busRoute.getBusStopMap() != null)
         {
             for (String busStopId : busRoute.getBusStopMap().keySet())    //For each bus stop, register a
@@ -331,8 +323,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
 
         //Clear the current routeAdapter values, add the current set of BusRoute values, and
         // notify the adapter that the underlying data has changed
-        routeAdapter.clear();
-        routeAdapter.addAll(getBusRoutes().values());
+        routeAdapter.add(busRoute);
         routeAdapter.notifyDataSetChanged();
         //If we're viewing the map activity, navigate to the map with the new route data
         if (BusTrackingSystem.isMapActivityVisible())
