@@ -112,8 +112,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * list of vehicle and routes
      */
-    public static Map<String, Vehicle> vehicles = null;
-    public static Map<String, BusRoute> routes = null;
+    private Map<String, Vehicle> vehicles = null;
+    private Map<String, BusRoute> routes = null;
+    private Map<String, Vehicle> assignedVehicles = null;
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -169,41 +170,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-//        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler(dataAdapter1));
-        mFirebase.child("/vehicles/").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                vehicles.put(dataSnapshot.getKey(), dataSnapshot.getValue(Vehicle.class));
-                dataAdapter1.add(dataSnapshot.getKey());
-                dataAdapter1.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-//        mFirebase.child("/routes/").addChildEventListener(new RouteChildEventHandler(dataAdapter2));
         mFirebase.child("/routes/").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                routes.put(dataSnapshot.getKey(), dataSnapshot.getValue(BusRoute.class));
+                BusRoute route = dataSnapshot.getValue(BusRoute.class);
+                routes.put(dataSnapshot.getKey(), route);
+                assignedVehicles.putAll(route.getVehicleObjectMap());
                 dataAdapter2.add(dataSnapshot.getKey());
                 dataAdapter2.notifyDataSetChanged();
             }
@@ -228,6 +201,40 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
+
+        mFirebase.child("/vehicles/").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Vehicle vehicle = dataSnapshot.getValue(Vehicle.class);
+                if(!assignedVehicles.containsKey(vehicle.getDriver())){
+                    vehicles.put(dataSnapshot.getKey(), vehicle);
+                    dataAdapter1.add(dataSnapshot.getKey());
+                    dataAdapter1.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+
 
     }
 
