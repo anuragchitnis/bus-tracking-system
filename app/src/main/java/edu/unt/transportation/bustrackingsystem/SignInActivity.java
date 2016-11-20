@@ -114,7 +114,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
      */
     private Map<String, Vehicle> vehicles = null;
     private Map<String, BusRoute> routes = null;
-    private Map<String, Vehicle> assignedVehicles = null;
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -146,7 +145,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         vehicles = new HashMap<String, Vehicle>();
         routes = new HashMap<String, BusRoute>();
-        assignedVehicles = new HashMap<String, Vehicle>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -177,7 +175,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 BusRoute route = dataSnapshot.getValue(BusRoute.class);
                 routes.put(dataSnapshot.getKey(), route);
-                assignedVehicles.putAll(route.getVehicleObjectMap());
                 dataAdapter2.add(dataSnapshot.getKey());
                 dataAdapter2.notifyDataSetChanged();
             }
@@ -207,7 +204,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Vehicle vehicle = dataSnapshot.getValue(Vehicle.class);
-                if(!assignedVehicles.containsKey(vehicle.getDriver())){
+                if(!vehicle.isAssigned()){
                     vehicles.put(dataSnapshot.getKey(), vehicle);
                     dataAdapter1.add(dataSnapshot.getKey());
                     dataAdapter1.notifyDataSetChanged();

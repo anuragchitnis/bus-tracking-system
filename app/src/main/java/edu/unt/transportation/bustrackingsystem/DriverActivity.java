@@ -1,13 +1,10 @@
 package edu.unt.transportation.bustrackingsystem;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.firebase.client.Firebase;
@@ -177,6 +174,9 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
          */
         route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
         mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+
+        vehicle.setIsAssigned(true);
+        mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
 
         routeTextView = (TextView) findViewById(R.id.textView3);
         vehicleTextView = (TextView) findViewById(R.id.textView4);

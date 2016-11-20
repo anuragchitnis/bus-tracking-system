@@ -17,7 +17,7 @@ public class Vehicle implements Serializable{
     private String timestamp;
     private String vehicleType;
     private String driverID;
-    private boolean isAssigned;
+    private boolean assigned;
 
 
     public Vehicle() {
@@ -93,11 +93,11 @@ public class Vehicle implements Serializable{
     }
 
     public void setIsAssigned(boolean isAssigned) {
-        this.isAssigned = isAssigned;
+        this.assigned = isAssigned;
     }
 
     public boolean isAssigned() {
-        return isAssigned;
+        return assigned;
     }
 
     @Override
