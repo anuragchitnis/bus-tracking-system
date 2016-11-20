@@ -46,10 +46,14 @@ public class TrackerMapActivityTest {
          * Introducing the delay of 500 ms before each test case,
          * so that the data loads from firebase in that time
          */
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for(int i=0;i<10;i++) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(!trackerMapActivity.getBusStopList().isEmpty())
+                break;
         }
     }
 

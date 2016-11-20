@@ -235,40 +235,40 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onBackPressed(); // Comment this super call to avoid calling finish()
     }
 
-    /**
-     * a callback method called onCreate()
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.driver, menu);
-        return true;
-    }
-
-    /**
-     * onSelect options menu from top right corner,
-     * this method gets called.
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        /**
-         * on Click of sign out
-         * the following block of code clears
-         * route list, vehicle list and deletes
-         * an entry from vehicel map
-         */
-        if (id == R.id.action_signOut) {
-            route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
-            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
-            startActivity(new Intent(this, RouteListActivity.class));
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    /**
+//     * a callback method called onCreate()
+//     * @param menu
+//     * @return
+//     */
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.driver, menu);
+//        return true;
+//    }
+//
+//    /**
+//     * onSelect options menu from top right corner,
+//     * this method gets called.
+//     * @param item
+//     * @return
+//     */
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        /**
+//         * on Click of sign out
+//         * the following block of code clears
+//         * route list, vehicle list and deletes
+//         * an entry from vehicel map
+//         */
+//        if (id == R.id.action_signOut) {
+//            route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
+//            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+//            startActivity(new Intent(this, RouteListActivity.class));
+//            finish();
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     /**
      * onLocation changed, when vehicle is in motion,

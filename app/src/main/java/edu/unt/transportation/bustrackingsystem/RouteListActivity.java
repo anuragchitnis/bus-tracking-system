@@ -316,7 +316,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
             for (String busStopId : busRoute.getBusStopMap().keySet())    //For each bus stop, register a
             // listener for that BusStop ID
             {
-                BusStopReceiver busStopReceiver = new BusStopReceiver(busRoute.getRouteId());
+                BusStopReceiver busStopReceiver = new BusStopReceiver();
                 busStopReceiver.registerListener(this, busStopId);
             }
         }
