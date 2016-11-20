@@ -146,6 +146,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         vehicles = new HashMap<String, Vehicle>();
         routes = new HashMap<String, BusRoute>();
+        assignedVehicles = new HashMap<String, Vehicle>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
