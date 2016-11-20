@@ -525,8 +525,8 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                     {
                         if(!stopSchedule.getDayOfWeek().equalsIgnoreCase(getDayStringForToday()))
                             continue;
-
-                        scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
+                        else
+                            scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
                     }
                 }
                 else

@@ -91,6 +91,15 @@ Shows App Bar - toolbar on the UI
                 android:layout_height="wrap_content" >
             </ListView>
 
+            <TextView android:id="@android:id/empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dip"
+                android:textSize="16dip"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:text="No Results" />
+
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
