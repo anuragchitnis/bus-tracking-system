@@ -1,5 +1,6 @@
 package edu.unt.transportation.bustrackingsystem;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -346,13 +347,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Go to MainActivity
         // Changed by Satya, to pass vehicle id to driver activity
         Bundle bundle = new Bundle();
-        Intent driverActivityIntent = new Intent(SignInActivity.this, DriverActivity.class);
+        Intent routeListActivityIntent = new Intent(this, RouteListActivity.class);
         bundle.putSerializable(vehicleId, vehicles.get(vehicleId));
         bundle.putSerializable(routeId, routes.get(routeId));
         bundle.putString("vehicleId", vehicleId);
         bundle.putString("routeId", routeId);
-        driverActivityIntent.putExtras(bundle);
-        startActivity(driverActivityIntent);
+        routeListActivityIntent.putExtras(bundle);
+        setResult(Activity.RESULT_OK, routeListActivityIntent);
         finish();
     }
 

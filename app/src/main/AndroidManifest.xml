@@ -49,15 +49,15 @@
                 android:value=".RouteListActivity" />
         </activity>
 
-        <activity
-            android:name=".DriverActivity"
+        <service
+            android:name=".DriverService"
             android:label="Bus Tracking System - Driver"
             android:theme="@style/AppTheme.NoActionBar">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SignInActivity" />
-        </activity>
+        </service>
 
 +    </application>
 </manifest>
