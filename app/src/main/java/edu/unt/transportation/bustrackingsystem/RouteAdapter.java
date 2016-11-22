@@ -13,6 +13,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,7 +63,22 @@ public class RouteAdapter extends ArrayAdapter<BusRoute>
         }
         //Get the UI components in the row_template_routes template and set the initial text values
         TextView routeName = (TextView) convertView.findViewById(R.id.text_view_route_name);
-        TextView routeStops = (TextView) convertView.findViewById(R.id.text_view_route_stop);
+
+        TextView routeStop1 = (TextView) convertView.findViewById(R.id.routes_stop_1);
+        TextView routeStop2 = (TextView) convertView.findViewById(R.id.routes_stop_2);
+        TextView routeStop1Separator = (TextView) convertView.findViewById(R.id
+                .routes_stop_1_separator);
+        TextView routeStop2Separator = (TextView) convertView.findViewById(R.id
+                .routes_stop_2_separator);
+
+        TextView stop1Time1 = (TextView) convertView.findViewById(R.id.routes_stop_1_time_1);
+        TextView stop1Time2 = (TextView) convertView.findViewById(R.id.routes_stop_1_time_2);
+        TextView stop1Time3 = (TextView) convertView.findViewById(R.id.routes_stop_1_time_3);
+        TextView stop2Time1 = (TextView) convertView.findViewById(R.id.routes_stop_2_time_1);
+        TextView stop2Time2 = (TextView) convertView.findViewById(R.id.routes_stop_2_time_2);
+        TextView stop2Time3 = (TextView) convertView.findViewById(R.id.routes_stop_2_time_3);
+
+
         routeName.setText(busRoute.getRouteName());
         //Initialize default values for time parsing
         String stopString = "", timeString = "";
@@ -70,20 +87,68 @@ public class RouteAdapter extends ArrayAdapter<BusRoute>
 
         if (busRoute.getBusStopObjectMap() != null)
         {
-            //If BusStops exist for route, loop through each one, parsing a time string for each
-            // stop
-            for (BusStop busStop : busRoute.getBusStopObjectMap().values())
+            Collection<BusStop> busRouteCollection = busRoute.getBusStopObjectMap().values();
+            Iterator<BusStop> iterator = busRouteCollection.iterator();
+            for (int i = 0; i <= 1; i++)
             {
-                timeString += parseTimeStringFromStop(busRoute, busStop);
+                if (!iterator.hasNext())
+                {
+                    if (i == 0)
+                    {
+                        routeStop1.setText("No Scheduled Stops");
+                        routeStop1.setWidth(500);
+                        routeStop1Separator.setVisibility(View.INVISIBLE);
+                        continue;
+                    }
+                    if (i == 1)
+                    {
+                        routeStop2.setText("");
+                        routeStop2Separator.setVisibility(View.INVISIBLE);
+                        break;
+                    }
+                }
+                BusStop busStop = iterator.next();
+                String fullTimeString = parseTimeStringFromStopNew(busRoute, busStop);
+                if (i == 0)
+                {
+                    routeStop1.setText(busStop.getStopName());
+
+                    String[] timeSplit = fullTimeString.split(",");
+                    if (timeSplit.length >= 1)
+                    {
+                        stop1Time1.setText(timeSplit[0]);
+                        if (timeSplit.length >= 2)
+                        {
+                            stop1Time2.setText(timeSplit[1]);
+                            if (timeSplit.length >= 3)
+                            {
+                                stop1Time3.setText(timeSplit[2]);
+                            }
+                        }
+
+                    }
+
+                }
+                else
+                {
+                    routeStop2.setText(busStop.getStopName());
+                    String[] timeSplit = fullTimeString.split(",");
+                    if (timeSplit.length >= 1)
+                    {
+                        stop2Time1.setText(timeSplit[0]);
+                        if (timeSplit.length >= 2)
+                        {
+                            stop2Time2.setText(timeSplit[1]);
+                            if (timeSplit.length >= 3)
+                            {
+                                stop2Time3.setText(timeSplit[2]);
+                            }
+                        }
+
+                    }
+                }
             }
         }
-        if (timeString.trim().length() == 0)
-        {
-            timeString = "No More Stops Today";
-        }
-        stopString += timeString.trim();
-        routeStops.setText(stopString);
-
         return convertView;
     }
 
@@ -131,6 +196,69 @@ public class RouteAdapter extends ArrayAdapter<BusRoute>
                                 //If no time is in the string, start the string with the bus
                                 // stop's name
                                 timeString += (counter > 0 ? ", " : busStop.getStopName() + ":")
+                                        + time;
+                                counter++;
+                                if (counter == MAX_TIMES_TO_SHOW)
+                                {
+                                    //Reached the maximum number of times to show per stop
+                                    //Append a newline character and return the value
+                                    timeString += "\n";
+                                    return timeString;
+                                }
+                            }
+
+                        } catch (ParseException e)
+                        {
+                            Log.e("RouteAdapter", "Error parsing time " + time, e);
+                        }
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    private String parseTimeStringFromStopNew(BusRoute busRoute, BusStop busStop)
+    {
+        String timeString = "";
+        Calendar calendar = Calendar.getInstance();
+        int counter = 0;
+        //If the bus stop has a route schedule, as non major bus stops will not have a set
+        // schedule and may be skipped
+        if (busStop.getRouteSchedule() != null && busStop.getRouteSchedule().size() > 0)
+        {
+            Map<String, List<StopSchedule>> theList = busStop.getRouteSchedule();   //Get the
+            // Route Schedule Map to a more easily readable list variable
+            if (theList.containsKey(busRoute.getRouteId())) //If theList has the current bus
+            // route id as a key
+            {
+                List<StopSchedule> scheduleTimes = theList.get(busRoute.getRouteId());  //Get the
+                // schedule times in a more easily readable list variable
+                for (StopSchedule stopSchedule : scheduleTimes) //Loop through the StopSchedules
+                {
+                    if (!stopSchedule.getDayOfWeek().equalsIgnoreCase(getDayStringForToday()))
+                        continue; //Not current day, ignore
+                    for (String time : stopSchedule.getTimingsList())   //Loop through each time
+                    // value in the day's schedule
+                    {
+                        try
+                        {
+                            //Converts the current time and the time looped through into
+                            // milliseconds
+                            int timeBusStop = (int) (dateFormat.parse(time).getTime() % (24 * 60
+                                    * 60 *
+                                    1000L));
+                            int timeCurrent = (int) (calendar.getTime().getTime() % (24 * 60 * 60 *
+                                    1000L));
+                            //If the current time is smaller than the bus stop's time we're
+                            // looking at
+                            //add the time to the timeString
+                            if (timeCurrent < timeBusStop)
+                            {
+                                //Check to see if a time has been added or not.
+                                //If no time is in the string, start the string with the bus
+                                // stop's name
+                                timeString += (counter > 0 ? ", " : "")
                                         + time;
                                 counter++;
                                 if (counter == MAX_TIMES_TO_SHOW)
