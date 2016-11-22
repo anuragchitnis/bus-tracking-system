@@ -14,8 +14,8 @@ import static org.junit.Assert.assertNotEquals;
 
 public class BusStopReceiverTest {
 
-    BusStopReceiver busStopReceiver;
-    BusStop testBusStop;
+    private BusStopReceiver busStopReceiver;
+    private BusStop testBusStop;
 
     @Before
     public void setUp() {

@@ -42,7 +42,8 @@ import java.util.Map;
 
 import edu.unt.transportation.bustrackingsystem.firebase.BusStopListener;
 import edu.unt.transportation.bustrackingsystem.firebase.BusStopReceiver;
-import edu.unt.transportation.bustrackingsystem.firebase.VehicleMapChangeListener;
+import edu.unt.transportation.bustrackingsystem.firebase.VehicleChangeListener;
+import edu.unt.transportation.bustrackingsystem.firebase.VehicleMapChangeReceiver;
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 import edu.unt.transportation.bustrackingsystem.model.StopSchedule;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
@@ -78,7 +79,7 @@ import static edu.unt.transportation.bustrackingsystem.util.GeneralUtil.getDaySt
  */
 
 public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyCallback,
-        ActivityCompat.OnRequestPermissionsResultCallback, ValueEventListener, BusStopListener
+        ActivityCompat.OnRequestPermissionsResultCallback, VehicleChangeListener, BusStopListener
 {
 
     /**
@@ -108,10 +109,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      */
     private List<BusStop> busStopList = new ArrayList<>();
     /**
-     * Reference of the 'vehicles' node, where we have all the vehicle objects located
-     */
-    private DatabaseReference vehiclesRef;
-    /**
      * We are keeping all the bus stop markers in a list so that we can remove them and add them
      * on the UI,
      * whenever user toggles the 'show bus stops' checkbox
@@ -126,6 +123,11 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      * Listener to receive callbacks for bus stops on the selected route
      */
     private BusStopReceiver busStopReceiver;
+
+    /**
+     * Listens to the change in vehicle map of a selected route
+     */
+    private VehicleMapChangeReceiver vehicleMapChangeReceiver;
     /**
      * Checkbox view to show and hide bus stop location
      */
@@ -252,15 +254,14 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         markerMap = new HashMap<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        vehiclesRef = mDatabase.child(FIREBASE_VEHICLES);
         busStopReceiver = new BusStopReceiver();
         /**
          * Set the routeID, whose vehicleMap we want to listen to and register for the listener
          */
-        VehicleMapChangeListener vehicleMapChangeListener = new VehicleMapChangeListener();
+        vehicleMapChangeReceiver = new VehicleMapChangeReceiver();
         if (null != routeID)
         {
-            vehicleMapChangeListener.registerListener(this,routeID);
+            vehicleMapChangeReceiver.registerListener(this,routeID);
             DatabaseReference busStopRef = mDatabase.child("routes/" + routeID + "/busStopMap");
             busStopRef.addListenerForSingleValueEvent(new ValueEventListener()
             {
@@ -341,6 +342,16 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        /**
+         * Remove listeners for bus stop and vehicle change
+         */
+        busStopReceiver.removeListener(this);
+        vehicleMapChangeReceiver.removeListener(this);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults)
     {
@@ -398,37 +409,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         return scheduleListMap;
     }
 
-    @Override
-    public void onDataChange(DataSnapshot dataSnapshot)
-    {
-        Log.d(TAG, "vehicleChangeListener : onDataChange " + dataSnapshot.getKey());
-        Vehicle vehicleSnapShot = dataSnapshot.getValue(Vehicle.class);
-        LatLng vehiclePosition = new LatLng(vehicleSnapShot.getLatitude(), vehicleSnapShot
-                .getLongitude());
-        if (vehicleList.contains(vehicleSnapShot))
-        {
-            // Replace the old vehicle object with the new one
-            vehicleList.set(vehicleList.indexOf(vehicleSnapShot), vehicleSnapShot);
-            /**
-             * If the vehicle is already present on the UI and in the vehicleList,
-             * most probably the position is updated, so we update the marker position
-             */
-            markerMap.get(vehicleSnapShot.getVehicleID()).setPosition(vehiclePosition);
-        }
-        else
-        {
-            /**
-             * Perform following operations if new vehicle is added on the route
-             */
-            vehicleList.add(vehicleSnapShot);
-            Marker newVehicleMarker = mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(bus))
-                    .position(vehiclePosition)
-                    .flat(true));
-            markerMap.put(vehicleSnapShot.getVehicleID(), newVehicleMarker);
-        }
-    }
-
     /**
      * This method is invoked when user clicks on the show schedule checkbox on the User Interface
      *
@@ -474,12 +454,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
             }
         }
 
-    }
-
-    @Override
-    public void onCancelled(DatabaseError databaseError)
-    {
-        Log.e(TAG, "vehicleChangeListener : onCancelled() " + databaseError.getMessage());
     }
 
     /**
@@ -550,5 +524,33 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     public void onBusStopAdded(BusStop busStop) {
         if (!busStopList.contains(busStop))
             busStopList.add(busStop);
+    }
+
+    @Override
+    public void onVehicleChanged(Vehicle vehicle) {
+        LatLng vehiclePosition = new LatLng(vehicle.getLatitude(), vehicle
+                .getLongitude());
+        if (vehicleList.contains(vehicle))
+        {
+            // Replace the old vehicle object with the new one
+            vehicleList.set(vehicleList.indexOf(vehicle), vehicle);
+            /**
+             * If the vehicle is already present on the UI and in the vehicleList,
+             * most probably the position is updated, so we update the marker position
+             */
+            markerMap.get(vehicle.getVehicleID()).setPosition(vehiclePosition);
+        }
+        else
+        {
+            /**
+             * Perform following operations if new vehicle is added on the route
+             */
+            vehicleList.add(vehicle);
+            Marker newVehicleMarker = mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(bus))
+                    .position(vehiclePosition)
+                    .flat(true));
+            markerMap.put(vehicle.getVehicleID(), newVehicleMarker);
+        }
     }
 }

@@ -7,27 +7,28 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 /**
  * This class tracks the changes to the vehicle map of the given route
  * Created by Anurag Chitnis on 11/17/2016.
  */
 
-public class VehicleMapChangeListener implements ChildEventListener{
-    private String TAG = VehicleMapChangeListener.class.getName();
+public class VehicleMapChangeReceiver implements ChildEventListener {
+    private String TAG = VehicleMapChangeReceiver.class.getName();
     private static final String FIREBASE_VEHICLES = "vehicles";
     private DatabaseReference vehicleMapRef;
-    private ValueEventListener valueEventListener;
+    private VehicleReceiver vehicleReceiver;
+    private VehicleChangeListener vehicleChangeListener;
     private DatabaseReference mDatabase;
     /**
      * Reference of the 'vehicles' node, where we have all the vehicle objects located
      */
     private DatabaseReference vehiclesRef;
 
-    public VehicleMapChangeListener() {
+    public VehicleMapChangeReceiver() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         vehiclesRef = mDatabase.child(FIREBASE_VEHICLES);
+        vehicleReceiver = new VehicleReceiver();
     }
 
     @Override
@@ -35,7 +36,7 @@ public class VehicleMapChangeListener implements ChildEventListener{
     {
         Log.d(TAG, "onChildAdded " + dataSnapshot.getKey());
         //Register to listen to the changes made to all the vehicles on this route
-        vehiclesRef.child(dataSnapshot.getKey()).addValueEventListener(valueEventListener);
+        vehicleReceiver.registerListener(vehicleChangeListener, dataSnapshot.getKey());
     }
 
     @Override
@@ -48,34 +49,35 @@ public class VehicleMapChangeListener implements ChildEventListener{
     public void onChildRemoved(DataSnapshot dataSnapshot)
     {
         //Remove the listener for this bus as we don't want to receive updates from it anymore
-        vehiclesRef.child(dataSnapshot.getKey()).removeEventListener(valueEventListener);
+        vehiclesRef.child(dataSnapshot.getKey()).removeEventListener(vehicleReceiver);
     }
 
     @Override
     public void onChildMoved(DataSnapshot dataSnapshot, String s)
     {
-        Log.w(TAG, "VehicleMapChangeListener : onChildMoved() " + s);
+        Log.w(TAG, "VehicleMapChangeReceiver : onChildMoved() " + s);
     }
 
     @Override
     public void onCancelled(DatabaseError databaseError)
     {
-        Log.e(TAG, "VehicleMapChangeListener : onCancelled() " + databaseError.getMessage());
+        Log.e(TAG, "VehicleMapChangeReceiver : onCancelled() " + databaseError.getMessage());
     }
 
     /**
      * Register for receiving the callbacks for all the vehicles on the specified route
-     * @param valueEventListener This listener will receive callbacks whenever a new child is added
+     * @param vehicleChangeListener This listener will receive callbacks whenever a new child is added
      * @param routeID route, whose vehicles you want to keep track of
      */
-    public void registerListener(ValueEventListener valueEventListener, String routeID)
+    public void registerListener(VehicleChangeListener vehicleChangeListener, String routeID)
     {
-        this.valueEventListener = valueEventListener;
+        this.vehicleChangeListener = vehicleChangeListener;
         vehicleMapRef = mDatabase.child("routes/" + routeID + "/vehicleMap");
         vehicleMapRef.addChildEventListener(this);
     }
 
-    public void removeListener(ValueEventListener valueEventListener) {
-        vehicleMapRef.removeEventListener(valueEventListener);
+    public void removeListener(VehicleChangeListener vehicleChangeListener) {
+        vehicleMapRef.removeEventListener(vehicleReceiver);
+        vehicleReceiver.removeListener(vehicleChangeListener);
     }
 }
