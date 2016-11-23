@@ -1,0 +1,276 @@
+package edu.unt.transportation.bustrackingsystem;
+
+import android.app.IntentService;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+
+import com.firebase.client.Firebase;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import edu.unt.transportation.bustrackingsystem.model.BusRoute;
+import edu.unt.transportation.bustrackingsystem.model.Vehicle;
+
+import static com.google.android.gms.location.LocationServices.API;
+import static com.google.android.gms.location.LocationServices.FusedLocationApi;
+
+/**
+ * <b>Driver Activity:</b> When driver logs in, this activity updates the
+ * vehicle location.
+ * <b>Created By:</b> Satyanarayana
+ * <b>Revised By:</b> Satyanarayana
+ * <b>Descritpion:</b> An activity that shows map and<br/>
+ * keep pushing the latest location to firebase as vehicle moves
+ * <b>Data Structre:</b> Uses some final static variables, instance of
+ * Vechicle and BusRoute classes
+ */
+public class DriverService extends IntentService implements ActivityCompat.OnRequestPermissionsResultCallback,
+        LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+    /**
+     * Firebase root URL
+     */
+    private static final String FIREBASE_URL = "https://untbustracking-acb72.firebaseio.com/";
+
+    /**
+     * Firebase vehicle root, the vehicle that
+     * was selected by driver while logging in
+     */
+    private static String FIREBASE_VEHICLE_NODE = null;
+
+    /**
+     * Firebase route root, the route that
+     * wast selected by driver while logging in
+     */
+    private static String FIREBASE_ROUTE_NODE = null;
+
+    /**
+     * Google Map private variable, that was called
+     * onMapReady event fired
+     */
+    private GoogleMap mMap = null;
+
+    /**
+     * Firebase instance variable
+     */
+    private Firebase mFirebase = null;
+
+    /**
+     * GogoleAPIClient, to receieve map
+     * location updates
+     */
+    private GoogleApiClient mGoogleApiClient = null;
+
+    /**
+     * LatLong bounds of hte
+     * location
+     */
+    private LatLngBounds.Builder mBounds = new LatLngBounds.Builder();
+
+    /**
+     * An instance of Vehicle class
+     * passed from SignInActivity, the
+     * vehicle that the driver checked out
+     */
+    private Vehicle vehicle = null;
+
+    /**
+     * An instance of BusRoute class
+     * passed from SignInActivity, the
+     * route that the driver checked out
+     */
+    private BusRoute route = null;
+
+    /**
+     * Activity name used to
+     * Log the comments
+     */
+    private static final String TAG = "DriverService";
+
+    /**
+     * Actual location parameters are
+     * stored in this instance
+     */
+    LatLng latLng = null;
+
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+    public DriverService(String name) {
+        super(name);
+    }
+
+    public DriverService() {
+        super("DriverService");
+    }
+
+    /**
+     * When the activty is called, this
+     * function gets invoked which creates and
+     * render the UI
+     */
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        Bundle bundle = intent.getExtras();
+
+        /**
+         * Extracting paramters passed from
+         * SignInActivity
+         */
+        FIREBASE_VEHICLE_NODE = bundle.getString("vehicleId");
+        FIREBASE_ROUTE_NODE = bundle.getString("routeId");
+
+        /**
+         * Deserializing instances passed from
+         * SignInActivity
+         */
+        vehicle = (Vehicle)bundle.getSerializable(FIREBASE_VEHICLE_NODE);
+        route = (BusRoute)bundle.getSerializable((FIREBASE_ROUTE_NODE));
+
+        /**
+         * Set up the API client for Places API
+         */
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(API)
+                .build();
+        mGoogleApiClient.connect();
+
+        /**
+         * Set up Firebase
+         */
+        Firebase.setAndroidContext(this);
+        mFirebase = new Firebase(FIREBASE_URL);
+
+        /**
+         * Making an entry into route's vehicle map
+         * with the vehicle id as true
+         */
+        route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
+        mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+
+        vehicle.setIsAssigned(true);
+        mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
+
+        Log.d("DriverService", "onHandleIntentEnd");
+
+        while(true){
+
+        }
+
+    }
+
+    /**
+     * on this activity is
+     * closed or moved to anotehr
+     * activity, onDestory() method
+     * would be called
+     */
+    public void onDestroy() {
+        Log.d("DriverService", "onDestroy");
+        route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
+        mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+        vehicle.setIsAssigned(false);
+        mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
+        super.onDestroy();
+    }
+
+    /**
+     * onLocation changed, when vehicle is in motion,
+     * the method following would get called as callback,
+     * and updates the location in Firebase
+     * @param location
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        if(vehicle != null){
+            vehicle.setLatitude(location.getLatitude());
+            vehicle.setLongitude(location.getLongitude());
+            mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+        }
+
+    }
+
+    /**
+     * on First time GoogleApiClient connected, this
+     * callback gets called.
+     * @param bundle
+     */
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            /**
+             * If location services are not enabled,
+             * the function following requests the user
+             * to enable them
+             */
+//            requestPermissions(new String[] {
+//                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+//                            android.Manifest.permission.ACCESS_FINE_LOCATION},
+//                            123);
+//            return;
+        }
+        /**
+         * getting the last location available location
+         * onConnected
+         */
+        Location mLastLocation = FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+
+        /**
+         * If last location is found,
+         * creating the LatLng instance and
+         * updating the firebase with vehicles
+         * latest position
+         */
+        if (mLastLocation != null) {
+            latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            if (vehicle != null){
+                vehicle.setLatitude(mLastLocation.getLatitude());
+                vehicle.setLongitude(mLastLocation.getLongitude());
+                mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
+            }
+        }
+
+        /**
+         * setting the frequency of
+         * location requestor, calling
+         * for every 500ms and at fastestinterval of
+         * 300ms
+         */
+        LocationRequest mLocationRequest;
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(500); //5 seconds
+        mLocationRequest.setFastestInterval(300); //3 seconds
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+    }
+}
