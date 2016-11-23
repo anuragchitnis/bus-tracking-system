@@ -1,5 +1,6 @@
 package edu.unt.transportation.bustrackingsystem;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -112,8 +113,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * list of vehicle and routes
      */
-    public static Map<String, Vehicle> vehicles = null;
-    public static Map<String, BusRoute> routes = null;
+    private Map<String, Vehicle> vehicles = null;
+    private Map<String, BusRoute> routes = null;
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -169,41 +170,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
-//        mFirebase.child("/vehicles/").addChildEventListener(new VehicleChildEventHandler(dataAdapter1));
-        mFirebase.child("/vehicles/").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                vehicles.put(dataSnapshot.getKey(), dataSnapshot.getValue(Vehicle.class));
-                dataAdapter1.add(dataSnapshot.getKey());
-                dataAdapter1.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-//        mFirebase.child("/routes/").addChildEventListener(new RouteChildEventHandler(dataAdapter2));
         mFirebase.child("/routes/").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                routes.put(dataSnapshot.getKey(), dataSnapshot.getValue(BusRoute.class));
+                BusRoute route = dataSnapshot.getValue(BusRoute.class);
+                routes.put(dataSnapshot.getKey(), route);
                 dataAdapter2.add(dataSnapshot.getKey());
                 dataAdapter2.notifyDataSetChanged();
             }
@@ -228,6 +200,40 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
+
+        mFirebase.child("/vehicles/").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Vehicle vehicle = dataSnapshot.getValue(Vehicle.class);
+                if(!vehicle.isAssigned()){
+                    vehicles.put(dataSnapshot.getKey(), vehicle);
+                    dataAdapter1.add(dataSnapshot.getKey());
+                    dataAdapter1.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+
 
     }
 
@@ -341,13 +347,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Go to MainActivity
         // Changed by Satya, to pass vehicle id to driver activity
         Bundle bundle = new Bundle();
-        Intent driverActivityIntent = new Intent(SignInActivity.this, DriverActivity.class);
+        Intent routeListActivityIntent = new Intent(this, RouteListActivity.class);
         bundle.putSerializable(vehicleId, vehicles.get(vehicleId));
         bundle.putSerializable(routeId, routes.get(routeId));
         bundle.putString("vehicleId", vehicleId);
         bundle.putString("routeId", routeId);
-        driverActivityIntent.putExtras(bundle);
-        startActivity(driverActivityIntent);
+        routeListActivityIntent.putExtras(bundle);
+        setResult(Activity.RESULT_OK, routeListActivityIntent);
         finish();
     }
 

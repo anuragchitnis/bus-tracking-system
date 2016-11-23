@@ -17,6 +17,8 @@ public class Vehicle implements Serializable{
     private String timestamp;
     private String vehicleType;
     private String driverID;
+    private boolean assigned;
+
 
     public Vehicle() {
         //Default Constructor for use with firebase
@@ -88,6 +90,14 @@ public class Vehicle implements Serializable{
 
     public void setDriver(String driver) {
         this.driverID = driver;
+    }
+
+    public void setIsAssigned(boolean isAssigned) {
+        this.assigned = isAssigned;
+    }
+
+    public boolean isAssigned() {
+        return assigned;
     }
 
     @Override

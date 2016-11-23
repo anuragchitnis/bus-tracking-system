@@ -111,6 +111,17 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     {
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = data.getExtras();
+                Intent driverServiceIntent = new Intent(this, DriverService.class);
+                driverServiceIntent.putExtras(bundle);
+                startService(driverServiceIntent);
+            }
+        }
+    }
 /*    @Override
     public void onDataChange(DataSnapshot dataSnapshot)
     {
@@ -172,7 +183,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         switch (item.getItemId())
         {
             case R.id.action_signIn:
-                startActivity(new Intent(this, SignInActivity.class));
+                startActivityForResult(new Intent(this, SignInActivity.class), 1);
                 return true;
 
             default:

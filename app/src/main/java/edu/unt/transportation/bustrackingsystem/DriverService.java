@@ -1,31 +1,26 @@
 package edu.unt.transportation.bustrackingsystem;
 
+import android.app.IntentService;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
+
+import static com.google.android.gms.location.LocationServices.API;
+import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
 /**
  * <b>Driver Activity:</b> When driver logs in, this activity updates the
@@ -37,7 +32,7 @@ import edu.unt.transportation.bustrackingsystem.model.Vehicle;
  * <b>Data Structre:</b> Uses some final static variables, instance of
  * Vechicle and BusRoute classes
  */
-public class DriverActivity extends AppCompatActivity implements OnMapReadyCallback,
+public class DriverService extends IntentService implements ActivityCompat.OnRequestPermissionsResultCallback,
         LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     /**
      * Firebase root URL
@@ -97,7 +92,7 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
      * Activity name used to
      * Log the comments
      */
-    private static final String TAG = "DriverActivity";
+    private static final String TAG = "DriverService";
 
     /**
      * Actual location parameters are
@@ -106,33 +101,26 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
     LatLng latLng = null;
 
     /**
-     * Textviews
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
      */
-    TextView routeTextView = null;
-    TextView vehicleTextView = null;
-    TextView speedTextView = null;
+    public DriverService(String name) {
+        super(name);
+    }
+
+    public DriverService() {
+        super("DriverService");
+    }
 
     /**
      * When the activty is called, this
      * function gets invoked which creates and
      * render the UI
-     * @param savedInstanceState
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        /**
-         * setting content view/layout of
-         * Driver Activity
-         */
-        setContentView(R.layout.activity_driver);
-
-        /**
-         * creating toolbar of the DriverActivity
-         */
-        Toolbar toolbar = (Toolbar) findViewById(R.id.drivertoolbar);
-        setSupportActionBar(toolbar);
-        Bundle bundle = getIntent().getExtras();
+    protected void onHandleIntent(Intent intent) {
+        Bundle bundle = intent.getExtras();
 
         /**
          * Extracting paramters passed from
@@ -149,19 +137,12 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         route = (BusRoute)bundle.getSerializable((FIREBASE_ROUTE_NODE));
 
         /**
-         * Set up Google Maps
-         */
-        SupportMapFragment mapFragment = (SupportMapFragment)
-                getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        /**
          * Set up the API client for Places API
          */
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
+                .addApi(API)
                 .build();
         mGoogleApiClient.connect();
 
@@ -178,12 +159,15 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         route.getVehicleMap().put(FIREBASE_VEHICLE_NODE, true);
         mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
 
-        routeTextView = (TextView) findViewById(R.id.textView3);
-        vehicleTextView = (TextView) findViewById(R.id.textView4);
-        speedTextView = (TextView) findViewById(R.id.textView5);
-        routeTextView.setText("Route: ["+FIREBASE_ROUTE_NODE+"]");
-        vehicleTextView.setText("Vehicle: ["+FIREBASE_VEHICLE_NODE+"]");
-        vehicleTextView.setText("Speed: ["+0.0+"]");
+        vehicle.setIsAssigned(true);
+        mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
+
+        Log.d("DriverService", "onHandleIntentEnd");
+
+        while(true){
+
+        }
+
     }
 
     /**
@@ -193,82 +177,13 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
      * would be called
      */
     public void onDestroy() {
+        Log.d("DriverService", "onDestroy");
+        route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
+        mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
+        vehicle.setIsAssigned(false);
+        mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
         super.onDestroy();
     }
-
-    /**
-     * Map setup. This is called when the GoogleMap is available to manipulate.
-     * @param googleMap
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            /**
-             * If location services are not enabled,
-             * the function following requests the user
-             * to enable them
-             */
-            requestPermissions(new String[] {
-                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION},
-                            123);
-            return;
-        }
-        /**
-         * setting the GPS locatio checkup and
-         * button enabled, that shows the button
-         * on the top right corner
-         */
-        mMap.setMyLocationEnabled(true);
-
-    }
-
-    /**
-     * On backbutton pressed, letting
-     * the super class know about the
-     * event
-     */
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed(); // Comment this super call to avoid calling finish()
-    }
-
-//    /**
-//     * a callback method called onCreate()
-//     * @param menu
-//     * @return
-//     */
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.driver, menu);
-//        return true;
-//    }
-//
-//    /**
-//     * onSelect options menu from top right corner,
-//     * this method gets called.
-//     * @param item
-//     * @return
-//     */
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        /**
-//         * on Click of sign out
-//         * the following block of code clears
-//         * route list, vehicle list and deletes
-//         * an entry from vehicel map
-//         */
-//        if (id == R.id.action_signOut) {
-//            route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
-//            mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
-//            startActivity(new Intent(this, RouteListActivity.class));
-//            finish();
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     /**
      * onLocation changed, when vehicle is in motion,
@@ -283,16 +198,7 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
             vehicle.setLatitude(location.getLatitude());
             vehicle.setLongitude(location.getLongitude());
             mFirebase.child("/vehicles/"+FIREBASE_VEHICLE_NODE).setValue(vehicle);
-            speedTextView.setText("Speed: ["+location.getSpeed()+"], m/s");
         }
-        /**
-         * zoom to current position
-         */
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(latLng).zoom(14).build();
-
-        mMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(cameraPosition));
 
     }
 
@@ -303,25 +209,18 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
      */
     @Override
     public void onConnected(Bundle bundle) {
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            /**
-             * If location services are not enabled,
-             * the function following requests the user
-             * to enable them
-             */
-            requestPermissions(new String[] {
-                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION},
-                            123);
-            return;
-        }
         /**
          * getting the last location available location
          * onConnected
          */
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        Location mLastLocation = null;
+        try {
+            mLastLocation = FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+        }
+        catch (SecurityException ex) {
+
+        }
 
         /**
          * If last location is found,
@@ -349,7 +248,12 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
         mLocationRequest.setInterval(500); //5 seconds
         mLocationRequest.setFastestInterval(300); //3 seconds
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        try{
+            FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }catch(SecurityException e){
+
+        }
+
     }
 
     @Override
@@ -359,6 +263,11 @@ public class DriverActivity extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
     }
 }
