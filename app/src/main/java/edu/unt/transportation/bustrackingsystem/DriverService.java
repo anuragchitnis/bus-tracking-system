@@ -2,7 +2,6 @@ package edu.unt.transportation.bustrackingsystem;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -210,25 +209,18 @@ public class DriverService extends IntentService implements ActivityCompat.OnReq
      */
     @Override
     public void onConnected(Bundle bundle) {
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            /**
-             * If location services are not enabled,
-             * the function following requests the user
-             * to enable them
-             */
-//            requestPermissions(new String[] {
-//                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-//                            android.Manifest.permission.ACCESS_FINE_LOCATION},
-//                            123);
-//            return;
-        }
         /**
          * getting the last location available location
          * onConnected
          */
-        Location mLastLocation = FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        Location mLastLocation = null;
+        try {
+            mLastLocation = FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+        }
+        catch (SecurityException ex) {
+
+        }
 
         /**
          * If last location is found,
@@ -256,7 +248,12 @@ public class DriverService extends IntentService implements ActivityCompat.OnReq
         mLocationRequest.setInterval(500); //5 seconds
         mLocationRequest.setFastestInterval(300); //3 seconds
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        try{
+            FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }catch(SecurityException e){
+
+        }
+
     }
 
     @Override
