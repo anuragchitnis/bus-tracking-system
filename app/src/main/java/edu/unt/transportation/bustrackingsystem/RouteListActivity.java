@@ -51,7 +51,6 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     private Map<String, BusRoute> busRouteMap; //Map of RouteIDs to BusRoute objects
     private BusRoute selectedRoute; //The bus route selected by the user
     private DatabaseReference mDatabase;  //reference to the root node of the Firebase database
-    private DatabaseReference routeRoot;  //reference to the root node of the routes in the
     // Firebase database
 
     @Override
@@ -68,12 +67,8 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         busRouteMap = new HashMap<>();
         //Initialize mDatabase value and add activity as ChildEvent Listener
         mDatabase = FirebaseDatabase.getInstance().getReference();
-//        mDatabase.addChildEventListener(this);
-        //Iniitalize routeRoot value and add activity as ValueEvent listener
-        routeRoot = mDatabase.child(ROOT_ROUTE);
         BusRouteReceiver busRouteReceiver = new BusRouteReceiver();
         busRouteReceiver.registerListener(this);
-//        routeRoot.addValueEventListener(this);
         //Initialize routeList component with routeAdapter and set current class listeners
         routeList = (ListView) findViewById(R.id.list_routes);
         routeAdapter = new RouteAdapter(RouteListActivity.this, R.layout.row_template_routes);
@@ -88,8 +83,6 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         Intent intent = new Intent(this, DriverService.class);
         stopService(intent);
         super.onDestroy();
-//        routeRoot.removeEventListener((ChildEventListener) this);   //remove the event listener
-        // from routeRoot now that we're done with the activity
     }
 
     @Override
@@ -112,53 +105,6 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     public void onNothingSelected(AdapterView<?> parent)
     {
     }
-
-/*    @Override
-    public void onDataChange(DataSnapshot dataSnapshot)
-    {
-        try
-        {
-            setUpRoutes(dataSnapshot.child(ROOT_ROUTE));    //call method to set up routes when
-            // the Firebase data has changed
-        } catch (Exception e)
-        {
-            Log.e("onDataChange", "Error loading routes", e);
-        }
-    }
-
-    @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s)
-    {
-        if (dataSnapshot.getKey().equals(ROOT_ROUTE))
-        {
-            setUpRoutes(dataSnapshot);  //call method to set up routes when the Firebase route
-            // data has a new route added to it
-        }
-    }
-
-    //empty override method, nothing to do here at the moment
-    @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s)
-    {
-        if (dataSnapshot.getKey().equals(ROOT_ROUTE))
-        {
-            setUpRoutes(dataSnapshot); //call method to set up routes when the Firebase route
-            // data is changed
-        }
-    }
-
-    //empty override method, nothing to do here at the moment
-    @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot)
-    {
-    }
-
-    //empty override method, nothing to do here at the moment
-    @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s)
-    {
-
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -205,95 +151,6 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         intent.putExtra(KEY_ROUTE_NAME, getSelectedRoute().getRouteName());
         startActivity(intent);
     }
-
-    //Set up Routes takes a datasnapshot as a parameter.  The parameter datasnapshot should be
-    // the root of the BusRoute node
-    //setUpRoutes does the work of setting up the data within the routeAdapter
-//    private void setUpRoutes(DataSnapshot dataSnapshot)
-//    {
-//        for (DataSnapshot snapshot : dataSnapshot.getChildren())    //For each BusRoute node
-//        {
-//            BusRoute b = snapshot.getValue(BusRoute.class);         //Bind the snapshot to an
-//            // instance of BusRoute
-//            getBusRoutes().put(b.getRouteId(), b);                  //Add BusRoute object to HashMap
-//            if (b.getBusStopMap() != null)
-//            {
-//                for (String id : b.getBusStopMap().keySet())    //For each bus stop, register a
-//                // listener for that BusStop ID
-//                {
-//                    BusStopReceiver busStopReceiver = new BusStopReceiver();
-//                    busStopReceiver.registerListener(this, id);
-//                }
-//            }
-//        }
-//        //Clear the current routeAdapter values, add the current set of BusRoute values, and
-//        // notify the adapter that the underlying data has changed
-//        routeAdapter.clear();
-//        routeAdapter.addAll(getBusRoutes().values());
-//        routeAdapter.notifyDataSetChanged();
-//        //If we're viewing the map activity, navigate to the map with the new route data
-//        if (BusTrackingSystem.isMapActivityVisible())
-//        {
-//            navigateToMap();
-//        }
-//    }
-
-//    //Implementation of ValueEventLister
-//    private class BusStopListener implements ValueEventListener
-//    {
-//
-//        private final String routeID;           //The Bus Stop's associated Route ID
-//        DatabaseReference busStopReference;     //DatabaseReference to a specific bus stop
-//
-//        public BusStopListener(String routeId)
-//        {
-//            this.routeID = routeId;
-//        }
-//
-//        //Registers a BusStop listener for any changes to a single BusStop
-//        //parameter stopID is the key for the bus stop registered
-//        public void registerListener(String stopID)
-//        {
-//            busStopReference = mDatabase.child("stops");
-//            busStopReference.child(stopID).addListenerForSingleValueEvent(this);
-//        }        //When the BusStop data has changed, rebuild the BusRoutes map and notify the
-//        // adapter
-//
-//        // that changes were made
-//        @Override
-//        public void onDataChange(DataSnapshot dataSnapshot)
-//        {
-//            BusStop busStopSnapShot = dataSnapshot.getValue(BusStop.class); //Get an instance of
-//            // BusStop from the dataSnapshot
-//            if (getBusRoutes().containsKey(routeID))    //The bus routes listed reference a bus
-//            // route using this stop
-//            {
-//                //Get the BusRoute by routeID, and add this BusStop, using its StopID as a key,
-//                // to the BusStopObjectMap
-//                //The BusStopObjectMap will be used in the RouteAdapter
-//                getBusRoutes().get(routeID).getBusStopObjectMap().put(busStopSnapShot.getStopID()
-//                        , busStopSnapShot);
-//                routeAdapter.notifyDataSetChanged();
-//
-//            }
-//        }
-//
-//        //Empty override method, nothing to do here at the moment
-//        @Override
-//        public void onCancelled(DatabaseError databaseError)
-//        {
-//
-//        }
-//
-//
-//    }
-//
-//    @Override
-//    public void onCancelled(DatabaseError databaseError)
-//    {
-//
-//    }
-
 
     @Override
     public void onBusStopAdded(BusStop busStop) {

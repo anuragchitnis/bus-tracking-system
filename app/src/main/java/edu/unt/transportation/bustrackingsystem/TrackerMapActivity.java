@@ -500,9 +500,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                 {
                     for (StopSchedule stopSchedule : stopScheduleList)
                     {
-                        if(!stopSchedule.getDayOfWeek().equalsIgnoreCase(getDayStringForToday()))
-                            continue;
-                        else
+                        if(stopSchedule.getDayOfWeek().equalsIgnoreCase(getDayStringForToday()))
                             scheduleListMap.put(busStop.getStopName(), stopSchedule.getTimingsList());
                     }
                 }
@@ -548,6 +546,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
             vehicleList.add(vehicle);
             Marker newVehicleMarker = mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(bus))
+                    .title(vehicle.getVehicleID())
                     .position(vehiclePosition)
                     .flat(true));
             markerMap.put(vehicle.getVehicleID(), newVehicleMarker);

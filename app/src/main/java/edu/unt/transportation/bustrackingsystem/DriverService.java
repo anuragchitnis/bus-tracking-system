@@ -16,6 +16,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -36,7 +37,7 @@ import static com.google.android.gms.location.LocationServices.FusedLocationApi;
  * <b>Data Structre:</b> Uses some final static variables, instance of
  * Vechicle and BusRoute classes
  */
-public class DriverService extends Service implements ActivityCompat.OnRequestPermissionsResultCallback,
+public class DriverService extends Service implements
         LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     /**
      * Firebase root URL
@@ -190,6 +191,7 @@ public class DriverService extends Service implements ActivityCompat.OnRequestPe
         vehicle.setIsAssigned(false);
         mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
         nm.cancelAll();
+        stopLocationUpdates();
         super.onDestroy();
     }
 
@@ -233,6 +235,7 @@ public class DriverService extends Service implements ActivityCompat.OnRequestPe
                     mGoogleApiClient);
         }
         catch (SecurityException ex) {
+            Log.e(TAG, "Check if the location permission is granted "+ex.getMessage());
 
         }
 
@@ -265,7 +268,7 @@ public class DriverService extends Service implements ActivityCompat.OnRequestPe
         try{
             FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }catch(SecurityException e){
-
+            Log.e(TAG, "Check if the location permission is granted "+e.getMessage());
         }
 
     }
@@ -280,8 +283,8 @@ public class DriverService extends Service implements ActivityCompat.OnRequestPe
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
+    protected void stopLocationUpdates() {
+        FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
     }
 }
