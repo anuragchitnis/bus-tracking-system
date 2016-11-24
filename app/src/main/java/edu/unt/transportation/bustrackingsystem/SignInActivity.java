@@ -1,6 +1,8 @@
 package edu.unt.transportation.bustrackingsystem;
 
-import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -347,14 +349,34 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Go to MainActivity
         // Changed by Satya, to pass vehicle id to driver activity
         Bundle bundle = new Bundle();
-        Intent routeListActivityIntent = new Intent(this, RouteListActivity.class);
+        Intent dataServiceIntent = new Intent(this, DriverService.class);
         bundle.putSerializable(vehicleId, vehicles.get(vehicleId));
         bundle.putSerializable(routeId, routes.get(routeId));
         bundle.putString("vehicleId", vehicleId);
         bundle.putString("routeId", routeId);
-        routeListActivityIntent.putExtras(bundle);
-        setResult(Activity.RESULT_OK, routeListActivityIntent);
+        dataServiceIntent.putExtras(bundle);
+        startService(dataServiceIntent);
+        addNotification();
         finish();
+    }
+
+    private void addNotification() {
+        Intent intent = new Intent(this, NotificationReceiver.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+        Notification n  = new Notification.Builder(this)
+                .setContentTitle("New mail from " + "test@gmail.com")
+                .setContentText("Subject")
+                .setSmallIcon(R.drawable.bus)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true)
+                .addAction(R.drawable.bus_stop, "Stop Sharing", pIntent)
+                .build();
+
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
     }
 
     private String usernameFromEmail(String email) {
