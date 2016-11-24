@@ -1,10 +1,12 @@
 package edu.unt.transportation.bustrackingsystem;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -360,6 +362,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     private void addNotification() {
         Intent stopSharingIntent = new Intent(this, NotificationReceiver.class);
 
@@ -374,6 +377,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         Intent intent = new Intent(this, RouteListActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        Notification.Action action = new Notification.Action.Builder(R.drawable.bus_stop, "Stop Sharing", pStopIntent).build();
+
         Notification n  = new Notification.Builder(this)
                 .setContentTitle("Bus Tracking System")
                 .setContentText("Location is being Shared")
@@ -381,7 +387,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
                 .setOngoing(true)
-                .addAction(R.drawable.bus_stop, "Click to Stop Sharing", pStopIntent)
+                .addAction(action)
                 .build();
 
 
