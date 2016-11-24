@@ -349,6 +349,9 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
          */
         busStopReceiver.removeListener(this);
         vehicleMapChangeReceiver.removeListener(this);
+
+        Intent intent = new Intent(this, DriverService.class);
+        stopService(intent);
     }
 
     @Override
@@ -527,12 +530,10 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     @Override
-<<<<<<< HEAD
     public void onVehicleChanged(Vehicle vehicle) {
         LatLng vehiclePosition = new LatLng(vehicle.getLatitude(), vehicle
                 .getLongitude());
-        if (vehicleList.contains(vehicle))
-        {
+        if (vehicleList.contains(vehicle)) {
             // Replace the old vehicle object with the new one
             vehicleList.set(vehicleList.indexOf(vehicle), vehicle);
             /**
@@ -540,9 +541,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
              * most probably the position is updated, so we update the marker position
              */
             markerMap.get(vehicle.getVehicleID()).setPosition(vehiclePosition);
-        }
-        else
-        {
+        } else {
             /**
              * Perform following operations if new vehicle is added on the route
              */
@@ -553,11 +552,5 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                     .flat(true));
             markerMap.put(vehicle.getVehicleID(), newVehicleMarker);
         }
-=======
-    protected void onDestroy() {
-        Intent intent = new Intent(this, DriverService.class);
-        stopService(intent);
-        super.onDestroy();
->>>>>>> DrvierActivityChanges
     }
 }
