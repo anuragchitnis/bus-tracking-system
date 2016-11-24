@@ -59,5 +59,8 @@
                 android:value=".SignInActivity" />
         </service>
 
+        <receiver android:name=".NotificationReceiver">
+        </receiver>
+
 +    </application>
 </manifest>

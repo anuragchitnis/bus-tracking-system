@@ -361,15 +361,27 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void addNotification() {
-        Intent intent = new Intent(this, NotificationReceiver.class);
+        Intent stopSharingIntent = new Intent(this, NotificationReceiver.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(vehicleId, vehicles.get(vehicleId));
+        bundle.putSerializable(routeId, routes.get(routeId));
+        bundle.putString("vehicleId", vehicleId);
+        bundle.putString("routeId", routeId);
+
+        stopSharingIntent.putExtras(bundle);
+        PendingIntent pStopIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), stopSharingIntent, 0);
+
+        Intent intent = new Intent(this, RouteListActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
         Notification n  = new Notification.Builder(this)
-                .setContentTitle("New mail from " + "test@gmail.com")
-                .setContentText("Subject")
+                .setContentTitle("Bus Tracking System")
+                .setContentText("Location is being Shared")
                 .setSmallIcon(R.drawable.bus)
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
-                .addAction(R.drawable.bus_stop, "Stop Sharing", pIntent)
+                .setOngoing(true)
+                .addAction(R.drawable.bus_stop, "Click to Stop Sharing", pStopIntent)
                 .build();
 
 
