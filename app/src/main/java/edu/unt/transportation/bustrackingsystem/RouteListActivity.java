@@ -85,6 +85,8 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     @Override
     protected void onDestroy()
     {
+        Intent intent = new Intent(this, DriverService.class);
+        stopService(intent);
         super.onDestroy();
 //        routeRoot.removeEventListener((ChildEventListener) this);   //remove the event listener
         // from routeRoot now that we're done with the activity

@@ -171,7 +171,7 @@ public class DriverService extends Service implements ActivityCompat.OnRequestPe
 
         Log.d("DriverService", "onHandleIntentEnd");
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     /**

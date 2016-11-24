@@ -551,4 +551,11 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         if (!busStopList.contains(busStop))
             busStopList.add(busStop);
     }
+
+    @Override
+    protected void onDestroy() {
+        Intent intent = new Intent(this, DriverService.class);
+        stopService(intent);
+        super.onDestroy();
+    }
 }
