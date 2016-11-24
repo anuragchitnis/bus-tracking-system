@@ -85,6 +85,8 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     @Override
     protected void onDestroy()
     {
+        Intent intent = new Intent(this, DriverService.class);
+        stopService(intent);
         super.onDestroy();
 //        routeRoot.removeEventListener((ChildEventListener) this);   //remove the event listener
         // from routeRoot now that we're done with the activity
@@ -111,17 +113,6 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     {
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                Bundle bundle = data.getExtras();
-                Intent driverServiceIntent = new Intent(this, DriverService.class);
-                driverServiceIntent.putExtras(bundle);
-                startService(driverServiceIntent);
-            }
-        }
-    }
 /*    @Override
     public void onDataChange(DataSnapshot dataSnapshot)
     {
@@ -183,7 +174,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         switch (item.getItemId())
         {
             case R.id.action_signIn:
-                startActivityForResult(new Intent(this, SignInActivity.class), 1);
+                startActivity(new Intent(this, SignInActivity.class));
                 return true;
 
             default:

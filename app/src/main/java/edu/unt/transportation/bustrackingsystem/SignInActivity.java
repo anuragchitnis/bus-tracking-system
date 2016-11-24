@@ -1,8 +1,12 @@
 package edu.unt.transportation.bustrackingsystem;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -347,14 +351,50 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Go to MainActivity
         // Changed by Satya, to pass vehicle id to driver activity
         Bundle bundle = new Bundle();
-        Intent routeListActivityIntent = new Intent(this, RouteListActivity.class);
+        Intent dataServiceIntent = new Intent(this, DriverService.class);
         bundle.putSerializable(vehicleId, vehicles.get(vehicleId));
         bundle.putSerializable(routeId, routes.get(routeId));
         bundle.putString("vehicleId", vehicleId);
         bundle.putString("routeId", routeId);
-        routeListActivityIntent.putExtras(bundle);
-        setResult(Activity.RESULT_OK, routeListActivityIntent);
+        dataServiceIntent.putExtras(bundle);
+        startService(dataServiceIntent);
+        addNotification();
         finish();
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+    private void addNotification() {
+        Intent stopSharingIntent = new Intent(this, NotificationReceiver.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(vehicleId, vehicles.get(vehicleId));
+        bundle.putSerializable(routeId, routes.get(routeId));
+        bundle.putString("vehicleId", vehicleId);
+        bundle.putString("routeId", routeId);
+
+        stopSharingIntent.putExtras(bundle);
+        PendingIntent pStopIntent = PendingIntent.getBroadcast(this, (int) System.currentTimeMillis(), stopSharingIntent, 0);
+
+        Intent intent = new Intent(this, RouteListActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        Notification.Action action = new Notification.Action.Builder(android.R.drawable.screen_background_light_transparent, "Stop Sharing", pStopIntent).build();
+
+        Notification n  = new Notification.Builder(this)
+                .setContentTitle("Bus Tracking System")
+                .setContentText("Location is being Shared")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true)
+                .setOngoing(true)
+                .addAction(action)
+                .build();
+
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
     }
 
     private String usernameFromEmail(String email) {

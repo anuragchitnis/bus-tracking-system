@@ -527,6 +527,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     @Override
+<<<<<<< HEAD
     public void onVehicleChanged(Vehicle vehicle) {
         LatLng vehiclePosition = new LatLng(vehicle.getLatitude(), vehicle
                 .getLongitude());
@@ -552,5 +553,11 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                     .flat(true));
             markerMap.put(vehicle.getVehicleID(), newVehicleMarker);
         }
+=======
+    protected void onDestroy() {
+        Intent intent = new Intent(this, DriverService.class);
+        stopService(intent);
+        super.onDestroy();
+>>>>>>> DrvierActivityChanges
     }
 }
