@@ -1,6 +1,8 @@
 package edu.unt.transportation.bustrackingsystem;
 
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -182,10 +184,12 @@ public class DriverService extends Service implements ActivityCompat.OnRequestPe
      */
     public void onDestroy() {
         Log.d("DriverService", "onDestroy");
+        NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
         mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);
         vehicle.setIsAssigned(false);
         mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
+        nm.cancelAll();
         super.onDestroy();
     }
 

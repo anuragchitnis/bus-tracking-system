@@ -373,7 +373,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         bundle.putString("routeId", routeId);
 
         stopSharingIntent.putExtras(bundle);
-        PendingIntent pStopIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), stopSharingIntent, 0);
+        PendingIntent pStopIntent = PendingIntent.getBroadcast(this, (int) System.currentTimeMillis(), stopSharingIntent, 0);
 
         Intent intent = new Intent(this, RouteListActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
