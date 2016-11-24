@@ -378,12 +378,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = new Intent(this, RouteListActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
-        Notification.Action action = new Notification.Action.Builder(R.drawable.bus_stop, "Stop Sharing", pStopIntent).build();
+        Notification.Action action = new Notification.Action.Builder(android.R.drawable.screen_background_light_transparent, "Stop Sharing", pStopIntent).build();
 
         Notification n  = new Notification.Builder(this)
                 .setContentTitle("Bus Tracking System")
                 .setContentText("Location is being Shared")
-                .setSmallIcon(R.drawable.bus)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
                 .setOngoing(true)

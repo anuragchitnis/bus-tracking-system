@@ -90,7 +90,7 @@ public class BusRoute implements Serializable
 
     public Map<String, Boolean> getVehicleMap()
     {
-        return vehicleMap;
+        return vehicleMap == null ? new HashMap<String, Boolean>() : vehicleMap;
     }
 
     public void setVehicleMap(Map<String, Boolean> vehicleMap)
