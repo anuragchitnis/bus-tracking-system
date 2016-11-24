@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 /**
  * Created by Satyanarayana on 11/23/2016.
@@ -11,8 +12,8 @@ import android.content.Intent;
 public class NotificationReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent service = new Intent();
-        service.setComponent(new ComponentName(context,DriverService.class));
-        context.stopService(service);
+        Log.d("NotificationReceiver", "onReceive");
+        intent.setComponent(new ComponentName(context,DriverService.class));
+        context.stopService(intent);
     }
 }

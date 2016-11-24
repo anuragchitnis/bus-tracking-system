@@ -1,9 +1,11 @@
 package edu.unt.transportation.bustrackingsystem;
 
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
@@ -32,7 +34,7 @@ import static com.google.android.gms.location.LocationServices.FusedLocationApi;
  * <b>Data Structre:</b> Uses some final static variables, instance of
  * Vechicle and BusRoute classes
  */
-public class DriverService extends IntentService implements ActivityCompat.OnRequestPermissionsResultCallback,
+public class DriverService extends Service implements ActivityCompat.OnRequestPermissionsResultCallback,
         LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     /**
      * Firebase root URL
@@ -100,18 +102,18 @@ public class DriverService extends IntentService implements ActivityCompat.OnReq
      */
     LatLng latLng = null;
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-    public DriverService(String name) {
-        super(name);
-    }
-
-    public DriverService() {
-        super("DriverService");
-    }
+//    /**
+//     * Creates an IntentService.  Invoked by your subclass's constructor.
+//     *
+//     * @param name Used to name the worker thread, important only for debugging.
+//     */
+//    public DriverService(String name) {
+//        super(name);
+//    }
+//
+//    public DriverService() {
+//        super("DriverService");
+//    }
 
     /**
      * When the activty is called, this
@@ -119,7 +121,12 @@ public class DriverService extends IntentService implements ActivityCompat.OnReq
      * render the UI
      */
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onCreate() {
+        Log.d(TAG, "onCreate called");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle bundle = intent.getExtras();
 
         /**
@@ -164,10 +171,7 @@ public class DriverService extends IntentService implements ActivityCompat.OnReq
 
         Log.d("DriverService", "onHandleIntentEnd");
 
-        while(true){
-
-        }
-
+        return START_STICKY;
     }
 
     /**
@@ -183,6 +187,12 @@ public class DriverService extends IntentService implements ActivityCompat.OnReq
         vehicle.setIsAssigned(false);
         mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
         super.onDestroy();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     /**
