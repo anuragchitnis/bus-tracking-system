@@ -40,7 +40,7 @@ public class BusTrackingSystem extends Application
     {
         super.onCreate();
 
-        // Set up Firebase
+        // Set up Firebase database
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(FIREBASE_URL);
         // Make the data persist for offline usage
