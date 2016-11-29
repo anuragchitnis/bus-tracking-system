@@ -86,7 +86,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      * We are using this tag to print the logs in this class
      */
     private static final String TAG = TrackerMapActivity.class.getName();
-    private static final String FIREBASE_VEHICLES = "vehicles";
     /**
      * Request code for location permission request.
      *
@@ -99,7 +98,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      * Instance of Google Map to show currently running buses and bus stops
      */
     private GoogleMap mMap;
-    private DatabaseReference mDatabase;
     /**
      * List of the vehicles running on the currently selected
      */
@@ -170,10 +168,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
      */
     private String routeID;
     /**
-     * This is the route name which we get from the previous activity
-     */
-    private String routeName;
-    /**
      * Flag indicating whether a requested permission has been denied after returning in
      * {@link #onRequestPermissionsResult(int, String[], int[])}.
      */
@@ -186,7 +180,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_tracker_map);
 
         routeID = getIntent().getStringExtra(KEY_ROUTE_ID);
-        routeName = getIntent().getStringExtra(KEY_ROUTE_NAME);
+        String routeName = getIntent().getStringExtra(KEY_ROUTE_NAME);
         setTitle(routeName);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -253,7 +247,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
 
         markerMap = new HashMap<>();
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         busStopReceiver = new BusStopReceiver();
         /**
          * Set the routeID, whose vehicleMap we want to listen to and register for the listener

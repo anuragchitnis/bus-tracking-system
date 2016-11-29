@@ -166,9 +166,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // Views
         mEmailField = (EditText) findViewById(R.id.field_email);
-        mEmailField.setText("untbustracking@gmail.com");
         mPasswordField = (EditText) findViewById(R.id.field_password);
-        mPasswordField.setText("TrackMyBus");
 
         mSignInButton = (Button) findViewById(R.id.button_sign_in);
         mSignUpButton = (Button) findViewById(R.id.button_sign_up);
