@@ -37,7 +37,7 @@ import static com.google.android.gms.location.LocationServices.FusedLocationApi;
  * <b>Data Structre:</b> Uses some final static variables, instance of
  * Vechicle and BusRoute classes
  */
-public class DriverService extends Service implements
+public class LocationSharingService extends Service implements
         LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     /**
      * Firebase root URL
@@ -97,7 +97,7 @@ public class DriverService extends Service implements
      * Activity name used to
      * Log the comments
      */
-    private static final String TAG = "DriverService";
+    private static final String TAG = "LocationSharingService";
 
     /**
      * Actual location parameters are
@@ -110,12 +110,12 @@ public class DriverService extends Service implements
 //     *
 //     * @param name Used to name the worker thread, important only for debugging.
 //     */
-//    public DriverService(String name) {
+//    public LocationSharingService(String name) {
 //        super(name);
 //    }
 //
-//    public DriverService() {
-//        super("DriverService");
+//    public LocationSharingService() {
+//        super("LocationSharingService");
 //    }
 
     /**
@@ -172,7 +172,7 @@ public class DriverService extends Service implements
         vehicle.setIsAssigned(true);
         mFirebase.child("/vehicles/" + FIREBASE_VEHICLE_NODE).setValue(vehicle);
 
-        Log.d("DriverService", "onHandleIntentEnd");
+        Log.d("LocationSharingService", "onHandleIntentEnd");
 
         return START_NOT_STICKY;
     }
@@ -184,7 +184,7 @@ public class DriverService extends Service implements
      * would be called
      */
     public void onDestroy() {
-        Log.d("DriverService", "onDestroy");
+        Log.d("LocationSharingService", "onDestroy");
         NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         route.getVehicleMap().remove(FIREBASE_VEHICLE_NODE);
         mFirebase.child("/routes/" + FIREBASE_ROUTE_NODE).setValue(route);

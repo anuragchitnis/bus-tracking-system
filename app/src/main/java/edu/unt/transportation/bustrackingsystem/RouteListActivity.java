@@ -78,12 +78,6 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     }
 
     @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
         onItemSelected(parent, view, position, id);
@@ -182,10 +176,5 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
         // notify the adapter that the underlying data has changed
         routeAdapter.add(busRoute);
         routeAdapter.notifyDataSetChanged();
-        //If we're viewing the map activity, navigate to the map with the new route data
-        if (BusTrackingSystem.isMapActivityVisible())
-        {
-            navigateToMap();
-        }
     }
 }

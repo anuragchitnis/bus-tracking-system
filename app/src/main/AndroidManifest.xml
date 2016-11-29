@@ -35,11 +35,6 @@
                 android:value=".RouteListActivity" />
         </activity>
         <activity
-            android:name=".CheckoutActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
             android:name=".TrackerMapActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
@@ -50,7 +45,7 @@
         </activity>
 
         <service
-            android:name=".DriverService"
+            android:name=".LocationSharingService"
             android:label="Bus Tracking System - Driver"
             android:theme="@style/AppTheme.NoActionBar">
             <!-- Parent activity meta-data to support 4.0 and lower -->

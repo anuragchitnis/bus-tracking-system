@@ -359,7 +359,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Go to MainActivity
         // Changed by Satya, to pass vehicle id to driver activity
         Bundle bundle = new Bundle();
-        Intent dataServiceIntent = new Intent(this, DriverService.class);
+        Intent dataServiceIntent = new Intent(this, LocationSharingService.class);
         bundle.putSerializable(vehicleId, vehicles.get(vehicleId));
         bundle.putSerializable(routeId, routes.get(routeId));
         bundle.putString("vehicleId", vehicleId);

@@ -13,7 +13,7 @@ public class NotificationReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("NotificationReceiver", "onReceive");
-        intent.setComponent(new ComponentName(context,DriverService.class));
+        intent.setComponent(new ComponentName(context,LocationSharingService.class));
         context.stopService(intent);
     }
 }
