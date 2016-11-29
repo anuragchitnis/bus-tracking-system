@@ -30,8 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".4"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/routes_stop_1_separator"
@@ -69,8 +68,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".4"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/routes_stop_2_separator"

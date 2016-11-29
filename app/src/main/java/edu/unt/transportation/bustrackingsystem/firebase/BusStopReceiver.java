@@ -51,7 +51,8 @@ public class BusStopReceiver implements ValueEventListener{
     public void onDataChange(DataSnapshot dataSnapshot)
     {
         BusStop busStopSnapShot = dataSnapshot.getValue(BusStop.class);
-        performCallBacks(busStopSnapShot);
+        if(busStopSnapShot != null)
+            performCallBacks(busStopSnapShot);
     }
 
     @Override
