@@ -101,19 +101,19 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
      * Drop Downs to
      * Vehicle and Route list
      */
-    private Spinner spinner1 = null, spinner2 = null;
+    private Spinner vehicleSpinner = null, routeSpinner = null;
 
     private String vehicleId = null;
     private String routeId = null;
-    private List<String> list1 = new ArrayList<String>();
-    private List<String> list2 = new ArrayList<String>();
+    private List<String> vehicleList = new ArrayList<String>();
+    private List<String> routeList = new ArrayList<String>();
 
     /**
      * Data Adapaters of spinners,
      * which lets notify on data change
      */
-    private ArrayAdapter<String> dataAdapter1 = null;
-    private ArrayAdapter<String> dataAdapter2 = null;
+    private ArrayAdapter<String> vehicleAdapter = null;
+    private ArrayAdapter<String> routeAdapter = null;
 
     /**
      * list of vehicle and routes
@@ -155,8 +155,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        dataAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list1);
-        dataAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list2);
+        vehicleAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, vehicleList);
+        routeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, routeList);
 
         vehicles = new HashMap<String, Vehicle>();
         routes = new HashMap<String, BusRoute>();
@@ -166,9 +166,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // Views
         mEmailField = (EditText) findViewById(R.id.field_email);
-        mEmailField.setText("untbustracking@gmail.com");
         mPasswordField = (EditText) findViewById(R.id.field_password);
-        mPasswordField.setText("TrackMyBus");
 
         mSignInButton = (Button) findViewById(R.id.button_sign_in);
         mSignUpButton = (Button) findViewById(R.id.button_sign_up);
@@ -190,8 +188,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 BusRoute route = dataSnapshot.getValue(BusRoute.class);
                 routes.put(dataSnapshot.getKey(), route);
-                dataAdapter2.add(dataSnapshot.getKey());
-                dataAdapter2.notifyDataSetChanged();
+                routeAdapter.add(dataSnapshot.getKey());
+                routeAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -221,8 +219,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Vehicle vehicle = dataSnapshot.getValue(Vehicle.class);
                 if(!vehicle.isAssigned()){
                     vehicles.put(dataSnapshot.getKey(), vehicle);
-                    dataAdapter1.add(dataSnapshot.getKey());
-                    dataAdapter1.notifyDataSetChanged();
+                    vehicleAdapter.add(dataSnapshot.getKey());
+                    vehicleAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -253,12 +251,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     // add items into spinner dynamically
     public void addItemsOnSpinner1() {
-        spinner1 = (Spinner) findViewById(R.id.spinner1);
-        spinner1.setVisibility(View.VISIBLE);
-        spinner1.setPrompt("Select Vehicle");
-        dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner1.setAdapter(dataAdapter1);
-        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        vehicleSpinner = (Spinner) findViewById(R.id.spinner1);
+        vehicleSpinner.setVisibility(View.VISIBLE);
+        vehicleSpinner.setPrompt("Select Vehicle");
+        vehicleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        vehicleSpinner.setAdapter(vehicleAdapter);
+        vehicleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 vehicleId = parent.getItemAtPosition(position).toString();
@@ -272,11 +270,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void addItemsOnSpinner2() {
-        spinner2 = (Spinner) findViewById(R.id.spinner2);
-        spinner2.setPrompt("Select Route");
-        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner2.setAdapter(dataAdapter2);
-        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        routeSpinner = (Spinner) findViewById(R.id.spinner2);
+        routeSpinner.setPrompt("Select Route");
+        routeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        routeSpinner.setAdapter(routeAdapter);
+        routeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 routeId = parent.getItemAtPosition(position).toString();

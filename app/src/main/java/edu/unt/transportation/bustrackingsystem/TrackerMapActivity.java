@@ -349,9 +349,6 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
          */
         busStopReceiver.removeListener(this);
         vehicleMapChangeReceiver.removeListener(this);
-
-        Intent intent = new Intent(this, DriverService.class);
-        stopService(intent);
     }
 
     @Override

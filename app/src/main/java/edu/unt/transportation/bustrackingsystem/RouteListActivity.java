@@ -80,8 +80,6 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
     @Override
     protected void onDestroy()
     {
-        Intent intent = new Intent(this, DriverService.class);
-        stopService(intent);
         super.onDestroy();
     }
 
