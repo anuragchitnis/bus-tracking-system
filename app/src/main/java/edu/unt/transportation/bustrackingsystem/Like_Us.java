@@ -6,10 +6,21 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.webkit.WebView;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import android.widget.Button;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
+import java.lang.Object;
+
+import edu.unt.transportation.bustrackingsystem.model.BusRoute;
+
 
 /**
  *
@@ -21,28 +32,48 @@ import com.google.android.gms.common.api.GoogleApiClient;
  *
  */
 
-public class Like_Us extends AppCompatActivity {
-
+public class Like_Us extends AppCompatActivity implements View.OnClickListener,
+        ChildEventListener {
     private GoogleApiClient client;
+    public static boolean IsPost = false;
 
     WebView myBrowser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         try {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_like__us);
+
+
+
+
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.activity_like__us);
 
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null)
+            {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+            }
 
+              //  ImageButton button = (ImageButton) findViewById(R.id.myButton);
 
-            OpenFacebookPage();
-            client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+                //button.setOnClickListener(this);
+
+                 OpenFacebookPage();
+                client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
         }
         catch (Exception e) {
             e.printStackTrace();}
+    }
+
+    @Override public void onClick(View v)
+    {
+        OpenFacebookPage();
     }
 
     protected void OpenFacebookPage(){
@@ -74,6 +105,30 @@ public class Like_Us extends AppCompatActivity {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl)));
 
         }
+
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+    }
+
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onCancelled(FirebaseError firebaseError) {
+
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
     }
 }
