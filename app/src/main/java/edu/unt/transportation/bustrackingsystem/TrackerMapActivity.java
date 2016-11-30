@@ -47,6 +47,7 @@ import edu.unt.transportation.bustrackingsystem.firebase.VehicleMapChangeReceive
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
 import edu.unt.transportation.bustrackingsystem.model.StopSchedule;
 import edu.unt.transportation.bustrackingsystem.model.Vehicle;
+import edu.unt.transportation.bustrackingsystem.util.GeneralUtil;
 import edu.unt.transportation.bustrackingsystem.util.NetworkUtil;
 import edu.unt.transportation.bustrackingsystem.util.PermissionUtils;
 
@@ -311,7 +312,7 @@ public class TrackerMapActivity extends AppCompatActivity implements OnMapReadyC
                 return true;
 
             case R.id.action_likeUs:
-                startActivity(new Intent(this, Like_Us.class));
+                GeneralUtil.OpenFacebookPage(this);
                 return true;
 
             default:

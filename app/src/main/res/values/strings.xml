@@ -41,6 +41,6 @@
     <string-array name="spinner2Items">
         <item>Select Route</item>
     </string-array>
-    <string name="title_activity_about__us">About_Us</string>
+    <string name="title_activity_about__us">About Us</string>
 
 </resources>

@@ -64,8 +64,12 @@
         <activity
             android:name=".About_Us"
             android:label="@string/title_activity_about__us"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Like_Us"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+        <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".RouteListActivity" />
+        </activity>
     </application>
 
 </manifest>

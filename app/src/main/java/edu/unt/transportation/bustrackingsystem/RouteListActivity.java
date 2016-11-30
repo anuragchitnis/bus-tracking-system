@@ -25,6 +25,7 @@ import edu.unt.transportation.bustrackingsystem.firebase.BusStopListener;
 import edu.unt.transportation.bustrackingsystem.firebase.BusStopReceiver;
 import edu.unt.transportation.bustrackingsystem.model.BusRoute;
 import edu.unt.transportation.bustrackingsystem.model.BusStop;
+import edu.unt.transportation.bustrackingsystem.util.GeneralUtil;
 
 import static edu.unt.transportation.bustrackingsystem.TrackerMapActivity.KEY_ROUTE_ID;
 import static edu.unt.transportation.bustrackingsystem.TrackerMapActivity.KEY_ROUTE_NAME;
@@ -120,7 +121,7 @@ public class RouteListActivity extends AppCompatActivity implements AdapterView
                 return true;
 
             case R.id.action_likeUs:
-                startActivity(new Intent(this, Like_Us.class));
+                GeneralUtil.OpenFacebookPage(this);
                 return true;
 
             default:
