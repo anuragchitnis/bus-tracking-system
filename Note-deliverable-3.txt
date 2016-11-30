@@ -1,1 +1,4 @@
-JavaDoc - doc > JavaDoc directory , It is the code documentation of our project. Open the index.html file.
+doc > JavaDoc - It is the code documentation of our project. Open the index.html file.
+docs > Deliverables - all the deliverable documents are located in this directory.
+docs > MOM - MOMs of our project
+docs > Presentations - Presentation slides of our project
