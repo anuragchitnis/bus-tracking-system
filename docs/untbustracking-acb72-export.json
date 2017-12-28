@@ -1,0 +1,585 @@
+{
+  "drivers" : {
+    "0uReFMZNAMaorCgnL6VGjIiAq1g2" : {
+      "driverId" : "0uReFMZNAMaorCgnL6VGjIiAq1g2",
+      "email" : "anuragchitnis.unt@gmail.com",
+      "name" : "anuragchitnis.unt"
+    },
+    "SvG9H92UxahSNmPqVrDG2VoDBbL2" : {
+      "driverId" : "SvG9H92UxahSNmPqVrDG2VoDBbL2",
+      "email" : "untbustracking@gmail.com",
+      "name" : "untbustracking"
+    },
+    "U6VScphpj3U2XyWy6VgkgwczIPg1" : {
+      "driverId" : "U6VScphpj3U2XyWy6VgkgwczIPg1",
+      "email" : "satyanarayana@gmail.com",
+      "name" : "satyanarayana"
+    },
+    "VRCqam0nqQctRIdLduZsCGXXuGG3" : {
+      "driverId" : "VRCqam0nqQctRIdLduZsCGXXuGG3",
+      "email" : "gilwasserman@gmail.com",
+      "name" : "gilwasserman"
+    },
+    "x9TviH6qv2UHDzBqO55vg9nI4X82" : {
+      "driverId" : "x9TviH6qv2UHDzBqO55vg9nI4X82",
+      "email" : "niteshsharmak@gmail.com",
+      "name" : "niteshsharmak"
+    }
+  },
+  "routes" : {
+    "Centre Place" : {
+      "busStopMap" : {
+        "1451" : true,
+        "blb" : true,
+        "castle_rock" : true,
+        "forum" : true,
+        "the_arch" : true
+      },
+      "lastUpdated" : "1477613750383",
+      "routeId" : "Centre Place",
+      "routeName" : "Centre Place",
+      "vehicleMap" : {
+        "1230" : true,
+        "1245" : true,
+        "1266" : true,
+        "4322" : true,
+        "4323" : true
+      }
+    },
+    "Discovery Park" : {
+      "busStopMap" : {
+        "ave_g" : true,
+        "bb_nb_emory" : true,
+        "bb_nb_university" : true,
+        "bb_nb_windsor" : true,
+        "bb_sb_emory" : true,
+        "bb_sb_university" : true,
+        "bb_sb_windsor" : true,
+        "dp_main" : true,
+        "eesat" : true,
+        "gab" : true,
+        "hickory_aveg" : true,
+        "nt_stella" : true,
+        "rec_center" : true
+      },
+      "lastUpdated" : "1477613750383",
+      "routeId" : "Discovery Park",
+      "routeName" : "Discovery Park",
+      "vehicleMap" : {
+        "4321" : true,
+        "4322" : true,
+        "5322" : true,
+        "7321" : true
+      }
+    },
+    "Eagle Point" : {
+      "busStopMap" : {
+        "honors_hall" : true,
+        "kerr_hall" : true,
+        "maple_hall" : true,
+        "mg_village" : true,
+        "traditions_hall" : true,
+        "victory_hall" : true,
+        "walt_parker" : true,
+        "willis" : true
+      },
+      "lastUpdated" : "1477613750383",
+      "routeId" : "Eagle Point",
+      "routeName" : "Eagle Point",
+      "vehicleMap" : {
+        "7321" : true
+      }
+    },
+    "Mean Green" : {
+      "busStopMap" : {
+        "art_building" : true,
+        "f_field_east" : true,
+        "f_field_gate5" : true,
+        "f_field_south" : true,
+        "maple_hall" : true,
+        "rec_center" : true,
+        "sana_fe" : true,
+        "union" : true,
+        "usb" : true
+      },
+      "lastUpdated" : "1477613750383",
+      "routeId" : "Mean Green",
+      "routeName" : "Mean Green",
+      "vehicleMap" : {
+        "4321" : true
+      }
+    },
+    "North Texan" : {
+      "busStopMap" : {
+        "ave_h" : true,
+        "honors_hall" : true,
+        "nt_stella" : true,
+        "union" : true,
+        "university_courtyard" : true,
+        "uptown" : true,
+        "west_hall" : true,
+        "willis" : true
+      },
+      "lastUpdated" : "1477613750383",
+      "routeId" : "North Texan",
+      "routeName" : "North Texan",
+      "vehicleMap" : {
+        "5321" : true
+      }
+    },
+    "eride" : {
+      "lastUpdated" : "1477613750383",
+      "routeId" : "eride",
+      "routeName" : "eride",
+      "vehicleMap" : {
+        "1230" : true
+      }
+    }
+  },
+  "stops" : {
+    "art_building" : {
+      "latitude" : 33.211687,
+      "longitude" : -97.144434,
+      "stopID" : "art_building",
+      "stopName" : "Art Building"
+    },
+    "ave_g" : {
+      "latitude" : 33.2157584,
+      "longitude" : -97.1575189,
+      "stopID" : "ave_g",
+      "stopName" : "Ave G"
+    },
+    "ave_h" : {
+      "latitude" : 33.214702,
+      "longitude" : -97.159891,
+      "stopID" : "ave_h",
+      "stopName" : "Ave H"
+    },
+    "bb_nb_emory" : {
+      "latitude" : 33.218372,
+      "longitude" : -97.161735,
+      "stopID" : "bb_nb_emory",
+      "stopName" : "Bonnie Brae NB Emory"
+    },
+    "bb_nb_university" : {
+      "latitude" : 33.228852,
+      "longitude" : -97.160287,
+      "stopID" : "bb_nb_university",
+      "stopName" : "Bonnie Brae NB University"
+    },
+    "bb_nb_windsor" : {
+      "latitude" : 33.239301,
+      "longitude" : -97.160205,
+      "stopID" : "bb_nb_windsor",
+      "stopName" : "Bonnie Brae NB Windsor"
+    },
+    "bb_sb_emory" : {
+      "latitude" : 33.21738,
+      "longitude" : -97.161708,
+      "stopID" : "bb_sb_emory",
+      "stopName" : "Bonnie Brae SB Emory"
+    },
+    "bb_sb_university" : {
+      "latitude" : 33.229697,
+      "longitude" : -97.16233,
+      "stopID" : "bb_sb_university",
+      "stopName" : "Bonnie Brae SB University"
+    },
+    "bb_sb_windsor" : {
+      "latitude" : 33.240171,
+      "longitude" : -97.161535,
+      "stopID" : "bb_sb_windsor",
+      "stopName" : "Bonnie Brae SB Windsor"
+    },
+    "blb" : {
+      "latitude" : 33.208238,
+      "longitude" : -97.147534,
+      "routeSchedule" : {
+        "Centre Place" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:30 AM", "7:36 AM", "7:42 AM", "7:48 AM", "7:54 AM", "8:00 AM", "8:06 AM", "8:12 AM", "8:18 AM", "8:24 AM", "8:30 AM", "8:36 AM", "8:42 AM", "8:48 AM", "8:54 AM", "9:05 AM", "9:11 AM", "9:17 AM", "9:23 AM", "9:29 AM", "9:35 AM", "9:41 AM", "9:47 AM", "9:53 AM", "9:59 AM", "10:05 AM", "10:11 AM", "10:17 AM", "10:23 AM", "10:29 AM", "10:35 AM", "10:41 AM", "10:47 AM", "10:53 AM", "10:59 AM", "11:10 AM", "11:16 AM", "11:22 AM", "11:28 AM", "11:34 AM", "11:40 AM", "11:46 AM", "11:52 AM", "11:58 AM", "12:04 PM", "12:10 PM", "12:16 PM", "12:22 PM", "12:28 PM", "12:34 PM", "12:40 PM", "12:46 PM", "12:52 PM", "12:58 PM", "1:04 PM", "1:15 PM", "1:21 PM", "1:27 PM", "1:33 PM", "1:39 PM", "1:45 PM", "1:51 PM", "1:57 PM", "2:03 PM", "2:09 PM", "2:15 PM", "2:21 PM", "2:27 PM", "2:33 PM", "2:39 PM", "2:45 PM", "2:51 PM", "2:57 PM", "3:03 PM", "3:09 PM", "3:20 PM", "3:26 PM", "3:32 PM", "3:38 PM", "3:44 PM", "3:50 PM", "3:56 PM", "4:02 PM", "4:08 PM", "4:14 PM", "4:20 PM", "4:26 PM", "4:32 PM", "4:38 PM", "4:44 PM", "4:50 PM", "4:56 PM", "5:02 PM", "5:08 PM", "5:14 PM", "5:25 PM", "5:31 PM", "5:37 PM", "5:43 PM", "5:55 PM", "6:25 PM", "6:55 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:35 PM", "10:05 PM", "10:35 PM" ]
+        }, {
+          "dayOfWeek" : "Friday",
+          "timingsList" : [ "7:30 AM", "7:36 AM", "7:42 AM", "7:48 AM", "7:54 AM", "8:00 AM", "8:06 AM", "8:12 AM", "8:18 AM", "8:24 AM", "8:30 AM", "8:36 AM", "8:42 AM", "8:48 AM", "8:54 AM", "9:05 AM", "9:11 AM", "9:17 AM", "9:23 AM", "9:29 AM", "9:35 AM", "9:41 AM", "9:47 AM", "9:53 AM", "9:59 AM", "10:05 AM", "10:11 AM", "10:17 AM", "10:23 AM", "10:29 AM", "10:35 AM", "10:41 AM", "10:47 AM", "10:53 AM", "10:59 AM", "11:10 AM", "11:16 AM", "11:22 AM", "11:28 AM", "11:34 AM", "11:40 AM", "11:46 AM", "11:52 AM", "11:58 AM", "12:04 PM", "12:10 PM", "12:16 PM", "12:22 PM", "12:28 PM", "12:34 PM", "12:40 PM", "12:46 PM", "12:52 PM", "12:58 PM", "1:04 PM", "1:15 PM", "1:21 PM", "1:27 PM", "1:33 PM", "1:39 PM", "1:45 PM", "1:51 PM", "1:57 PM", "2:03 PM", "2:09 PM", "2:15 PM", "2:21 PM", "2:27 PM", "2:33 PM", "2:39 PM", "2:45 PM", "2:51 PM", "2:57 PM", "3:03 PM", "3:09 PM", "3:20 PM", "3:26 PM", "3:32 PM", "3:38 PM", "3:44 PM", "3:50 PM", "3:56 PM", "4:02 PM", "4:08 PM", "4:14 PM", "4:20 PM", "4:26 PM", "4:32 PM", "4:38 PM", "4:44 PM", "4:50 PM", "4:56 PM", "5:02 PM", "5:08 PM", "5:14 PM", "5:25 PM", "5:31 PM", "5:37 PM", "5:43 PM" ]
+        } ]
+      },
+      "stopID" : "blb",
+      "stopName" : "BLB"
+    },
+    "castle_rock" : {
+      "latitude" : 33.197001,
+      "longitude" : -97.135349,
+      "stopID" : "castle_rock",
+      "stopName" : "Castle Rock"
+    },
+    "dp_main" : {
+      "latitude" : 33.2534488,
+      "longitude" : -97.1539886,
+      "routeSchedule" : {
+        "Discovery Park" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:35 AM", "7:49 AM", "8:03 AM", "8:15 AM", "8:29 AM", "8:43 AM", "9:00 AM", "9:14 AM", "9:28 AM", "9:40 AM", "9:54 AM", "10:08 AM", "10:20 AM", "10:34 AM", "10:48 AM", "11:05 AM", "11:19 AM", "11:33 AM", "11:45 AM", "11:59 AM", "12:13 PM", "12:25 PM", "12:39 PM", "12:53 PM", "1:10 PM", "1:24 PM", "1:38 PM", "1:50 PM", "2:04 PM", "2:18 PM", "2:30 PM", "2:44 PM", "2:58 PM", "3:15 PM", "3:29 PM", "3:43 PM", "3:55 PM", "4:09 PM", "4:23 PM", "4:35 PM", "4:49 PM", "5:03 PM", "5:20 PM", "5:34 PM", "5:48 PM", "6:00 PM", "6:14 PM", "6:28 PM", "6:40 PM", "6:54 PM", "7:08 PM", "7:39 PM", "7:53 PM", "8:19 PM", "8:33 PM", "9:13 PM", "9:58 PM", "10:38 PM" ]
+        }, {
+          "dayOfWeek" : "Friday",
+          "timingsList" : [ "7:35 AM", "7:49 AM", "8:03 AM", "8:15 AM", "8:29 AM", "8:43 AM", "9:00 AM", "9:14 AM", "9:28 AM", "9:40 AM", "9:54 AM", "10:08 AM", "10:20 AM", "10:34 AM", "10:48 AM", "11:05 AM", "11:19 AM", "11:33 AM", "11:45 AM", "11:59 AM", "12:13 PM", "12:25 PM", "12:39 PM", "12:53 PM", "1:10 PM", "1:24 PM", "1:38 PM", "1:50 PM", "2:04 PM", "2:18 PM", "2:30 PM", "2:44 PM", "2:58 PM", "3:15 PM", "3:29 PM", "3:43 PM", "3:55 PM", "4:09 PM", "4:23 PM", "4:35 PM", "4:49 PM", "5:03 PM", "5:20 PM", "5:34 PM", "5:48 PM", "6:00 PM" ]
+        }, {
+          "dayOfWeek" : "Saturday",
+          "timingsList" : [ "7:35 AM", "8:15 AM", "9:00 AM", "9:40 AM", "10:20 AM", "11:05 AM", "11:45 AM", "12:25 PM", "1:10 PM", "1:50 PM", "2:30 PM", "3:15 PM", "3:55 PM", "4:35 PM", "5:20 PM", "6:00 PM" ]
+        } ]
+      },
+      "stopID" : "dp_main",
+      "stopName" : "Discovery Park Main"
+    },
+    "eesat" : {
+      "latitude" : 33.213648,
+      "longitude" : -97.151503,
+      "stopID" : "eesat",
+      "stopName" : "Eesat"
+    },
+    "f_field_east" : {
+      "latitude" : 33.208533,
+      "longitude" : -97.155622,
+      "routeSchedule" : {
+        "Mean Green" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:15 AM", "7:25 AM", "7:35 AM", "7:45 AM", "7:55 AM", "8:05 AM", "8:15 AM", "8:25 AM", "8:35 AM", "8:45 AM", "8:55 AM", "9:05 AM", "9:20 AM", "9:30 AM", "9:40 AM", "9:50 AM", "10:00 AM", "10:10 AM", "10:20 AM", "10:30 AM", "10:40 AM", "10:50 AM", "11:00 AM", "11:10 AM", "11:25 AM", "11:35 AM", "11:45 AM", "11:55 AM", "12:05 PM", "12:15 PM", "12:25 PM", "12:35 PM", "12:45 PM", "12:55 PM", "1:05 PM", "1:15 PM", "1:30 PM", "1:40 PM", "1:50 PM", "2:00 PM", "2:10 PM", "2:20 PM", "2:30 PM", "2:40 PM", "2:50 PM", "3:00 PM", "3:10 PM", "3:20 PM", "3:35 PM", "3:45 PM", "3:55 PM", "4:05 PM", "4:15 PM", "4:25 PM", "4:35 PM", "4:45 PM", "4:55 PM", "5:05 PM", "5:15 PM", "5:25 PM" ]
+        } ]
+      },
+      "stopID" : "f_field_east",
+      "stopName" : "Fotus Field East"
+    },
+    "f_field_gate5" : {
+      "latitude" : 33.20874,
+      "longitude" : -97.158999,
+      "stopID" : "f_field_gate5",
+      "stopName" : "Fotus Field Gate5"
+    },
+    "f_field_south" : {
+      "latitude" : 33.207564,
+      "longitude" : -97.156424,
+      "stopID" : "f_field_south",
+      "stopName" : "Fotus Field South"
+    },
+    "forum" : {
+      "latitude" : 33.198608,
+      "longitude" : -97.131208,
+      "routeSchedule" : {
+        "Centre Place" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:15 AM", "7:21 AM", "7:27 AM", "7:33 AM", "7:39 AM", "7:45 AM", "7:51 AM", "7:57 AM", "8:03 AM", "8:09 AM", "8:15 AM", "8:21 AM", "8:27 AM", "8:33 AM", "8:39 AM", "8:45 AM", "8:51 AM", "8:57 AM", "9:03 AM", "9:09 AM", "9:20 AM", "9:26 AM", "9:32 AM", "9:38 AM", "9:44 AM", "9:50 AM", "9:56 AM", "10:02 AM", "10:08 AM", "10:14 AM", "10:20 AM", "10:26 AM", "10:32 AM", "10:38 AM", "10:44 AM", "10:50 AM", "10:56 AM", "11:02 AM", "11:08 AM", "11:14 AM", "11:25 AM", "11:31 AM", "11:37 AM", "11:43 AM", "11:49 AM", "11:55 AM", "12:01 PM", "12:07 PM", "12:13 PM", "12:19 PM", "12:25 PM", "12:31 PM", "12:37 PM", "12:43 PM", "12:49 PM", "12:55 PM", "1:01 PM", "1:07 PM", "1:13 PM", "1:19 PM", "1:30 PM", "1:36 PM", "1:42 PM", "1:48 PM", "1:54 PM", "2:00 PM", "2:06 PM", "2:12 PM", "2:18 PM", "2:24 PM", "2:30 PM", "2:36 PM", "2:42 PM", "2:48 PM", "2:54 PM", "3:00 PM", "3:06 PM", "3:12 PM", "3:18 PM", "3:24 PM", "3:35 PM", "3:41 PM", "3:47 PM", "3:53 PM", "3:59 PM", "4:05 PM", "4:11 PM", "4:17 PM", "4:23 PM", "4:29 PM", "4:35 PM", "4:41 PM", "4:47 PM", "4:53 PM", "4:59 PM", "5:05 PM", "5:11 PM", "5:17 PM", "5:23 PM", "5:40 PM", "6:10 PM", "6:40 PM", "7:10 PM", "7:45 PM", "8:15 PM", "8:45 PM", "9:15 PM", "9:50 PM", "10:20 PM" ]
+        }, {
+          "dayOfWeek" : "Friday",
+          "timingsList" : [ "7:15 AM", "7:21 AM", "7:27 AM", "7:33 AM", "7:39 AM", "7:45 AM", "7:51 AM", "7:57 AM", "8:03 AM", "8:09 AM", "8:15 AM", "8:21 AM", "8:27 AM", "8:33 AM", "8:39 AM", "8:45 AM", "8:51 AM", "8:57 AM", "9:03 AM", "9:09 AM", "9:20 AM", "9:26 AM", "9:32 AM", "9:38 AM", "9:44 AM", "9:50 AM", "9:56 AM", "10:02 AM", "10:08 AM", "10:14 AM", "10:20 AM", "10:26 AM", "10:32 AM", "10:38 AM", "10:44 AM", "10:50 AM", "10:56 AM", "11:02 AM", "11:08 AM", "11:14 AM", "11:25 AM", "11:31 AM", "11:37 AM", "11:43 AM", "11:49 AM", "11:55 AM", "12:01 PM", "12:07 PM", "12:13 PM", "12:19 PM", "12:25 PM", "12:31 PM", "12:37 PM", "12:43 PM", "12:49 PM", "12:55 PM", "1:01 PM", "1:07 PM", "1:13 PM", "1:19 PM", "1:30 PM", "1:36 PM", "1:42 PM", "1:48 PM", "1:54 PM", "2:00 PM", "2:06 PM", "2:12 PM", "2:18 PM", "2:24 PM", "2:30 PM", "2:36 PM", "2:42 PM", "2:48 PM", "2:54 PM", "3:00 PM", "3:06 PM", "3:12 PM", "3:18 PM", "3:24 PM", "3:35 PM", "3:41 PM", "3:47 PM", "3:53 PM", "3:59 PM", "4:05 PM", "4:11 PM", "4:17 PM", "4:23 PM", "4:29 PM", "4:35 PM", "4:41 PM", "4:47 PM", "4:53 PM", "4:59 PM", "5:05 PM", "5:11 PM", "5:17 PM", "5:23 PM" ]
+        } ]
+      },
+      "stopID" : "forum",
+      "stopName" : "Forum"
+    },
+    "gab" : {
+      "latitude" : 33.2139981,
+      "longitude" : -97.1483429,
+      "routeSchedule" : {
+        "Discovery Park" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:15 AM", "7:29 AM", "7:43 AM", "7:55 AM", "8:09 AM", "8:23 AM", "8:40 AM", "8:54 AM", "9:08 AM", "9:20 AM", "9:34 AM", "9:48 AM", "10:00 AM", "10:14 AM", "10:28 AM", "10:45 AM", "10:59 AM", "11:13 AM", "11:25 AM", "11:39 AM", "11:53 AM", "12:05 PM", "12:19 PM", "12:33 PM", "12:50 PM", "1:04 PM", "1:18 PM", "1:30 PM", "1:44 PM", "1:58 PM", "2:10 PM", "2:24 PM", "2:38 PM", "2:55 PM", "3:09 PM", "3:23 PM", "3:35 PM", "3:49 PM", "4:03 PM", "4:15 PM", "4:29 PM", "4:43 PM", "5:00 PM", "5:14 PM", "5:28 PM", "5:40 PM", "5:54 PM", "6:08 PM", "6:20 PM", "6:34 PM", "6:48 PM", "7:19 PM", "7:33 PM", "7:59 PM", "8:13 PM", "8:53 PM", "9:38 PM", "10:18 PM" ]
+        }, {
+          "dayOfWeek" : "Friday",
+          "timingsList" : [ "7:15 AM", "7:29 AM", "7:43 AM", "7:55 AM", "8:09 AM", "8:23 AM", "8:40 AM", "8:54 AM", "9:08 AM", "9:20 AM", "9:34 AM", "9:48 AM", "10:00 AM", "10:14 AM", "10:28 AM", "10:45 AM", "10:59 AM", "11:13 AM", "11:25 AM", "11:39 AM", "11:53 AM", "12:05 PM", "12:19 PM", "12:33 PM", "12:50 PM", "1:04 PM", "1:18 PM", "1:30 PM", "1:44 PM", "1:58 PM", "2:10 PM", "2:24 PM", "2:38 PM", "2:55 PM", "3:09 PM", "3:23 PM", "3:35 PM", "3:49 PM", "4:03 PM", "4:15 PM", "4:29 PM", "4:43 PM", "5:00 PM", "5:14 PM", "5:28 PM", "5:40 PM" ]
+        }, {
+          "dayOfWeek" : "Saturday",
+          "timingsList" : [ "7:15 AM", "7:55 AM", "8:40 AM", "9:20 AM", "10:00 AM", "10:45 AM", "11:25 AM", "12:05 PM", "12:50 PM", "1:30 PM", "2:10 PM", "2:55 PM", "3:35 PM", "4:15 PM", "5:00 PM", "5:40 PM" ]
+        } ]
+      },
+      "stopID" : "gab",
+      "stopName" : "GAB",
+      "zipCode" : "76201"
+    },
+    "hickory_aveg" : {
+      "latitude" : 33.214759,
+      "longitude" : -97.159874,
+      "stopID" : "hickory_aveg",
+      "stopName" : "Hickory_AVE_G"
+    },
+    "honors_hall" : {
+      "latitude" : 33.206865,
+      "longitude" : -97.152327,
+      "stopID" : "honors_hall",
+      "stopName" : "Honors Hall"
+    },
+    "kerr_hall" : {
+      "latitude" : 33.208238,
+      "longitude" : -97.147534,
+      "routeSchedule" : {
+        "Eagle Point" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:29 AM", "7:38 AM", "7:47 AM", "7:56 AM", "8:05 AM", "8:14 AM", "8:23 AM", "8:32 AM", "8:41 AM", "8:55 AM", "9:04 AM", "9:13 AM", "9:22 AM", "9:31 AM", "9:40 AM", "9:49 AM", "9:58 AM", "10:07 AM", "10:16 AM", "10:25 AM", "10:34 AM", "10:48 AM", "10:57 AM", "11:06 AM", "11:15 AM", "11:24 AM", "11:33 AM", "11:42 AM", "11:51 AM", "12:00 PM", "12:09 PM", "12:18 PM", "12:27 PM", "12:41 PM", "12:50 PM", "12:59 PM", "1:08 PM", "1:17 PM", "1:26 PM", "1:35 PM", "1:44 PM", "1:53 PM", "2:02 PM", "2:11 PM", "2:20 PM", "2:34 PM", "2:43 PM", "2:52 PM", "3:01 PM", "3:10 PM", "3:19 PM", "3:28 PM", "3:37 PM", "3:46 PM", "3:55 PM", "4:04 PM", "4:13 PM", "4:27 PM", "4:36 PM", "4:45 PM", "4:54 PM", "5:03 PM", "5:12 PM", "5:21 PM" ]
+        } ]
+      },
+      "stopID" : "kerr_hall",
+      "stopName" : "Kerr Hall"
+    },
+    "maple_hall" : {
+      "latitude" : 33.208605,
+      "longitude" : -97.150051,
+      "stopID" : "maple_hall",
+      "stopName" : "Maple Hall"
+    },
+    "mg_village" : {
+      "latitude" : 33.200074,
+      "longitude" : -97.1615,
+      "stopID" : "mg_village",
+      "stopName" : "Mg Village"
+    },
+    "nt_stella" : {
+      "latitude" : 33.213831,
+      "longitude" : -97.155063,
+      "stopID" : "nt_stella",
+      "stopName" : "NT Blvd. Stella"
+    },
+    "rec_center" : {
+      "latitude" : 33.211606,
+      "longitude" : -97.153704,
+      "stopID" : "rec_center",
+      "stopName" : "Rec Center"
+    },
+    "sana_fe" : {
+      "latitude" : 33.21017,
+      "longitude" : -97.156118,
+      "stopID" : "sana_fe",
+      "stopName" : "Sana Fe"
+    },
+    "the_arch" : {
+      "latitude" : 33.198174,
+      "longitude" : -97.135455,
+      "stopID" : "the_arch",
+      "stopName" : "The Arch"
+    },
+    "traditions_hall" : {
+      "latitude" : 33.210851,
+      "longitude" : -97.155342,
+      "stopID" : "traditions_hall",
+      "stopName" : "Traditions Hall"
+    },
+    "union" : {
+      "latitude" : 33.211352,
+      "longitude" : -97.144333,
+      "routeSchedule" : {
+        "Mean Green" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:30 AM", "7:40 AM", "7:50 AM", "8:00 AM", "8:10 AM", "8:20 AM", "8:30 AM", "8:40 AM", "8:50 AM", "9:05 AM", "9:15 AM", "9:25 AM", "9:35 AM", "9:45 AM", "9:55 AM", "10:05 AM", "10:15 AM", "10:25 AM", "10:35 AM", "10:45 AM", "10:55 AM", "11:10 AM", "11:20 AM", "11:30 AM", "11:40 AM", "11:50 AM", "12:00 PM", "12:10 PM", "12:20 PM", "12:30 PM", "12:40 PM", "12:50 PM", "1:00 PM", "1:15 PM", "1:25 PM", "1:35 PM", "1:45 PM", "1:55 PM", "2:05 PM", "2:15 PM", "2:25 PM", "2:35 PM", "2:45 PM", "2:55 PM", "3:05 PM", "3:20 PM", "3:30 PM", "3:40 PM", "3:50 PM", "4:00 PM", "4:10 PM", "4:20 PM", "4:30 PM", "4:40 PM", "4:50 PM", "5:00 PM", "5:10 PM" ]
+        } ],
+        "North Texan" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:27 AM", "7:33 AM", "7:39 AM", "7:45 AM", "7:51 AM", "7:57 AM", "8:03 AM", "8:09 AM", "8:15 AM", "8:21 AM", "8:27 AM", "8:33 AM", "8:44 AM", "8:50 AM", "8:56 AM", "9:02 AM", "9:08 AM", "9:14 AM", "9:20 AM", "9:26 AM", "9:32 AM", "9:38 AM", "9:44 AM", "9:50 AM", "9:56 AM", "10:02 AM", "10:08 AM", "10:14 AM", "10:25 AM", "10:31 AM", "10:37 AM", "10:43 AM", "10:49 AM", "10:55 AM", "11:01 AM", "11:07 AM", "11:13 AM", "11:19 AM", "11:25 AM", "11:31 AM", "11:37 AM", "11:43 AM", "11:49 AM", "11:55 AM", "12:06 PM", "12:12 PM", "12:18 PM", "12:24 PM", "12:30 PM", "12:36 PM", "12:42 PM", "12:48 PM", "12:54 PM", "1:00 PM", "1:06 PM", "1:12 PM", "1:18 PM", "1:24 PM", "1:30 PM", "1:36 PM", "1:47 PM", "1:53 PM", "1:59 PM", "2:05 PM", "2:11 PM", "2:17 PM", "2:23 PM", "2:29 PM", "2:35 PM", "2:41 PM", "2:47 PM", "2:53 PM", "2:59 PM", "3:05 PM", "3:11 PM", "3:17 PM", "3:28 PM", "3:34 PM", "3:40 PM", "3:46 PM", "3:52 PM", "3:58 PM", "4:04 PM", "4:10 PM", "4:16 PM", "4:22 PM", "4:28 PM", "4:34 PM", "4:40 PM", "4:46 PM", "4:52 PM", "4:58 PM", "5:09 PM", "5:15 PM", "5:21 PM", "5:27 PM" ]
+        } ]
+      },
+      "stopID" : "union",
+      "stopName" : "Union"
+    },
+    "university_courtyard" : {
+      "latitude" : 33.214711,
+      "longitude" : -97.161211,
+      "stopID" : "university_courtyard",
+      "stopName" : "University Courtyard"
+    },
+    "uptown" : {
+      "latitude" : 33.215404,
+      "longitude" : -97.166383,
+      "routeSchedule" : {
+        "North Texan" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:15 AM", "7:21 AM", "7:27 AM", "7:33 AM", "7:39 AM", "7:45 AM", "7:51 AM", "7:57 AM", "8:03 AM", "8:09 AM", "8:15 AM", "8:21 AM", "8:27 AM", "8:33 AM", "8:39 AM", "8:45 AM", "8:56 AM", "9:02 AM", "9:08 AM", "9:14 AM", "9:20 AM", "9:26 AM", "9:32 AM", "9:38 AM", "9:44 AM", "9:50 AM", "9:56 AM", "10:02 AM", "10:08 AM", "10:14 AM", "10:20 AM", "10:26 AM", "10:37 AM", "10:43 AM", "10:49 AM", "10:55 AM", "11:01 AM", "11:07 AM", "11:13 AM", "11:19 AM", "11:25 AM", "11:31 AM", "11:37 AM", "11:43 AM", "11:49 AM", "11:55 AM", "12:01 PM", "12:07 PM", "12:18 PM", "12:24 PM", "12:30 PM", "12:36 PM", "12:42 PM", "12:48 PM", "12:54 PM", "1:00 PM", "1:06 PM", "1:12 PM", "1:18 PM", "1:24 PM", "1:30 PM", "1:36 PM", "1:42 PM", "1:48 PM", "1:59 PM", "2:05 PM", "2:11 PM", "2:17 PM", "2:23 PM", "2:29 PM", "2:35 PM", "2:41 PM", "2:47 PM", "2:53 PM", "2:59 PM", "3:05 PM", "3:11 PM", "3:17 PM", "3:23 PM", "3:29 PM", "3:40 PM", "3:46 PM", "3:52 PM", "3:58 PM", "4:04 PM", "4:10 PM", "4:16 PM", "4:22 PM", "4:28 PM", "4:34 PM", "4:40 PM", "4:46 PM", "4:52 PM", "4:58 PM", "5:04 PM", "5:10 PM", "5:21 PM", "5:27 PM" ]
+        } ]
+      },
+      "stopID" : "uptown",
+      "stopName" : "Uptown"
+    },
+    "usb" : {
+      "latitude" : 33.210077,
+      "longitude" : -97.158495,
+      "stopID" : "usb",
+      "stopName" : "USB"
+    },
+    "victory_hall" : {
+      "latitude" : 33.201739,
+      "longitude" : -97.158604,
+      "routeSchedule" : {
+        "Eagle Point" : [ {
+          "dayOfWeek" : "Monday",
+          "timingsList" : [ "7:15 AM", "7:24 AM", "7:33 AM", "7:42 AM", "7:51 AM", "8:00 AM", "8:09 AM", "8:18 AM", "8:27 AM", "8:36 AM", "8:45 AM", "8:54 AM", "9:08 AM", "9:17 AM", "9:26 AM", "9:35 AM", "9:44 AM", "9:53 AM", "10:02 AM", "10:11 AM", "10:20 AM", "10:29 AM", "10:38 AM", "10:47 AM", "11:01 AM", "11:10 AM", "11:19 AM", "11:28 AM", "11:37 AM", "11:46 AM", "11:55 AM", "12:04 PM", "12:13 PM", "12:22 PM", "12:31 PM", "12:40 PM", "12:54 PM", "1:03 PM", "1:12 PM", "1:21 PM", "1:30 PM", "1:39 PM", "1:48 PM", "1:57 PM", "2:06 PM", "2:15 PM", "2:24 PM", "2:33 PM", "2:47 PM", "2:56 PM", "3:05 PM", "3:14 PM", "3:23 PM", "3:32 PM", "3:41 PM", "3:50 PM", "3:59 PM", "4:08 PM", "4:17 PM", "4:26 PM", "4:40 PM", "4:49 PM", "4:58 PM", "5:07 PM", "5:16 PM", "5:25 PM", "5:34 PM" ]
+        } ]
+      },
+      "stopID" : "victory_hall",
+      "stopName" : "Victory Hall"
+    },
+    "walt_parker" : {
+      "latitude" : 33.199755,
+      "longitude" : -97.161436,
+      "stopID" : "walt_parker",
+      "stopName" : "Walt Parker"
+    },
+    "west_hall" : {
+      "latitude" : 33.211838,
+      "longitude" : -97.15516,
+      "stopID" : "west_hall",
+      "stopName" : "West Hall"
+    },
+    "willis" : {
+      "latitude" : 33.209325,
+      "longitude" : -97.149066,
+      "stopID" : "willis",
+      "stopName" : "Willis"
+    }
+  },
+  "vehicles" : {
+    "1230" : {
+      "assigned" : true,
+      "driver" : "0uReFMZNAMaorCgnL6VGjIiAq1g2",
+      "latitude" : 33.0294208,
+      "longitude" : -96.9408945,
+      "routeID" : "eride",
+      "timestamp" : "1477613516926",
+      "vehicleID" : "1230",
+      "vehicleType" : "Eride"
+    },
+    "1245" : {
+      "assigned" : true,
+      "driver" : "0uReFMZNAMaorCgnL6VGjIiAq1g2",
+      "latitude" : 33.0294426,
+      "longitude" : -96.9409051,
+      "routeID" : "eride",
+      "timestamp" : "1477613516926",
+      "vehicleID" : "1245",
+      "vehicleType" : "Eride"
+    },
+    "1266" : {
+      "assigned" : true,
+      "driver" : "x9TviH6qv2UHDzBqO55vg9nI4X82",
+      "latitude" : 33.0293889,
+      "longitude" : -96.940912,
+      "routeID" : "Discovery Park",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "1266",
+      "vehicleType" : "Bus"
+    },
+    "4321" : {
+      "assigned" : true,
+      "driver" : "SvG9H92UxahSNmPqVrDG2VoDBbL2",
+      "latitude" : 33.2145011,
+      "longitude" : -97.160971,
+      "routeID" : "Mean Green",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "4321",
+      "vehicleType" : "Bus"
+    },
+    "4322" : {
+      "assigned" : true,
+      "driver" : "0uReFMZNAMaorCgnL6VGjIiAq1g2",
+      "latitude" : 33.2540086,
+      "longitude" : -97.1527237,
+      "routeID" : "eride",
+      "timestamp" : "1477613516926",
+      "vehicleID" : "4322",
+      "vehicleType" : "Eride"
+    },
+    "4323" : {
+      "assigned" : true,
+      "driver" : "0uReFMZNAMaorCgnL6VGjIiAq1g2",
+      "latitude" : 33.2141252,
+      "longitude" : -97.1563873,
+      "routeID" : "eride",
+      "timestamp" : "1477613516926",
+      "vehicleID" : "4323",
+      "vehicleType" : "Eride"
+    },
+    "5321" : {
+      "assigned" : false,
+      "driver" : "SvG9H92UxahSNmPqVrDG2VoDBbL2",
+      "latitude" : 33.2529851,
+      "longitude" : -97.1523029,
+      "routeID" : "North Texan",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "5321",
+      "vehicleType" : "Bus"
+    },
+    "5322" : {
+      "assigned" : true,
+      "driver" : "0uReFMZNAMaorCgnL6VGjIiAq1g2",
+      "latitude" : 33.21371105,
+      "longitude" : -97.15088042,
+      "routeID" : "eride",
+      "timestamp" : "1477613516926",
+      "vehicleID" : "5322",
+      "vehicleType" : "Eride"
+    },
+    "5323" : {
+      "assigned" : false,
+      "driver" : "SvG9H92UxahSNmPqVrDG2VoDBbL2",
+      "latitude" : 33.2141,
+      "longitude" : -97.156409,
+      "routeID" : "North Texan",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "5323",
+      "vehicleType" : "Bus"
+    },
+    "6321" : {
+      "assigned" : false,
+      "driver" : "SvG9H92UxahSNmPqVrDG2VoDBbL2",
+      "latitude" : 33.2129492,
+      "longitude" : -97.1492315,
+      "routeID" : "Centre Place",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "6321",
+      "vehicleType" : "Bus"
+    },
+    "6322" : {
+      "assigned" : false,
+      "driver" : "x9TviH6qv2UHDzBqO55vg9nI4X82",
+      "latitude" : 33.2140688,
+      "longitude" : -97.1563423,
+      "routeID" : "Centre Place",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "6323",
+      "vehicleType" : "Bus"
+    },
+    "6323" : {
+      "assigned" : false,
+      "driver" : "x9TviH6qv2UHDzBqO55vg9nI4X82",
+      "latitude" : 33.214395,
+      "longitude" : -97.1546742,
+      "routeID" : "Centre Place",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "6323",
+      "vehicleType" : "Bus"
+    },
+    "7321" : {
+      "assigned" : false,
+      "latitude" : 33.2540086,
+      "longitude" : -97.1527237,
+      "routeID" : "Eagle Point",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "7321",
+      "vehicleType" : "Bus"
+    },
+    "7322" : {
+      "assigned" : false,
+      "driver" : "0uReFMZNAMaorCgnL6VGjIiAq1g2",
+      "latitude" : 33.2530773,
+      "longitude" : -97.1522188,
+      "routeID" : "eride",
+      "timestamp" : "1477613516926",
+      "vehicleID" : "7322",
+      "vehicleType" : "Eride"
+    },
+    "7323" : {
+      "assigned" : false,
+      "driver" : "x9TviH6qv2UHDzBqO55vg9nI4X82",
+      "latitude" : 33.2540086,
+      "longitude" : -97.1527237,
+      "routeID" : "Eagle Point",
+      "timestamp" : "1477613435152",
+      "vehicleID" : "7323",
+      "vehicleType" : "Bus"
+    }
+  }
+}
